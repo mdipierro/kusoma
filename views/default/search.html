@@ -1,0 +1,9 @@
+{{extend 'layout.html'}}
+
+{{=form}}
+
+<table class="table">
+{{for row in rows:}}
+<tr><th><a href="{{=URL('course',args=row.id)}}">{{=row.name}}</a></th></tr>
+{{pass}}
+</table>

@@ -1,0 +1,5 @@
+{{extend 'layout.html'}}
+
+{{if auth.user:}}
+<h1>Hello {{=auth.user.first_name}}</h1>
+{{pass}}

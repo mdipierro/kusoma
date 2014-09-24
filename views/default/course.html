@@ -1,0 +1,8 @@
+{{extend 'layout.html'}}
+
+<h2>{{=course.code}}: {{=course.name}}</h2>
+
+<p>{{=course.description}}</p>
+
+<h4>Prerequisites</h4>
+{{=', '.join(course.prerequisites)}}
