@@ -5,4 +5,49 @@
 <p>{{=course.description}}</p>
 
 <h4>Prerequisites</h4>
-{{=', '.join(course.prerequisites)}}
+{{=', '.join(course.prerequisites or [])}}
+
+{{if current_sections:}}
+<h3>Current Sections</h3>
+<table class="table">
+  {{for section in current_sections:}}
+  <tr>
+    <td>
+      <a href="{{=URL('section',args=section.id)}}">{{=section.name}}</a>
+    </td>
+    <td>{{=section.start_date}}</td>
+    <td>{{=section.stop_date}}</td>
+    <td>{{=section.meeting_time}}</td>
+    <td>{{=section.meeting_place}}</td>
+    <td>{{='in class' if section.inclass else ''}}</td>
+    <td>{{='on line' if section.on_line else ''}}</td>
+  </tr>
+  {{pass}}
+</table>
+{{pass}}
+
+{{if past_sections:}}
+<h3>Past Sections</h3>
+<table class="table">
+  {{for section in past_sections:}}
+  <tr>
+    <td>
+      <a href="{{=URL('section',args=section.id)}}">{{=section.name}}</a>
+    </td>
+    <td>{{=section.start_date}}</td>
+    <td>{{=section.stop_date}}</td>
+    <td>{{=section.meeting_time}}</td>
+    <td>{{=section.meeting_place}}</td>
+    <td>{{='in class' if section.inclass else ''}}</td>
+    <td>{{='on line' if section.on_line else ''}}</td>
+  </tr>
+  {{pass}}
+</table>
+{{pass}}
+
+{{if auth.user:}}
+<h3>Roles</h3>
+{{for row in rows:}}
+You are a {{=row.membership.role}} in section <a href="{{=URL('section',args=row.course_section.id)}}">{{=row.course_section.name}}</a></br>
+{{pass}}
+{{pass}}
