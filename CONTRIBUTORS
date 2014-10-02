@@ -1,0 +1,21 @@
+If you know how to use GIT and make pull-requests.
+Please add your name as group project leader.
+You can suggest a topic or pick from this:
+
+- attendance verification 
+- calendar (should be based on fullcalendar.js)
+- assignment upload (should use Field(...type='upload')
+- grading interface (should use ractive.js)
+- customizable layout (based on bootstrap 2.0 styles)
+- user polling system (ask, I have example)
+- class recoring (screen-o-matic?)
+- class video chat (google hangout api?)
+- system wiki
+- documentation integration (every group is responsible for providing documentation of their work but one group should re responsible for assembling the docs into a manual)
+- testing (manual testing for now, you will have to write periodic reports to the groups about your tests)
+
+# group leader:
+## group members:
+-
+-
+-
