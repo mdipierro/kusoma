@@ -8,7 +8,7 @@ You can suggest a topic or pick from this:
 - grading interface (should use ractive.js)
 - customizable layout (based on bootstrap 2.0 styles)
 - user polling system (ask, I have example)
-- class recodring (screen-o-matic?)
+- class recording (screen-o-matic?)
 - class video chat (google hangout api?)
 - system wiki
 - documentation integration (every group is responsible for providing documentation of their work but one group should be responsible for assembling the docs into a manual)
