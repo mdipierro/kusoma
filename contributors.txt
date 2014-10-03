@@ -6,3 +6,8 @@ Contributors
 _____________
 
 Daniel Isler - disler
+
+Calendar (fullcalendar.js)
+group leader: Mike Sherry (Github - MSherry24)
+group members:
+-
