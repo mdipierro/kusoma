@@ -4,6 +4,7 @@ You can suggest a topic or pick from this:
 
 - attendance verification 
 - calendar (should be based on fullcalendar.js)
+## Bryan Patzke - GitHub: bpatzke
 - assignment upload (should use Field(...type='upload')
 - grading interface (should use ractive.js)
 - customizable layout (based on bootstrap 2.0 styles)
