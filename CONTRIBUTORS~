@@ -3,7 +3,7 @@ Please add your name as group project leader.
 You can suggest a topic or pick from this:
 
 - attendance verification 
-# calendar (should be based on fullcalendar.js)
+- calendar (should be based on fullcalendar.js)
 - assignment upload (should use Field(...type='upload')
 - grading interface (should use ractive.js)
 - customizable layout (based on bootstrap 2.0 styles)
@@ -19,5 +19,3 @@ You can suggest a topic or pick from this:
 -
 -
 -
-# Calendar
-# group leader: Mike Sherry - Github: MSherry24
