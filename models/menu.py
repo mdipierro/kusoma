@@ -39,6 +39,7 @@ response.menu = [
             ('Chat',False,URL()),
             ]),
     
+    ('Wiki', False, URL('default', 'wiki')),
 ]
 
 if "auth" in locals(): auth.wikimenu() 
