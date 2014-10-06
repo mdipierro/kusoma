@@ -4,7 +4,19 @@
 <script src="../static/js/lms299calendar.js"></script>
 <script>
 	$(document).ready(function() {
-	    $('#fullcalendar').lmsCalendar();
+	    $('#fullcalendar').lmsCalendar({
+	    	height: 'auto',
+	    	events: [
+                    {
+                        title: 'Event1',
+                        start: '2014-10-05'
+                    },
+                    {
+                        title: 'Event2',
+                        start: '2014-10-10'
+                    }
+                    ]
+	    });
 	});
 </script>
 <div id="fullcalendar"></div>

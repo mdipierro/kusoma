@@ -14,8 +14,13 @@ LMS299 Calendar Control
    **/
     $.widget('lms299.lmsCalendar', {
         options: {
+            created: false,
             disabled: false,
-            created: false
+            headerCenter: 'month,basicWeek,basicDay',
+            headerLeft: 'title',
+            headerRight: 'today prev,next',
+            height: 'auto',
+            view: 'month'
         },
         _create: function (options) {
             var self = this;
@@ -36,8 +41,15 @@ LMS299 Calendar Control
             var self = this;
             self.element.addClass('lms299-calendar');
             self._container = $('<div id="lms299calendar-container"></div>').appendTo(this.element);
-            $('#lms299calendar-container').fullCalendar();
-            
+            $('#lms299calendar-container').fullCalendar({
+                header: {        
+                    left:   self.options.headerLeft,
+                    center: self.options.headerCenter,
+                    right:  self.options.headerRight
+                },       
+                events: self.options.events,
+                height: self.options.height
+            });
         }
     });
 }(jQuery, window, document, moment));
