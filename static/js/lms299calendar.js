@@ -2,7 +2,7 @@
 /**
 LMS299 Calendar Control
 **/
-(function ($, window, undefined) {
+(function ($, window, undefined, moment) {
    /**
     example usage
     $(document).ready(function() {
@@ -20,12 +20,15 @@ LMS299 Calendar Control
         },
         _create: function (options) {
             var self = this;
+            alert('2');
         },
         _init: function () {
             var self = this;
+            alert('1');
             if (!self.options.created) {
                     self._createCalendar();
                 }
+                alert('hi');
                 self.options.created = true;
             },
             //self.element.click(this.options.click);
@@ -41,7 +44,7 @@ LMS299 Calendar Control
             
         }
     });
-}(jQuery, window, document));
+}(jQuery, window, document, moment));
 
 
 
