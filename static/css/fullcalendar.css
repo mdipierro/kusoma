@@ -931,3 +931,8 @@ be a descendant of the grid when it is being dragged.
 .fc-time-grid-event .fc-resizer:after {
 	content: "=";
 }
+
+.lms299calendar-container p, table, ol, ul {
+	margin: 0;
+	padding: 0;
+}

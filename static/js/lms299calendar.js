@@ -6,7 +6,6 @@ LMS299 Calendar Control
    /**
     example usage
     $(document).ready(function() {
-        console.log('hi');
         $('#fullcalendar').fullCalendar({
             disabled: false,
             created: false
@@ -20,15 +19,12 @@ LMS299 Calendar Control
         },
         _create: function (options) {
             var self = this;
-            alert('2');
         },
         _init: function () {
             var self = this;
-            alert('1');
             if (!self.options.created) {
                     self._createCalendar();
                 }
-                alert('hi');
                 self.options.created = true;
             },
             //self.element.click(this.options.click);
