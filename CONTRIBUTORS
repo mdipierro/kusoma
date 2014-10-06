@@ -9,12 +9,17 @@ You can suggest a topic or pick from this:
 - grading interface (should use ractive.js)
 - customizable layout (based on bootstrap 2.0 styles)
 - user polling system (ask, I have example)
+
 - class recording (screen-o-matic?)
 - class video chat (google hangout api?)
 ## Nick Groos - github: groos
 - system wiki
 ## Jialiang Chang - github: aiolos404
 - documentation integration (every group is responsible for providing documentation of their work but one group should be responsible for assembling the docs into a manual)
+- class recoring (screen-o-matic?)
+- class video chat (google hangout api?)
+- system wiki
+- documentation integration (every group is responsible for providing documentation of their work but one group should re responsible for assembling the docs into a manual)
 - testing (manual testing for now, you will have to write periodic reports to the groups about your tests)
 
 # group leader:
@@ -27,3 +32,5 @@ You can suggest a topic or pick from this:
 ## Zack Salerno - github: ZSalerno
 
 ## Daniel Isler - disler
+
+## learnbydoing (Urvi Patel) -  attendance verification
