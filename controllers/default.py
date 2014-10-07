@@ -89,3 +89,8 @@ def user():
 def download():
     return response.download(request, db)
 
+def wiki():
+    """
+    wiki page
+    """
+    return dict()
