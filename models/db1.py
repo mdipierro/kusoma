@@ -93,6 +93,6 @@ if db(db.auth_user).isempty():
                                      auth_user=row.id,
                                      role='student')
 
-                         
-    
-    
+
+
+
