@@ -1,11 +1,18 @@
 {{extend 'layout.html'}}
+<!--    This will be the default event calendar for lms299.  Dummy events
+        are currently used for demonstration purposes, but they will eventually
+        be replaced by actual enents from the appliaction once a data model is
+        determined and hooked up to the calendar tool.  This page can also serve as
+        a test page for development.
+-->
 <script src="../static/js/moment.min.js" ></script>
 <script src="../static/js/fullcalendar.js" ></script>
 <script src="../static/js/lms299calendar.js"></script>
 <script>
 	$(document).ready(function() {
-	    $('#fullcalendar').lmsCalendar({
-	    	height: 'auto',
+	    $('#calendar').lmsCalendar({
+	    	height: 500,
+            width: 500,
 	    	events: [
                     {
                         title: 'Event1',
@@ -15,8 +22,8 @@
                         title: 'Event2',
                         start: '2014-10-10'
                     }
-                    ]
+                    ],
 	    });
 	});
 </script>
-<div id="fullcalendar"></div>
+<div id="calendar"></div>

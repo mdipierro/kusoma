@@ -4,11 +4,28 @@ LMS299 Calendar Control
 **/
 (function ($, window, undefined, moment) {
    /**
+    The fullcalendar.js is wrapped inside of a jQueryUI Widget.  This will provide us
+    with the ability to create a reusable JS calendar control that has a standardized style
+    and is already connected to the LMS299 event data source.  If a fullcalendar feature needs
+    to be exposed, it can be exposed through the options object.  
+    
+    If extra features are added beyond what fullcalendar can do (such as filtering LSM299 events 
+    or additional UI tools) they can also be exposed through the options object, and will be 
+    available wherever this widget is used on the site.  See the width option for this calendar
+    control for an example of an expanded feature.
+
+    Documentation on the jQueryUI factory can be found at http://api.jqueryui.com/jQuery.widget/
+
+    Questions about this file can be sent to mikesherry24@gmail.com
+
     example usage
     $(document).ready(function() {
         $('#fullcalendar').fullCalendar({
             disabled: false,
-            created: false
+            headerCenter: 'month,basicWeek',
+            height: 500p,
+            view: 'month',
+            width: 500           
         });
     });
    **/
@@ -16,11 +33,12 @@ LMS299 Calendar Control
         options: {
             created: false,
             disabled: false,
-            headerCenter: 'month,basicWeek,basicDay',
+            headerCenter: 'month,basicWeek',
             headerLeft: 'title',
             headerRight: 'today prev,next',
             height: 'auto',
-            view: 'month'
+            view: 'month',
+            width: ''
         },
         _create: function (options) {
             var self = this;
@@ -32,11 +50,6 @@ LMS299 Calendar Control
                 }
                 self.options.created = true;
             },
-            //self.element.click(this.options.click);
-            //self._setDisabled(self.options.disabled);
-            //self.element.css('height', self.options.height);
-            //self.element.css('line-height', self.options.height - 5 + 'px');
-            //self.element.addClass('dr-crm-button-hover');
         _createCalendar: function () {
             var self = this;
             self.element.addClass('lms299-calendar');
@@ -50,6 +63,9 @@ LMS299 Calendar Control
                 events: self.options.events,
                 height: self.options.height
             });
+            if (self.options.width !== '') {
+                $('#lms299calendar-container').width(self.options.width);
+            }
         }
     });
 }(jQuery, window, document, moment));

@@ -1,6 +1,5 @@
 # -*- coding: utf-8 -*-
-# try something like
-def index(): return dict(message="hello from calendar.py")
+# This is the controller file for the lms299 event calendar.
 
 def calendar():
 	return dict()
