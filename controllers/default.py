@@ -89,3 +89,18 @@ def user():
 def download():
     return response.download(request, db)
 
+def calendar():
+    """
+    allows to look at course description
+    """
+    import datetime
+    today = datetime.date.today()
+    course_id = request.args(0,cast=int)
+    course = db.course(course_id) or redirect(URL('search'))
+    sections = db(db.course_section.course==course.id).select()
+    current_sections = [s for s in sections if s.stop_date>=today]
+    past_sections = [s for s in sections if s.stop_date<today]
+    rows = my_sections(course_id, auth.user_id)
+    return dict(course=course, rows=rows, current_sections=current_sections,
+                past_sections=past_sections)
+
