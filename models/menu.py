@@ -37,7 +37,6 @@ response.menu = [
             ('Classlist',False,URL()),
             ('Attendance',False,URL()),
             ('Chat',False,URL()),
-            ('grade',False,URL('grade', 'index')),
             ]),
     
 ]
