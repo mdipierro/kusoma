@@ -7,3 +7,5 @@
 [2014-10-05 12:13:21] CREATE calendar.py: 0
 [2014-10-05 12:14:13] EDIT lms299/views/calendar/calendar.html: -50
 [2014-10-09 20:15:32] EDIT lms299/controllers/calendar.py: -1
+[2014-10-10 21:40:59] CREATE grade.py: 0
+[2014-10-10 21:41:26] CREATE grade/index.html: 0
