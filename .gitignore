@@ -3,3 +3,9 @@ sessions/
 
 #do not track local errors
 errors/
+
+#do not track local databases
+databases/
+
+#do not track local logs
+progress.log
