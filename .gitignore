@@ -1,0 +1,5 @@
+#do not track local sessions
+sessions/
+
+#do not track local errors
+errors/
