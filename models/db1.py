@@ -62,6 +62,12 @@ def is_user_teacher(section_id, user_id):
                          role='teacher',
                          auth_user=user_id)
 
+## Given a section id and a user id, return true if user is a member of session
+## false otherwise
+def is_in_class(section_id, user_id):
+    query = (db.membership.course_section==section_id)&(db.membership.auth_user==user_id)
+    return len(db(query).select()) > 0
+
 if db(db.auth_user).isempty():
     import datetime
     from gluon.contrib.populate import populate
