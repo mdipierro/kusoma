@@ -1,9 +1,0 @@
-[2014-10-05 11:45:35] START
-[2014-10-05 11:45:35] EDIT lms299/views/__init__.py: 0
-[2014-10-05 11:50:43] EDIT lms299/views/calendar/calendar.html: 1
-[2014-10-05 12:02:26] EDIT lms299/views/calendar/calendar.html: 5
-[2014-10-05 12:04:30] DELETE lms299/controllers/calendar.py: -2
-[2014-10-05 12:04:47] EDIT lms299/views/calendar/calendar.html: 0
-[2014-10-05 12:13:21] CREATE calendar.py: 0
-[2014-10-05 12:14:13] EDIT lms299/views/calendar/calendar.html: -50
-[2014-10-09 20:15:32] EDIT lms299/controllers/calendar.py: -1

@@ -42,7 +42,8 @@ def section():
     section_id = request.args(0,cast=int)
     section = db.course_section(section_id)
     course = section.course
-    membership = db.membership(role='student',
+    student_group_id = db(db.auth_group.role == 'student').select().first().id
+    membership = db.membership(role=student_group_id,
                                auth_user=auth.user_id,
                                course_section=section_id)
     return dict(course=course, section=section, 
@@ -51,7 +52,8 @@ def section():
 @auth.requires_login()
 def signup():
     section_id = request.args(0,cast=int)
-    db.membership.insert(role="student",
+    student_group_id = db(db.auth_group.role == 'student').select().first().id
+    db.membership.insert(role=student_group_id,
                          course_section=section_id,
                          auth_user=auth.user.id)
     redirect(URL('section',args=section_id))
@@ -59,17 +61,22 @@ def signup():
 @auth.requires_login()
 def drop():
     section_id = request.args(0,cast=int)
-    db((db.membership.role=="student")&
+    student_group_id = db(db.auth_group.role == 'student').select().first().id
+    db((db.membership.role==student_group_id)&
        (db.membership.course_section==section_id)&
        (db.membership.auth_user==auth.user.id)).delete()
     redirect(URL('section',args=section_id))
 
+@auth.requires_login()
+@auth.requires((auth.has_membership(role='administrator')) |
+               (auth.has_membership(role='teacher')))
 def members():
     """
     shows students and teachers and graders in a course section
     """
     section_id = request.args(0,cast=int)
-    if not is_user_teacher(section_id, auth.user_id):
+    if not (is_user_teacher(section_id, auth.user_id) |
+            is_user_administrator(auth.user_id)):
         session.flash = 'Not authorized'
         redirect(URL('section',args=section_id)) 
     section = db.course_section(section_id)
@@ -103,4 +110,3 @@ def calendar():
     rows = my_sections(course_id, auth.user_id)
     return dict(course=course, rows=rows, current_sections=current_sections,
                 past_sections=past_sections)
-
