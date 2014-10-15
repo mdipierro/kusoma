@@ -52,6 +52,13 @@ db.define_table(
     auth.signature)
 
 db.define_table(
+    'doc',
+    Field('name',requires=NE),
+    Field('course_section','reference course_section',writable=False,readable=False),
+    Field('filename','upload',label='Content'),   
+    auth.signature)
+
+db.define_table(
     'occurrance',
     Field('name',requires=NE),
     Field('description','text'),

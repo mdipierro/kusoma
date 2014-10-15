@@ -1,0 +1,1 @@
+ssh-agent bash -c 'ssh-add /var/www/.ssh/id_rsa_bitbucket; git push'
