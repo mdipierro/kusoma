@@ -26,7 +26,6 @@ db.define_table(
     Field('prerequisites','list:string'),  # This should be a reference to another course.
     Field('description','text'),
     Field('tags','list:string'),
-    auth.signature,
     format='%(code)s: %(name)s')
 
 db.define_table(
@@ -43,7 +42,6 @@ db.define_table(
     Field('private_info','text'),
     Field('on_line','boolean',default=False,label='Online'),
     Field('inclass','boolean',default=True),
-    auth.signature,
     format='%(name)s')
 
 db.define_table(
@@ -83,9 +81,8 @@ def get_section_users(section_id):
     return db(query).select()
 
 def is_user_teacher(section_id, user_id):
-    teacher_group_id = db(db.auth_group.role == ROLE_TEACHER).select().first().id
     return db((db.membership.course_section==section_id) &
-              (db.membership.role==teacher_group_id) &
+              (db.membership.role==teacher_group_id()) &
               (db.membership.auth_user==user_id)).count() > 0
 
 def is_user_administrator(user_id):
@@ -94,11 +91,35 @@ def is_user_administrator(user_id):
               (db.auth_membership.group_id == admin_group_id)).count() > 0
 
 def is_student_in_section(section_id, user_id):
-    student_group_id = db(db.auth_group.role == 'student').select().first().id
     count = db((db.membership.course_section == section_id) &
-              (db.membership.role == student_group_id) &
+              (db.membership.role == student_group_id()) &
               (db.membership.auth_user == user_id)).count()
     return count > 0
+
+def students_in_section(section_id):
+    return db((db.membership.course_section == section_id) &
+              (db.membership.role == student_group_id()) &
+              (db.membership.auth_user == db.auth_user.id)).select(db.auth_user.id,
+                                                                   db.auth_user.first_name,
+                                                                   db.auth_user.last_name)
+
+def students_in_course(course_id):
+    return db((db.course.id == course_id) &
+              (db.course.id == db.course_section.course) &
+              (db.membership.course_section == db.course_section.id) &
+              (db.membership.role == student_group_id()) &
+              (db.membership.auth_user == db.auth_user.id)).select(db.auth_user.id,
+                                                                   db.auth_user.first_name,
+                                                                   db.auth_user.last_name)
+
+def student_group_id():
+    return db(db.auth_group.role == ROLE_STUDENT).select().first().id
+
+def teacher_group_id():
+    return db(db.auth_group.role == ROLE_TEACHER).select().first().id
+
+def administrator_group_id():
+    return db(db.auth_group.role == ROLE_ADMINISTRATOR).select().first().id
 
 
 ####################################################################################################
@@ -106,20 +127,18 @@ def is_student_in_section(section_id, user_id):
 if db(db.auth_user).isempty():
     import datetime
     from gluon.contrib.populate import populate
-    db.auth_user.insert(first_name="Massimo",last_name='Di Pierro',
-                        email='massimo.dipierro@gmail.com',
-                        password=CRYPT()('test')[0])
+    mdp_id = db.auth_user.insert(first_name="Massimo",last_name='Di Pierro',
+                                 email='massimo.dipierro@gmail.com',
+                                 password=CRYPT()('test')[0])
 
-    student_group_id = db(db.auth_group.role == 'student').select().first().id
-    teacher_group_id = db(db.auth_group.role == ROLE_TEACHER).select().first().id
-    db.auth_membership.insert(user_id=1, group_id=teacher_group_id)
-    db.auth_membership.insert(user_id=1, group_id=student_group_id)
+    db.auth_membership.insert(user_id=mdp_id, group_id=teacher_group_id())
+    db.auth_membership.insert(user_id=mdp_id, group_id=student_group_id())
                               
     populate(db.auth_user,500)
 
     # Add everyone in the auth_user table - except Massimo - to the student group.
-    for person_id in db(db.auth_user.id != 1).select():
-        db.auth_membership.insert(user_id=person_id, group_id=student_group_id)
+    for person_id in db(db.auth_user.id != mdp_id).select():
+        db.auth_membership.insert(user_id=person_id, group_id=student_group_id())
 
     for k in range(200,300):
         id = db.course.insert(name="Dummy course",
@@ -139,11 +158,11 @@ if db(db.auth_user).isempty():
             rows = db(db.auth_user).select(limitby=(0,10),orderby='<random>')
             db.membership.insert(course_section=i,
                                  auth_user=1,
-                                 role=teacher_group_id)
+                                 role=teacher_group_id())
             for row in rows:
                 db.membership.insert(course_section=i,
                                      auth_user=row.id,
-                                     role=student_group_id)
+                                     role=student_group_id())
 
 # add logic to add me and massimo to the admin and teacter groups
 # students = db((db.auth_user.first_name != 'Massimo') | (db.auth_user.first_name != 'Bryan')).select(db.auth_user.id)
