@@ -100,6 +100,7 @@ def is_student_in_section(section_id, user_id):
               (db.membership.auth_user == user_id)).count()
     return count > 0
 
+
 ####################################################################################################
 # Populate some tables so we have data with which to work.
 if db(db.auth_user).isempty():
