@@ -49,20 +49,19 @@ def section():
                 membership=membership)
 
 @auth.requires_login()
-def signup():
+def enroll():
     section_id = request.args(0,cast=int)
-    db.membership.insert(role="student",
-                         course_section=section_id,
-                         auth_user=auth.user.id)
-    redirect(URL('section',args=section_id))
+    n = db((db.membership.role=="student")&
+           (db.membership.course_section==section_id)&
+           (db.membership.auth_user==auth.user.id)).delete()
+    if n==0:
+        db.membership.insert(role="student",
+                             course_section=section_id,
+                             auth_user=auth.user.id)
+        return 'Drop this class'        
+    else:
+        return 'Sign Up for this class' 
 
-@auth.requires_login()
-def drop():
-    section_id = request.args(0,cast=int)
-    db((db.membership.role=="student")&
-       (db.membership.course_section==section_id)&
-       (db.membership.auth_user==auth.user.id)).delete()
-    redirect(URL('section',args=section_id))
 
 def members():
     """
@@ -76,6 +75,17 @@ def members():
     course = section.course
     rows = get_section_users(section.id)
     return dict(course=course, section=section, rows=rows)    
+
+def section_docs():
+    """
+    shows students and teachers and graders in a course section
+    """
+    section_id = request.args(0,cast=int)
+    section = db.course_section(section_id)
+    db.doc.course_section.default = section_id
+    form = SQLFORM(db.doc).process()
+    docs = db(db.doc.course_section==section_id).select()
+    return locals()
 
 @auth.requires_login()
 def manage_courses():
