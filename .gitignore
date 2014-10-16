@@ -1,13 +1,13 @@
-.idea/
+.idea/*
 
 #do not track local sessions
-sessions/
+sessions/*
 
 #do not track local errors
-errors/
+errors/*
 
 #do not track local databases
-databases/
+databases/*
 
 #do not track local logs
 progress.log
