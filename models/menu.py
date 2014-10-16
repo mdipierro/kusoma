@@ -34,6 +34,7 @@ response.menu = [
             ('Discussion',False,URL()),
             ('Content',False,URL()),
             ('Dropbox',False,URL()),
+            ('ClassNotes',False,URL('Notes','index')),
             ('Classlist',False,URL()),
             ('Attendance',False,URL()),
             ('Chat',False,URL()),
