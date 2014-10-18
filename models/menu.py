@@ -39,7 +39,7 @@ response.menu = [
             ('Chat',False,URL()),
             ('grade',False,URL('grade', 'index', args=1)),
             ]),
-    
+    ('Wiki', False, URL('wiki', 'wiki')),
 ]
 
-if "auth" in locals(): auth.wikimenu() 
+if "auth" in locals(): auth.wikimenu()
