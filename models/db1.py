@@ -30,6 +30,14 @@ db.define_table(
     format='%(name)s')
 
 db.define_table(
+    'class_assignment',
+    Field('name', 'reference course'),
+    Field('course_section', 'reference course_section'),
+    Field('title'),
+    Field('weight'),
+    Field('assignment_order'))
+
+db.define_table(
     'membership',
     Field('course_section','reference course_section'),
     Field('auth_user','reference auth_user'),
