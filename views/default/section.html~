@@ -3,9 +3,13 @@
 <h2>{{=course.code}}: {{=course.name}}</h2>
 <h3>{{=section.name}}</h3>
 
-{{=A('Sign Up for this class' if not membership else 'Drop this class',
-     _class="btn btn-primary",callback=URL('enroll',args=section.id),
-     target="<self>")}}
+{{if not membership:}}
+<a class="btn btn-primary" 
+   href="{{=URL('signup',args=section.id)}}">Sign Up for this class</a>
+{{else:}}
+<a class="btn btn-primary" 
+   href="{{=URL('drop',args=section.id)}}">Drop this class</a>
+{{pass}}
 
 <table class="table">
   <tr>
@@ -23,7 +27,7 @@
 {{=course.description}}
 
 <h3>Syllabus</h3>
-{{=MARKMIN(section.syllabus)}}
+{{=section.syllabus}}
 
 <h3>Service</h3>
 <a href="{{=URL('members',args=section.id)}}">Members</a>
