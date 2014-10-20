@@ -44,6 +44,7 @@ db.define_table(
     Field('inclass','boolean',default=True),
     format='%(name)s')
 
+
 db.define_table(
     'membership',
     Field('course_section','reference course_section'),
