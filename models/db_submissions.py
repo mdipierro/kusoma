@@ -12,7 +12,6 @@ db.define_table('folder',
 
 """
 Assignment that pertains to a course
-**Should we make this by course section instead?**
 """
 db.define_table('assignments',
                 Field('title', 'string', requires=IS_NOT_EMPTY()),

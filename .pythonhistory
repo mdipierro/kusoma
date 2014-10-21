@@ -1,0 +1,54 @@
+for k in range(20):
+    db.membership.insert(course_section=1,auth_user=208+k,role='student')
+db.commit()
+db.tables
+db.auth_user(2)
+print db.auth_user(2)
+print db.auth_user(232)
+print db.auth_user(first_name='Massimo')
+auth.user=db.auth_user(first_name='Massimo')
+auth.user
+auth.user.id
+db(db.course).select()
+print db(db.course).select()
+print db(db.course_sction).select()
+print db(db.course_section).select()
+db(db.membership).select()
+print db(db.membership).select()
+rows = db(db.membership.auth_user==auth.user.it).select()
+rows = db(db.membership.auth_user==auth.user.id).select()
+print rows
+row.course_section
+rows[0].course_section
+section = db.course_section(1)
+print section
+section.course
+section.course.name
+section.course.code
+rows[0].role
+db.course(1)
+db.course(1).name
+1
+course_id =1 
+auth.user.id
+query = (db.course.id==course_id)&(db.course_section.course==db.course.id)&(db.membership.course_section==db.course_section.id)&(db.membership.auth_user==auth.user.id)
+rows = db(query).select()
+print rows
+rows
+rows.memberhip.role
+row[0].memberhip.role
+rows[0].memberhip.role
+rows[0].membership.role
+rows[0].course_section.name
+rows[0].course.name
+rows[0].course.description
+rows[0].course.tags
+rows[0].auth_user.first_name
+auth.user.first_name
+a = '<script>alert("hacked!")</script><strong>Hello</strong>'
+print a
+print XML(a)
+import cgi
+cgi.escape(a)
+help(XML)
+print XML(a, sanitize=True)
