@@ -4,11 +4,6 @@
 from gluon.tools import Auth
 auth = Auth(db)
 
-#My chrombook is being dumb, so I can't upload the whole repo :/
-#Delete this if you have the db1.py in the app
-db.define_table('course',
-                Field('name', 'string'))
-
 """
 Organize assignments
 """
@@ -17,12 +12,11 @@ db.define_table('folder',
 
 """
 Assignment that pertains to a course
-**Should we make this by course section instead?**
 """
 db.define_table('assignments',
                 Field('title', 'string', requires=IS_NOT_EMPTY()),
                 Field('id_folder', 'reference folder'),
-                Field('id_course', 'reference course'),
+                Field('id_course', 'reference course_section'),
                 Field('score', 'double'),
                 Field('opening_date', 'datetime', default=request.now),
                 Field('due_date', 'datetime'))

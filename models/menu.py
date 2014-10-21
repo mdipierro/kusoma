@@ -33,7 +33,7 @@ response.menu = [
     ('ThisCourse',False,URL('default','course'),[
             ('Discussion',False,URL()),
             ('Content',False,URL()),
-            ('Dropbox',False,URL()),
+            ('Dropbox',False,URL('dropbox', 'index')),
             ('Classlist',False,URL()),
             ('Attendance',False,URL()),
             ('Chat',False,URL()),
