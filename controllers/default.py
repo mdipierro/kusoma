@@ -42,40 +42,52 @@ def section():
     section_id = request.args(0,cast=int)
     section = db.course_section(section_id)
     course = section.course
-    membership = db.membership(role='student',
+    membership = db.membership(role=student_group_id(),
                                auth_user=auth.user_id,
                                course_section=section_id)
     return dict(course=course, section=section, 
                 membership=membership)
 
 @auth.requires_login()
-def signup():
+def enroll():
     section_id = request.args(0,cast=int)
-    db.membership.insert(role="student",
-                         course_section=section_id,
-                         auth_user=auth.user.id)
-    redirect(URL('section',args=section_id))
+    n = db((db.membership.role=="student")&
+           (db.membership.course_section==section_id)&
+           (db.membership.auth_user==auth.user.id)).delete()
+    if n==0:
+        db.membership.insert(role="student",
+                             course_section=section_id,
+                             auth_user=auth.user.id)
+        return 'Drop this class'        
+    else:
+        return 'Sign Up for this class' 
 
-@auth.requires_login()
-def drop():
-    section_id = request.args(0,cast=int)
-    db((db.membership.role=="student")&
-       (db.membership.course_section==section_id)&
-       (db.membership.auth_user==auth.user.id)).delete()
-    redirect(URL('section',args=section_id))
-
+@auth.requires((auth.has_membership(role='administrator')) |
+               (auth.has_membership(role='teacher')))
 def members():
     """
     shows students and teachers and graders in a course section
     """
     section_id = request.args(0,cast=int)
-    if not is_user_teacher(section_id, auth.user_id):
+    if not (is_user_teacher(section_id, auth.user_id) |
+            is_user_administrator(auth.user_id)):
         session.flash = 'Not authorized'
         redirect(URL('section',args=section_id)) 
     section = db.course_section(section_id)
     course = section.course
     rows = get_section_users(section.id)
     return dict(course=course, section=section, rows=rows)    
+
+def section_docs():
+    """
+    shows students and teachers and graders in a course section
+    """
+    section_id = request.args(0,cast=int)
+    section = db.course_section(section_id)
+    db.doc.course_section.default = section_id
+    form = SQLFORM(db.doc).process()
+    docs = db(db.doc.course_section==section_id).select()
+    return locals()
 
 @auth.requires_login()
 def manage_courses():
