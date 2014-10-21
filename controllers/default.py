@@ -89,3 +89,22 @@ def user():
 def download():
     return response.download(request, db)
 
+
+
+
+
+
+
+#Author: Daniel Isler
+#Date: 10/20/14
+### The following methods belong to dropbox functionality ###
+def dropbox():
+    '''
+    TODO:
+    Select course
+    Select assignment to upload for (or display currently uploaded assignment name)
+    upload assignment
+    save
+    '''
+    return dict(locals=locals())
+### END ###
