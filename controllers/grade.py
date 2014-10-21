@@ -1,15 +1,11 @@
 # -*- coding: utf-8 -*-
 # try something like
 def index():
-    message="Hello just testing!!"
-    section_id = request.args(0,cast=int)
-    section = db.course_section(section_id)
-#    student_grades=db((db.grade.section_id==section.name) & (db.grade.auth_user==db.auth_user.id)).select()
-    student_grades=db((db.grade.section_id==db.course_section(name).
-    return dict(message=message, role="Student", section=section)
-#    return dict(role="student", message=message, student_grades=student_grades)
-#return dict(role="student", student_grades=student_grades)-->
-#return dict(message="hello just testing!!") -->
+    usr_id = auth.user.id;
+    query = db.membership.auth_user == usr_id
+    sections = db(query).select(orderby=db.membership.course_section)
+  
+    return dict(message="Your Course:", sections = sections)
 
 def teacher():
     response.files.insert(0,URL('static','js/jquery.js'))
@@ -35,5 +31,3 @@ def savedata():
     import gluon.contrib.simplejson
     data = gluon.contrib.simplejson.loads(request.body.read())
     return response.json(data)
-
-
