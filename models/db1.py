@@ -67,6 +67,11 @@ db.define_table(
 
 
 def my_sections(user_id=auth.user_id, course_id=None, roles=[TEACHER, STUDENT],max_sections=20):
+    """
+    returns a Rows of Sections the user_id is in in any of the speficied roles (teacher or student)
+    if a course_id is specified it returns only sections for that course id (default to all courses)
+    if max_sections is specified limits the search results (defaults to 20)
+    """
     query = ((db.membership.course_section==db.course_section.id)&
              (db.membership.auth_user==user_id)&
              (db.membership.role.belongs(roles)))
@@ -75,16 +80,25 @@ def my_sections(user_id=auth.user_id, course_id=None, roles=[TEACHER, STUDENT],m
     return db(query).select(db.course_section.ALL,limitby=(0,max_sections))
 
 def is_user_student(section_id, user_id=auth.user_id):
+    """
+    checks if the user_id (or the current user) is enrolled in the section_id as a student
+    """
     return db((db.membership.course_section==section_id) &
               (db.membership.role==STUDENT) &
               (db.membership.auth_user==user_id)).count() > 0
 
 def is_user_teacher(section_id, user_id=auth.user_id):
+    """
+    checks if the user_id (or the current user) is the teacher of a the section_id
+    """
     return db((db.membership.course_section==section_id) &
               (db.membership.role==TEACHER) &
               (db.membership.auth_user==user_id)).count() > 0
 
 def users_in_section(section_id,roles=[STUDENT]):
+    """
+    returns a list of users with a role (default STUDENT role) in the section_id    
+    """
     return db((db.membership.course_section == section_id) &
               (db.membership.role.belongs(roles))&
               (db.membership.auth_user == db.auth_user.id)).select(db.auth_user.ALL)
@@ -100,6 +114,7 @@ if db(db.auth_user).isempty():
 
     populate(db.auth_user,300)
     db(db.auth_user.id>1).update(is_student=True,is_teacher=False,is_administrator=False)
+
 
     # Add everyone in the auth_user table - except Massimo - to the student group.
     for k in range(200,300):
