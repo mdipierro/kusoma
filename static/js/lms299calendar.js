@@ -33,6 +33,7 @@ LMS299 Calendar Control
         options: {
             created: false,
             disabled: false,
+            events: {},
             headerCenter: 'month,basicWeek',
             headerLeft: 'title',
             headerRight: 'today prev,next',
