@@ -5,9 +5,9 @@
 ## Customize your APP title, subtitle and menus here
 #########################################################################
 
-response.logo = A(B('LMS',SPAN(299)),XML('&trade;&nbsp;'),
+response.logo = A(B('LMS'),XML('&trade;&nbsp;'),
                   _class="brand",_href="http://www.web2py.com/")
-response.title = 'LMS299'
+response.title = 'Learning Management System'
 
 ## read more at http://dev.w3.org/html5/markup/meta.name.html
 response.meta.author = 'Your Name <you@example.com>'
@@ -27,8 +27,9 @@ response.menu = [
     ('Search', False, URL('default', 'search'))]
 
 if auth.user:
-    courses = [(section.name,False,URL('default','section',args=s.id)) for s in my_sections()]
-    response.menu.append(('My Courses',False,URL('default', 'courses'),courses))
+    courses = [(s.name,False,URL('default','section',args=s.id)) for s in my_sections()]
+    if courses:
+        response.menu.append(('My Courses',False,None,courses))
 
 if auth.user and auth.user.is_administrator:
     response.menu.append(('Manage',False,None,[

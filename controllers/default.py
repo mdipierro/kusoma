@@ -86,6 +86,18 @@ def manage_users():
 def manage_courses():
     return dict(grid=SQLFORM.smartgrid(db.course))
 
+@auth.requires_login()
+def manage_courses():
+    grid = SQLFORM.smartgrid(db.course)
+    return dict(grid=grid)
+
+def user():
+    return dict(form=auth())
+
+@cache.action()
+def download():
+    return response.download(request, db)
+
 ############
 
 def section_docs():
@@ -98,18 +110,6 @@ def section_docs():
     form = SQLFORM(db.doc).process()
     docs = db(db.doc.course_section==section_id).select()
     return locals()
-
-@auth.requires_login()
-def manage_courses():
-    grid = SQLFORM.smartgrid(db.course)
-    return dict(grid=grid)
-
-def user():
-    return dict(form=auth())
-
-@cache.action()
-def download():
-    return response.download(request, db)
 
 def calendar():
     """

@@ -66,13 +66,13 @@ db.define_table(
     auth.signature)
 
 
-def my_sections(user_id=auth.user_id, course_id=None, roles=['TEACHER', 'STUDENT']):
+def my_sections(user_id=auth.user_id, course_id=None, roles=[TEACHER, STUDENT],max_sections=20):
     query = ((db.membership.course_section==db.course_section.id)&
              (db.membership.auth_user==user_id)&
              (db.membership.role.belongs(roles)))
     if course_id:
         query &= db.course_section.course==course_id
-    return db(query).select(db.course_section.ALL)
+    return db(query).select(db.course_section.ALL,limitby=(0,max_sections))
 
 def is_user_student(section_id, user_id=auth.user_id):
     return db((db.membership.course_section==section_id) &
@@ -94,11 +94,11 @@ def users_in_section(section_id,roles=[STUDENT]):
 if db(db.auth_user).isempty():
     import datetime
     from gluon.contrib.populate import populate
-    mdp_id = db.auth_user.insert(first_name="Massimo",last_name='Di Pierro',
-                                 email='massimo.dipierro@gmail.com',
+    mdp_id = db.auth_user.insert(first_name="Good",last_name='Teacher',
+                                 email='good.teacher@example.com',
                                  password=CRYPT()('test')[0])
 
-    populate(db.auth_user,500)
+    populate(db.auth_user,300)
     db(db.auth_user.id>1).update(is_student=True,is_teacher=False,is_administrator=False)
 
     # Add everyone in the auth_user table - except Massimo - to the student group.
@@ -118,13 +118,9 @@ if db(db.auth_user).isempty():
                 stop_date=datetime.date(2014,12,1),
                 signup_deadline=datetime.date(2014,11,10))
             rows = db(db.auth_user).select(limitby=(0,10),orderby='<random>')
-            db.membership.insert(course_section=i,
-                                 auth_user=1,
-                                 role='teacher')
+            db.membership.insert(course_section=i, auth_user=mdp_id, role=TEACHER)
             for row in rows:
-                db.membership.insert(course_section=i,
-                                     auth_user=row.id,
-                                     role='student')
+                db.membership.insert(course_section=i, auth_user=row.id, role=STUDENT)
 
 # add logic to add me and massimo to the admin and teacter groups
 # students = db((db.auth_user.first_name != 'Massimo') | (db.auth_user.first_name != 'Bryan')).select(db.auth_user.id)

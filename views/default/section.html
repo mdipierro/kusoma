@@ -3,9 +3,11 @@
 <h2>{{=course.code}}: {{=course.name}}</h2>
 <h3>{{=section.name}}</h3>
 
+{{if auth.user and auth.user.is_student:}}
 {{=A('Sign Up for this class' if not membership else 'Drop this class',
      _class="btn btn-primary",callback=URL('enroll',args=section.id),
      target="<self>")}}
+{{pass}}
 
 <table class="table">
   <tr>
