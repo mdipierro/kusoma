@@ -1,8 +1,0 @@
-{{extend 'layout.html'}}
-
-<h1>
-  Course Section {{=section.name}}
-</h1>
-
-<h2>Homework Management Interface</h2>
-{{=grid}}
