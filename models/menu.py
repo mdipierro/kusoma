@@ -5,9 +5,9 @@
 ## Customize your APP title, subtitle and menus here
 #########################################################################
 
-response.logo = A(B('LMS',SPAN(299)),XML('&trade;&nbsp;'),
+response.logo = A(B('LMS'),XML('&trade;&nbsp;'),
                   _class="brand",_href="http://www.web2py.com/")
-response.title = 'LMS299'
+response.title = 'Learning Management System'
 
 ## read more at http://dev.w3.org/html5/markup/meta.name.html
 response.meta.author = 'Your Name <you@example.com>'
@@ -24,22 +24,27 @@ response.google_analytics_id = None
 
 response.menu = [
     ('MyHome', False, URL('default', 'index')),
-    ('Search', False, URL('default', 'search')),
-    ('MyCourses',False,URL('default', 'courses'),[
-            ('CSC299',False,URL()),
-            ('CSC438',False,URL()),
-            ('CSC402',False,URL()),
-            ]),
-    ('ThisCourse',False,URL('default','course'),[
-            ('Discussion',False,URL()),
-            ('Content',False,URL()),
-            ('Dropbox',False,URL('dropbox', 'index')),
-            ('Classlist',False,URL()),
-            ('Attendance',False,URL()),
-            ('Chat',False,URL()),
-            ('grade',False,URL('grade', 'index')),
-            ]),
-    ('Wiki', False, URL('wiki', 'wiki')),
-]
+    ('Search', False, URL('default', 'search'))]
 
-if "auth" in locals(): auth.wikimenu()
+if auth.user:
+    courses = [(s.name,False,URL('default','section',args=s.id)) for s in my_sections()]
+    if courses:
+        response.menu.append(('My Courses',False,None,courses))
+
+if auth.user and auth.user.is_administrator:
+    response.menu.append(('Manage',False,None,[
+                ('Users',False,URL('default','manage_users')),
+                ('Courses',False,URL('default','manage_courses'))]))
+
+def add_section_menu(section_id):
+    response.menu.append(('Course Content',False,None,[
+                ('Students',False,URL('default','students',args=section_id)),
+                ('Homeworks',False,URL('homeworks','manage_homeworks',args=section_id)),
+                ('Grades',False,URL('gradebook','manage_grades',args=section_id)),
+                ('Quizzes',False,URL('quizzes','manage_quizzes',args=section_id)),
+                ('Dropbox',False,URL('dropbox','manage_uploads',args=section_id)),
+                ('Chat',False,URL('chat','manage_chat',args=section_id)),
+                ]))
+
+if False:    
+    auth.wikimenu() 
