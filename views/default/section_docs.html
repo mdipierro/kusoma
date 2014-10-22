@@ -1,0 +1,19 @@
+{{extend 'layout.html'}}
+
+<h1>{{=section.name}}</h1>
+
+<h2>Course Documents</h2>
+
+<table>
+  {{for doc in docs:}}
+  <tr>
+    <td>{{=doc.name}}</td>
+    <td>{{=A('donwload',_href=URL('download',args=doc.filename))}}</td>
+    <td></td>      
+  </tr>
+  {{pass}}
+</table>
+
+<h2>Upload new documents</h2>
+
+{{=form}}

@@ -23,23 +23,22 @@ response.google_analytics_id = None
 #########################################################################
 
 response.menu = [
-    ('MyHome', False, URL('default', 'index')),
-    ('Search', False, URL('default', 'search')),
-    ('MyCourses',False,URL('default', 'courses'),[
-            ('CSC299',False,URL()),
-            ('CSC438',False,URL()),
-            ('CSC402',False,URL()),
+    (T('MyHome'), False, URL('default', 'index'), []),
+    (T('Search'), False, URL('default', 'search'), []),
+    (T('MyCourses'),False,URL('default', 'courses'),[
+            (T('CSC299'),False,URL(), []),
+            (T('CSC438'),False,URL(), []),
+            (T('CSC402'),False,URL(), []),
             ]),
     ('ThisCourse',False,URL('default','course'),[
-            ('Discussion',False,URL()),
-            ('Content',False,URL()),
-            ('Dropbox',False,URL()),
-            ('Classlist',False,URL()),
-            ('Attendance',False,URL()),
-            ('Chat',False,URL()),
-            ('grade',False,URL('grade', 'index')),
+            ('Discussion',False,URL(), []),
+            ('Content',False,URL(), []),
+            ('Dropbox',False,URL(), []),
+            ('Classlist',False,URL(), []),
+            ('Attendance',False,URL(), []),
+            ('Chat',False,URL(), []),
+            ('grade',False,URL('grade', 'index'), []),
             ]),
-    
 ]
 
-if "auth" in locals(): auth.wikimenu() 
+if "auth" in locals(): auth.wikimenu()
