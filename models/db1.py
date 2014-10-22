@@ -48,7 +48,7 @@ db.define_table(
     'membership',
     Field('course_section','reference course_section'),
     Field('auth_user','reference auth_user'),
-    Field('role','reference auth_group'),
+    Field('role'),
     auth.signature)
 
 db.define_table(
