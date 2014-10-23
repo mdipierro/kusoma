@@ -13,13 +13,6 @@ def course_dropbox():
     section = db.course_section[section_id]
     folders = db(db.folder.course_section == section_id).select()
     homeworks = db(db.homework.course_section == section_id).select()
-    form=FORM('Add Folder: ', INPUT(_name='name', requires=IS_NOT_EMPTY()), INPUT(_type='submit'))
-    if form.accepts(request,session):
-        response.flash = 'Folder Added'
-        db.folder.insert(name=form.vars.name, course_section=section_id)
-        redirect(URL('course_dropbox',args=(section_id)))
-    elif form.errors:
-        response.flash = 'Form is empty.'
     form = add_folder(section_id)
     return dict(folders=folders, homeworks=homeworks,
                 section_id=section_id, user_id=auth.user_id,
