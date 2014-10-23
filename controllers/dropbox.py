@@ -1,88 +1,44 @@
-# -*- coding: utf-8 -*-
-# this file is released under public domain and you can use without limitations
-
-#########################################################################
-## This is a sample controller
-## - index is the default action of any application
-## - user is required for authentication and authorization
-## - download is for downloading files uploaded in the db (does streaming)
-## - call exposes all registered services (none by default)
-#########################################################################
-
 def index():
-    """
-    example action using the internationalization operator T and flash
-    rendered by views/default/index.html or views/generic.html
+    return dict()
 
-    if you need a simple wiki simply replace the two lines below with:
-    return auth.wiki()
+def course_dropbox():
     """
-    db.course.drop()
-    db.assignments.drop()
-    db.feedback.drop()
-    db.course.insert(name = "CSC308")
-    db.course.insert(name = "CSC309")
-    db.assignments.insert(title = "Homework 1")
-    db.feedback.insert(comments = "Best ever")
-    message = T('Class')
-    message2 = T('Homework')
-    courseList = db(db['course']['name']).select()
-    hwList = db(db['assignments']['title']).select()
-    feedbackList = db(db['feedback']).select()
-    attachmentList = db(db['attachment']).select()
-    return locals()
+    Author: Curtis Weir
+    Date: 10/22/14
+    Display assignments for a course section to the user
+    """
+    section_id = request.args(0,cast=int)
+    if not is_user_student(section_id, auth.user_id) and not is_user_teacher(section_id, auth.user_id):
+        return dict(rejected="Permission denied. You are not in this course section.")
+    section = db.course_section[section_id]
+    folders = db(db.folder.course_section == section_id).select()
+    homeworks = db(db.homework.course_section == section_id).select()
+    form=FORM('Add Folder: ', INPUT(_name='name', requires=IS_NOT_EMPTY()), INPUT(_type='submit'))
+    if form.accepts(request,session):
+        response.flash = 'Folder Added'
+        db.folder.insert(name=form.vars.name, course_section=section_id)
+        redirect(URL('course_dropbox',args=(section_id)))
+    elif form.errors:
+        response.flash = 'Form is empty.'
+    form = add_folder(section_id)
+    return dict(folders=folders, homeworks=homeworks,
+                section_id=section_id, user_id=auth.user_id,
+                section=section, rejected=None, form=form)
 
-def user():
+def add_folder(section_id):
     """
-    exposes:
-    http://..../[app]/default/user/login
-    http://..../[app]/default/user/logout
-    http://..../[app]/default/user/register
-    http://..../[app]/default/user/profile
-    http://..../[app]/default/user/retrieve_password
-    http://..../[app]/default/user/change_password
-    http://..../[app]/default/user/manage_users (requires membership in
-    use @auth.requires_login()
-        @auth.requires_membership('group name')
-        @auth.requires_permission('read','table name',record_id)
-    to decorate functions that need access control
+    Creates a form to add a new folder.
+    Returns a SQLFORM
     """
-    return dict(form=auth())
+    form = SQLFORM(db.folder, fields=['name'])
+    if form.process().accepted:
+        db.folder.insert(name=form.vars.name, course_section=section_id)
+        redirect(URL('course_dropbox',args=(section_id)))
+        response.flash = 'form accepted'
+    elif form.errors:
+        response.flash = 'form has errors'
+    return form
 
-@cache.action()
-def download():
-    """
-    allows downloading of uploaded files
-    http://..../[app]/default/download/[filename]
-    """
-    return response.download(request, db)
-
-def call():
-    """
-    exposes services. for example:
-    http://..../[app]/default/call/jsonrpc
-    decorate with @services.jsonrpc the functions to expose
-    supports xml, json, xmlrpc, jsonrpc, amfrpc, rss, csv
-    """
-    return service()
-
-    
-@auth.requires_signature()
-def data():
-    """
-    http://..../[app]/default/data/tables
-    http://..../[app]/default/data/create/[table]
-    http://..../[app]/default/data/read/[table]/[id]
-    http://..../[app]/default/data/update/[table]/[id]
-    http://..../[app]/default/data/delete/[table]/[id]
-    http://..../[app]/default/data/select/[table]
-    http://..../[app]/default/data/search/[table]
-    but URLs must be signed, i.e. linked with
-      A('table',_href=URL('data/tables',user_signature=True))
-    or with the signed load operator
-      LOAD('default','data.load',args='tables',ajax=True,user_signature=True)
-    """
-    return dict(form=crud())
 def uploading():
     record = db.attachment(request.args(0))
     db.attachment.insert(file_upload = 'text.txt')
