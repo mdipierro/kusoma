@@ -1,5 +1,11 @@
 {{extend 'layout.html'}}
 
-{{if auth.user:}}
-<h1>Hello {{=auth.user.first_name}}</h1>
+<h1>XYZ University</h1>
+
+<h2>Random courses</h2>
+
+<table class="table">
+{{for row in courses:}}
+<tr><th><a href="{{=URL('course',args=row.id)}}">{{=row.code}}: {{=row.name}}</a></th></tr>
 {{pass}}
+</table>
