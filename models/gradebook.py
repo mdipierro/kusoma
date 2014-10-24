@@ -15,3 +15,15 @@ db.define_table(
     Field('total_points', 'reference class_assignment'),
     Field('auth_user', 'reference auth_user'),
     Field('teacher_comment'))
+
+
+
+
+def get_all_students(section_id):
+    query = (db.membership.course_section==section_id)&(db.membership.auth_user==db.auth_user.id)&(db.membership.role!='teacher')
+    return db(query).select()
+
+def is_user_teacher(section_id):
+    return db.membership(course_section=section_id,
+                         role='teacher',
+                         auth_user=auth.user.id)
