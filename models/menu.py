@@ -48,4 +48,3 @@ def add_section_menu(section_id):
 
 if False:    
     auth.wikimenu() 
-

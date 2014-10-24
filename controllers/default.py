@@ -97,29 +97,6 @@ def section_docs():
     docs = db(db.doc.course_section==section_id).select()
     return locals()
 
-@auth.requires_login()
-def manage_courses():
-    grid = SQLFORM.smartgrid(db.course)
-    return dict(grid=grid)
-
-def user():
-    return dict(form=auth())
-
-@cache.action()
-def download():
-    return response.download(request, db)
-
-def section_docs():
-    """
-    shows students and teachers and graders in a course section
-    """
-    section_id = request.args(0,cast=int)
-    section = db.course_section(section_id)
-    db.doc.course_section.default = section_id
-    form = SQLFORM(db.doc).process()
-    docs = db(db.doc.course_section==section_id).select()
-    return locals()
-
 def calendar():
     """
     allows to look at course description
@@ -134,4 +111,3 @@ def calendar():
     rows = my_sections(course_id, auth.user_id)
     return dict(course=course, rows=rows, current_sections=current_sections,
                 past_sections=past_sections)
-

@@ -7,14 +7,6 @@ STUDENT, TEACHER = 'student','teacher'
 
 NE = IS_NOT_EMPTY()
 
-# Populate the default roles.
-if db(db.auth_group).isempty():
-    db.auth_group.bulk_insert([{'role':ROLE_TEACHER},
-                               {'role':ROLE_STUDENT},
-                               {'role':ROLE_ADMINISTRATOR},
-                               {'role':ROLE_AUDITOR},
-                               {'role':ROLE_GRADER}])
-
 db.define_table(
     'course',
     Field('name',requires=NE),
@@ -45,6 +37,13 @@ db.define_table(
     Field('course_section','reference course_section'),
     Field('auth_user','reference auth_user'),
     Field('role', requires=IS_IN_SET((STUDENT, TEACHER))),
+    auth.signature)
+
+db.define_table(
+    'doc',
+    Field('name',requires=NE),
+    Field('course_section','reference course_section',writable=False,readable=False),
+    Field('filename','upload',label='Content'),   
     auth.signature)
 
 db.define_table(
@@ -102,49 +101,6 @@ def is_user_teacher(section_id, user_id=auth.user_id):
               (db.membership.role==TEACHER) &
               (db.membership.auth_user==user_id)).count() > 0
 
-
-def is_user_teacher(section_id, user_id):
-    return db((db.membership.course_section==section_id) &
-              (db.membership.role==teacher_group_id()) &
-              (db.membership.auth_user==user_id)).count() > 0
-
-def is_user_administrator(user_id):
-    admin_group_id = db(db.auth_group.role == ROLE_ADMINISTRATOR).select().first().id
-    return db((db.auth_membership.user_id == user_id) &
-              (db.auth_membership.group_id == admin_group_id)).count() > 0
-
-def is_student_in_section(section_id, user_id):
-    count = db((db.membership.course_section == section_id) &
-              (db.membership.role == student_group_id()) &
-              (db.membership.auth_user == user_id)).count()
-    return count > 0
-
-def students_in_section(section_id):
-    return db((db.membership.course_section == section_id) &
-              (db.membership.role == student_group_id()) &
-              (db.membership.auth_user == db.auth_user.id)).select(db.auth_user.id,
-                                                                   db.auth_user.first_name,
-                                                                   db.auth_user.last_name)
-
-def students_in_course(course_id):
-    return db((db.course.id == course_id) &
-              (db.course.id == db.course_section.course) &
-              (db.membership.course_section == db.course_section.id) &
-              (db.membership.role == student_group_id()) &
-              (db.membership.auth_user == db.auth_user.id)).select(db.auth_user.id,
-                                                                   db.auth_user.first_name,
-                                                                   db.auth_user.last_name)
-
-def student_group_id():
-    return db(db.auth_group.role == ROLE_STUDENT).select().first().id
-
-def teacher_group_id():
-    return db(db.auth_group.role == ROLE_TEACHER).select().first().id
-
-def administrator_group_id():
-    return db(db.auth_group.role == ROLE_ADMINISTRATOR).select().first().id
-
-
 def users_in_section(section_id,roles=[STUDENT]):
     """
     returns a list of users with a role (default STUDENT role) in the section_id    
@@ -166,6 +122,7 @@ if db(db.auth_user).isempty():
     db(db.auth_user.id>1).update(is_student=True,is_teacher=False,is_administrator=False)
 
 
+    # Add everyone in the auth_user table - except Massimo - to the student group.
     for k in range(200,300):
         id = db.course.insert(name="Dummy course",
                               code="CSC%s" % k,
@@ -191,4 +148,3 @@ if db(db.auth_user).isempty():
 # for student in students:
 #     db.auth_membership.insert(user_id=student.id, group_id=2)
 ####################################################################################################
-
