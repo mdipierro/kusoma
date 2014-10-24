@@ -136,7 +136,7 @@ if db(db.auth_user).isempty():
             rows = db(db.auth_user).select(limitby=(0,10),orderby='<random>')
             db.membership.insert(course_section=i, auth_user=mdp_id, role='teacher')
             for row in rows:
-                db.membership.insert(course_section=i, auth_user=row.id, role='teacher')
+                db.membership.insert(course_section=i, auth_user=row.id, role='student')
 
 # add logic to add me and massimo to the admin and teacter groups
 # students = db((db.auth_user.first_name != 'Massimo') | (db.auth_user.first_name != 'Bryan')).select(db.auth_user.id)
