@@ -1,33 +1,4 @@
-Last login: Thu Oct 23 19:01:32 on ttys000
-Urvis-MacBook-Pro:~ urvipatel$ pwd
-/Users/urvipatel
-Urvis-MacBook-Pro:~ urvipatel$ cd Desktop/
-Urvis-MacBook-Pro:Desktop urvipatel$ ls *.html
-index.html		manage_grades.html
-Urvis-MacBook-Pro:Desktop urvipatel$ vi manage_grades.html 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 {{extend 'layout.html'}}
-
-<script src="../static/js/jquery.min.js"></script>
-<script src="../static/js/jquery.handsontable.full.js"></script>
-<link rel="stylesheet" media="screen" href="../static/css/jquery.handsontable.full.css">
-
 <h1>Grade Interface</h1><br><br>
 
 {{if auth.user and auth.user.is_teacher:}}
