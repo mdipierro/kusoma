@@ -99,12 +99,12 @@ I00
 sg6
 I4
 sg7
-S'CHAR(512)'
+S'INTEGER REFERENCES auth_group (id) ON DELETE CASCADE'
 p29
 sg9
 I00
 sg10
-S'string'
+S'reference auth_group'
 p30
 ssS'modified_on'
 p31
