@@ -134,9 +134,9 @@ if db(db.auth_user).isempty():
                 stop_date=datetime.date(2014,12,1),
                 signup_deadline=datetime.date(2014,11,10))
             rows = db(db.auth_user).select(limitby=(0,10),orderby='<random>')
-            db.membership.insert(course_section=i, auth_user=mdp_id, role=TEACHER)
+            db.membership.insert(course_section=i, auth_user=mdp_id, role='teacher')
             for row in rows:
-                db.membership.insert(course_section=i, auth_user=row.id, role=STUDENT)
+                db.membership.insert(course_section=i, auth_user=row.id, role='teacher')
 
 # add logic to add me and massimo to the admin and teacter groups
 # students = db((db.auth_user.first_name != 'Massimo') | (db.auth_user.first_name != 'Bryan')).select(db.auth_user.id)
