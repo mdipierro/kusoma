@@ -25,9 +25,9 @@ NE = IS_NOT_EMPTY()
 ################################################################################
 db.define_table(
     'event_visibility',
-    Field('level', unique=True, requires=NE),
-    format='%(level)s')
-db.event_visiblilty.id.readable = db.event_visiblilty.id.writable = False
+    Field('levels', unique=True, requires=NE),
+    format='%(levels)s')
+db.event_visibility.id.readable = db.event_visibility.id.writable = False
 
 ################################################################################
 # cal_event
@@ -45,7 +45,7 @@ db.define_table(
     Field('details', 'text'),
     Field('start_date', 'datetime', requires=NE),
     Field('end_date', 'datetime'),
-    Field('visibility', 'reference event_visibilty'),
+    Field('visibility', 'reference event_visibility'),
     auth.signature,
     format='%(name)s')
 db.cal_event.id.readable = db.cal_event.id.writable = False
@@ -90,8 +90,8 @@ db.course_event.id.readable = db.course_event.id.writable = False
 #
 ################################################################################
 if db(db.event_visibility).isempty():
-    db.event_visibility.bulk_insert([{'level':'admin'},
-                                     {'level':'public'},
-                                     {'level':'school'},
-                                     {'level':'class'},
-                                     {'level':'staff'}])
+    db.event_visibility.bulk_insert([{'levels':'admin'},
+                                     {'levels':'public'},
+                                     {'levels':'school'},
+                                     {'levels':'class'},
+                                     {'levels':'staff'}])
