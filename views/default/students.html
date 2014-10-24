@@ -4,12 +4,11 @@
 <h3>{{=section.name}}</h3>
 
 <table class="table">
-  {{for row in rows:}}
+  {{for student in students:}}
   <tr>
-    <td>{{=row.membership.role}}</td>
     <td>
-      {{=row.auth_user.first_name}} 
-      {{=row.auth_user.last_name}}
+      {{=student.first_name}} 
+      {{=student.last_name}}
     </td>
   </tr>
   {{pass}}

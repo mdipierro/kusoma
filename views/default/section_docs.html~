@@ -1,9 +1,0 @@
-{{extend 'layout.html'}}
-
-<h1>{{=section.name}}</h1>
-
-<h2>Course Documents</h2>
-
-<h2>Upload new documents</h2>
-
-{{=form}}

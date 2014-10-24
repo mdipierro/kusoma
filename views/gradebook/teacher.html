@@ -35,7 +35,6 @@
   $('#dataTable').handsontable({
     data: data,
     colHeaders: ['id', 'name', 'message'],
-
     minSpareRows: 1,
     contextMenu: true,
     currentRowClassName: 'currentRow',
@@ -53,7 +52,6 @@
         dataType: 'json',
         type: 'POST',
         success: function (res) {
-
             if(res)
             {
                 $console.text(JSON.stringify(res, undefined, 2));
