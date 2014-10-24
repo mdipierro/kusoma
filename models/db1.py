@@ -47,6 +47,13 @@ db.define_table(
     auth.signature)
 
 db.define_table(
+    'doc',
+    Field('name',requires=NE),
+    Field('course_section','reference course_section',writable=False,readable=False),
+    Field('filename','upload',label='Content'),   
+    auth.signature)
+
+db.define_table(
     'homework',
     Field('name',requires=NE),
     Field('course_section','reference course_section'),
@@ -64,7 +71,6 @@ db.define_table(
     Field('course_section','reference course_section',
           requires=IS_EMPTY_OR(IS_IN_DB(db,'course_section.id','%(name)s'))),
     auth.signature)
-
 
 def my_sections(user_id=auth.user_id, course_id=None, roles=[TEACHER, STUDENT],max_sections=20):
     """
