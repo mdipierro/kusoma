@@ -45,9 +45,3 @@
 </table>
 {{pass}}
 
-{{if auth.user:}}
-<h3>Roles</h3>
-{{for row in rows:}}
-You are a {{=row.auth_group.role}} in section <a href="{{=URL('section',args=row.course_section.id)}}">{{=row.course_section.name}}</a></br>
-{{pass}}
-{{pass}}
