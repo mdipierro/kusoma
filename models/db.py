@@ -1,5 +1,7 @@
 # -*- coding: utf-8 -*-
 
+DEBUG = True
+
 #########################################################################
 ## This scaffolding model makes your app work on Google App Engine too
 ## File is released under public domain and you can use without limitations
@@ -51,8 +53,8 @@ auth.settings.extra_fields['auth_user'] = [
     Field('country'),
     Field('phone_number'),
     Field('student_code'),
-    Field('is_administrator','boolean',default=False,writable=False),
-    Field('is_teacher','boolean',default=False,writable=False),
+    Field('is_administrator','boolean',default=DEBUG,writable=DEBUG),
+    Field('is_teacher','boolean',default=DEBUG,writable=DEBUG),
     Field('is_student','boolean',default=True),
 ]
 auth.define_tables(username=False, signature=False)

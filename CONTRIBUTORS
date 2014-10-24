@@ -2,7 +2,7 @@ If you know how to use GIT and make pull-requests.
 Please add your name as group project leader.
 You can suggest a topic or pick from this:
 
-- attendance verification 
+- attendance verification
 - calendar (should be based on fullcalendar.js)
 - assignment upload (should use Field(...type='upload')
 - grading interface (should use ractive.js)
@@ -51,7 +51,7 @@ Members:
 ## Nick Groos - github: groos
 
 Topics: Custom Layout using Bootstrap
-Members: James Robert Hagle, Aly Marchetti, Spencer Langley, Kyle Corral
+Members: James Robert Hagle, Aly Marchetti, Spencer Langley, Kyle Foster
 
 ## Mike Sherry - Github: MSherry24
 
@@ -66,7 +66,6 @@ Members:
     Justin Junk  (Github: jjunk) (Group Leader)
     Adam Barlock (Github: arbarlo)
     Sev Jasinski (Github: SJasinski)
-    Cheng Zhang  (Github: showt1me)
     Sara Koutbia (Github: SaraKoutbia)
 	
 ## Michael Matusevich - Github: matus85
