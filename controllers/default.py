@@ -44,7 +44,7 @@ def section():
     section = db.course_section(section_id) or redirect(URL('search'))
     add_section_menu(section_id)
     course = section.course
-    membership = db.membership(role=student_group_id(),
+    membership = db.membership(role='student',
                                auth_user=auth.user_id,
                                course_section=section_id)
     return dict(course=course, section=section, 
@@ -85,6 +85,20 @@ def manage_users():
 @auth.requires_login()
 def manage_courses():
     return dict(grid=SQLFORM.smartgrid(db.course))
+
+@auth.requires_login()
+def manage_courses():
+    grid = SQLFORM.smartgrid(db.course)
+    return dict(grid=grid)
+
+def user():
+    return dict(form=auth())
+
+@cache.action()
+def download():
+    return response.download(request, db)
+
+############
 
 def section_docs():
     """

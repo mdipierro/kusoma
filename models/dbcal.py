@@ -25,9 +25,9 @@ NE = IS_NOT_EMPTY()
 ################################################################################
 db.define_table(
     'event_visibility',
-    Field('level', unique=True, requires=NE),
-    format='%(level)s')
-db.event_visiblilty.id.readable = db.event_visiblilty.id.writable = False
+    Field('event_level', unique=True, requires=NE),
+    format='%(event_level)s')
+db.event_visibility.id.readable = db.event_visibility.id.writable = False
 
 ################################################################################
 # cal_event
@@ -90,8 +90,8 @@ db.course_event.id.readable = db.course_event.id.writable = False
 #
 ################################################################################
 if db(db.event_visibility).isempty():
-    db.event_visibility.bulk_insert([{'level':'admin'},
-                                     {'level':'public'},
-                                     {'level':'school'},
-                                     {'level':'class'},
-                                     {'level':'staff'}])
+    db.event_visibility.bulk_insert([{'event_level':'admin'},
+                                     {'event_level':'public'},
+                                     {'event_level':'school'},
+                                     {'event_level':'class'},
+                                     {'event_level':'staff'}])
