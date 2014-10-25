@@ -4,14 +4,15 @@ def index():
     """
     general welcome page
     """
-    return dict()
+    courses = db(db.course).select(limitby=(0,10),orderby='<random>')
+    return dict(courses = courses)
 
 def search():
     """
     allows visitors to search by course name, code and tags
     """
-    form = SQLFORM.factory(Field('keyword',requires=NE)).process()
-    if form.accepted:
+    form = FORM('Serch',INPUT(_name='keyword',requires=NE),_method='GET')
+    if form.accepts(request.get_vars):
         query = db.course.name.contains(form.vars.keyword)
         query = query|db.course.code.contains(form.vars.keyword)
         query = query|db.course.tags.contains(form.vars.keyword)
@@ -31,7 +32,7 @@ def course():
     sections = db(db.course_section.course==course.id).select()
     current_sections = [s for s in sections if s.stop_date>=today]
     past_sections = [s for s in sections if s.stop_date<today]
-    rows = my_sections(course_id, auth.user_id)
+    rows = my_sections(course_id = course_id)
     return dict(course=course, rows=rows, current_sections=current_sections,
                 past_sections=past_sections)
 
@@ -40,7 +41,8 @@ def section():
     this one shows details about a course section
     """
     section_id = request.args(0,cast=int)
-    section = db.course_section(section_id)
+    section = db.course_section(section_id) or redirect(URL('search'))
+    add_section_menu(section_id)
     course = section.course
     membership = db.membership(role=student_group_id(),
                                auth_user=auth.user_id,
@@ -62,21 +64,27 @@ def enroll():
     else:
         return 'Sign Up for this class' 
 
-@auth.requires((auth.has_membership(role='administrator')) |
-               (auth.has_membership(role='teacher')))
-def members():
+@auth.requires_login()
+def students():
     """
     shows students and teachers and graders in a course section
     """
     section_id = request.args(0,cast=int)
-    if not (is_user_teacher(section_id, auth.user_id) |
-            is_user_administrator(auth.user_id)):
+    if not (is_user_teacher(section_id) or auth.user.is_aministrator):
         session.flash = 'Not authorized'
         redirect(URL('section',args=section_id)) 
     section = db.course_section(section_id)
     course = section.course
-    rows = get_section_users(section.id)
-    return dict(course=course, section=section, rows=rows)    
+    students = users_in_section(section_id,roles=[STUDENT])
+    return dict(course=course, section=section, students=students)    
+
+@auth.requires_login()
+def manage_users():
+    return dict(grid=SQLFORM.smartgrid(db.auth_user))
+
+@auth.requires_login()
+def manage_courses():
+    return dict(grid=SQLFORM.smartgrid(db.course))
 
 def section_docs():
     """
@@ -88,18 +96,6 @@ def section_docs():
     form = SQLFORM(db.doc).process()
     docs = db(db.doc.course_section==section_id).select()
     return locals()
-
-@auth.requires_login()
-def manage_courses():
-    grid = SQLFORM.smartgrid(db.course)
-    return dict(grid=grid)
-
-def user():
-    return dict(form=auth())
-
-@cache.action()
-def download():
-    return response.download(request, db)
 
 def calendar():
     """
@@ -115,4 +111,3 @@ def calendar():
     rows = my_sections(course_id, auth.user_id)
     return dict(course=course, rows=rows, current_sections=current_sections,
                 past_sections=past_sections)
-

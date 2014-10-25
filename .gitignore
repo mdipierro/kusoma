@@ -21,3 +21,23 @@ progress.log
 
 # personal stuff
 models/z_db_personal.py
+
+# Stuff from master project
+.*
+*.pyc
+*.pyo
+*~
+#*
+*.1
+*.bak
+*.bak2
+*.svn
+*.w2p
+*.class
+*.rej
+*.orig
+databases/*
+sessions/*
+errors/*
+cache/*
+uploads/*
