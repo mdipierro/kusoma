@@ -1,0 +1,7 @@
+{{extend 'layout.html'}}
+<h1>Available wiki pages</h1>
+[ {{=A('search', _href=URL('wikisearch'))}} ]<br />
+<ul>{{for page in pages:}}
+     {{=LI(A(page.title, _href=URL('wikishow', args=page.id)))}}
+{{pass}}</ul>
+[ {{=A('create page', _href=URL('wikicreate'))}} ]
