@@ -26,7 +26,11 @@ db.define_table('wikidocument',
     Field('created_by', 'reference auth_user', default=auth.user_id),
     format='%(name)s')
 
+<<<<<<< HEAD
 db.wikipage.title.requires = IS_NOT_IN_DB(db, 'page.title')
+=======
+db.wikipage.title.requires = IS_NOT_IN_DB(db, 'wikipage.title')
+>>>>>>> 74ed9a7704d97630a4d91272c68760558305ce49
 db.wikipage.body.requires = IS_NOT_EMPTY()
 db.wikipage.created_by.readable = db.wikipage.created_by.writable = False
 db.wikipage.created_on.readable = db.wikipage.created_on.writable = False
@@ -36,7 +40,11 @@ db.wikipost.page_id.readable = db.wikipost.page_id.writable = False
 db.wikipost.created_by.readable = db.wikipost.created_by.writable = False
 db.wikipost.created_on.readable = db.wikipost.created_on.writable = False
 
+<<<<<<< HEAD
 db.wikidocument.name.requires = IS_NOT_IN_DB(db, 'document.name')
+=======
+db.wikidocument.name.requires = IS_NOT_IN_DB(db, 'wikidocument.name')
+>>>>>>> 74ed9a7704d97630a4d91272c68760558305ce49
 db.wikidocument.page_id.readable = db.wikidocument.page_id.writable = False
 db.wikidocument.created_by.readable = db.wikidocument.created_by.writable = False
 db.wikidocument.created_on.readable = db.wikidocument.created_on.writable = False

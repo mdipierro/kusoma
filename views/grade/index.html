@@ -1,0 +1,21 @@
+{{extend 'layout.html'}}
+
+<h1>Welcome to Grade Interface</h1>
+
+<h4>{{=message}}</h4>
+<table>
+    <tr><th>Section</th><th>Course</th><th>Role</th><th>Meeting Time</th><th>Start Time</th><tr>
+{{for x in sections:}}
+    <tr>
+        <td>{{=x.course_section.name}}</td>
+        <td>{{=x.course_section.course.name}}</td>
+        <td>{{=x.role.role}}</td>
+        <td>{{=x.course_section.meeting_time}}</td>
+        <td>{{=x.course_section.start_date}}</td>
+        <td> Link to assignment page</td>
+    </tr>
+{{pass}}
+</table>
+
+<a class="btn btn-primary" href="{{=URL('student',args=1)}}"> Student</a>
+<a class="btn btn-primary" href="{{=URL('teacher',args=1)}}"> Teacher</a>

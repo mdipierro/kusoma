@@ -1,6 +1,10 @@
 {{extend 'layout.html'}}
 <h1>{{=page.title}}</h1>
+<<<<<<< HEAD
 [ {{=A('edit', _href=URL('edit', args=request.args))}} ]<br />
+=======
+[ {{=A('edit', _href=URL('wikiedit', args=request.args))}} ]<br />
+>>>>>>> 74ed9a7704d97630a4d91272c68760558305ce49
 {{=MARKMIN(page.body)}}
 <h2>Comments</h2>
 {{for post in comments:}}
