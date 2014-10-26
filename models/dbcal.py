@@ -1,3 +1,4 @@
+'''
 ####################################################################################################
 # dbcal.py
 #
@@ -95,3 +96,4 @@ if db(db.event_visibility).isempty():
                                      {'event_level':'school'},
                                      {'event_level':'class'},
                                      {'event_level':'staff'}])
+'''
