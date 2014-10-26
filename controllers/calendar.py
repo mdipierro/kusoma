@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
 # This is the controller file for the lms299 event calendar.
+import json
 
 @auth.requires_login()
 def index():
@@ -53,7 +54,19 @@ def course_calendar():
     #
     # With the given course ID, query all of the events related to that course
     #
+    courseEvents = db().select(db.cal_event.ALL)
+    courseEventList = []
+    for courseEvent in courseEvents:
+        courseEventInstance = { "start" : courseEvent.start_date.isoformat(),
+                                "end" : courseEvent.end_date.isoformat() }
+        if courseEvent.title != None:
+            courseEventInstance["title"] = courseEvent.title
+        if courseEvent.details != None:
+            courseEventInstance["description"] = courseEvent.details
+        courseEventList.append(courseEventInstance)
+    courseEventsJSON = json.dumps(courseEventList)
     # Convert the queried events into a json object and return the json object to be used in the view
     #
     # The view will use the json object as a datasource for fullcalendar and display the events
-    return dict()
+    #return dict(courseEventsJSON=courseEventsJSON)
+    return dict(courseEventsJSON = courseEventsJSON, courseEventList = courseEventList)

@@ -1,0 +1,20 @@
+{{import HTMLParser}}
+
+{{extend 'layout.html'}}
+
+<script src="../static/js/moment.min.js" ></script>
+<script src="../static/js/fullcalendar.js" ></script>
+<script src="../static/js/lms299calendar.js"></script>
+<script>
+	$(document).ready(function() {
+	    $('#calendar').lmsCalendar({
+	    	height: 500,
+            events: '{{=courseEventsJSON}}'
+	    });
+	});
+</script>
+<div id="calendar"></div>
+
+
+
+{{=courseEventsJSON}}
