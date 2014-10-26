@@ -82,8 +82,13 @@ class CalendarEvent(object):
         self.all_day = allDay
         self.visibility = visibility
         self.course = course
-    # def __call__(self):
-    #     return dict(populate dict with object fields)
+    def __string__(self):
+        # val = '{"id": %d, "title": "%s", "start": "%s", "end": "%s"}' % (self.id,
+        val = '{id: %d, title: %s, start: %s, end: %s}' % (self.id,
+                                                                         self.name,
+                                                                         self.start_date.isoformat(),
+                                                                         self.end_date.isoformat())
+        return val
 
 #########################
 # Function definitions
@@ -111,27 +116,12 @@ def my_events():
     """
     Events for the logged-in user.
     """
-    events =  db((db.cal_event.owner_id == auth.user.id) &
-                 (db.cal_event.owner_id == db.auth_user.id) &
-                 (db.cal_event.visibility == db.event_visibility.id)).select(db.cal_event.id,
-                                                                             db.cal_event.owner_id,
-                                                                             db.cal_event.name,
-                                                                             db.cal_event.details,
-                                                                             db.cal_event.start_date,
-                                                                             db.cal_event.end_date,
-                                                                             db.event_visibility.visibility,
-                                                                             orderby=~db.cal_event.start_date)
-    cal = []
-    for e in events:
-        cal.append(CalendarEvent(event_id=e.id,
-                                 owner_id=e.owner_id,
-                                 title=e.name,
-                                 details=e.details,
-                                 start=e.start_date,
-                                 visibility=e.visibility,
-                                 end=e.end_date))
-    return cal
-                                 
+    return {'title': 'A1', 'start': '2014-10-20'}
+    # return {'id':1,
+    #         'title':'A1',
+    #         'details':'A1 details',
+    #         'start':date(2014, 10, 20).isoformat(),
+    #         'end':date(2014, 10, 21).isoformat()}
 
 #########################
 # Load defaults

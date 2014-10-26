@@ -1,0 +1,1 @@
+{{from gluon.serializers import json}}{{=XML(json({'title':'A1', 'start':'2014-10-20'}))}}

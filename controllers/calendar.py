@@ -6,11 +6,12 @@ def index():
     # form = SQLFORM(db.cal_event)
     # db.cal_event.owner_id.default = auth.user_id
     # return dict(form=form)
-    form = db(db.cal_event.owner_id == auth.user_id).select(db.cal_event.id,
-                                                            db.cal_event.title,
-                                                            db.cal_event.start_date,
-                                                            db.cal_event.end_date)
-    return dict(form=form)
+    # form = db(db.cal_event.owner_id == auth.user_id).select(db.cal_event.id,
+    #                                                         db.cal_event.title,
+    #                                                         db.cal_event.start_date,
+    #                                                         db.cal_event.end_date)
+    # return form
+    return dict(form=my_events())
 
 @auth.requires_login()
 def calendar():
