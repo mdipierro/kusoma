@@ -1,9 +1,22 @@
 # -*- coding: utf-8 -*-
 # This is the controller file for the lms299 event calendar.
 
+@auth.requires_login()
+def index():
+    # form = SQLFORM(db.cal_event)
+    # db.cal_event.owner_id.default = auth.user_id
+    # return dict(form=form)
+    form = db(db.cal_event.owner_id == auth.user_id).select(db.cal_event.id,
+                                                            db.cal_event.title,
+                                                            db.cal_event.start_date,
+                                                            db.cal_event.end_date)
+    return dict(form=form)
+
+@auth.requires_login()
 def calendar():
     return dict()
 
+@auth.requires_login()
 def create_event():
     # Display a form the user can use to create a new event.
     #
@@ -15,6 +28,7 @@ def create_event():
     form = SQLFORM(db.cal_event).process(next=URL('calendar'))
     return dict(form=form)
 
+@auth.requires_login()
 def delete_event():
     # get a list of events that the current user created
     # display the events in a grid or a picklist
@@ -22,6 +36,7 @@ def delete_event():
     # Delete the event that the user selected
     return dict()
     
+@auth.requires_login()
 def user_calendar():
     # input: a user id
     #
@@ -32,6 +47,7 @@ def user_calendar():
     # The view will use the json object as a datasource for fullcalendar and display the events
     return dict()
 
+@auth.requires_login()
 def course_calendar():
     # input: a course ID
     #
