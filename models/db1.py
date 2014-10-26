@@ -47,18 +47,22 @@ db.define_table(
     Field('filename','upload',label='Content'),   
     auth.signature)
 
+"""
+Organize homeworks into folders for a particular class section
+"""
 db.define_table(
-    'doc',
-    Field('name',requires=NE),
-    Field('course_section','reference course_section',writable=False,readable=False),
-    Field('filename','upload',label='Content'),   
-    auth.signature)
+    'folder',
+    Field('name', 'string', requires=NE),
+    Field('course_section', 'reference course_section'))
 
 db.define_table(
     'homework',
     Field('name',requires=NE),
     Field('course_section','reference course_section'),
+    Field('folder', 'reference folder',
+          requires=IS_EMPTY_OR(IS_IN_DB(db,'folder.id','%(name)s'))),
     Field('description','text'),
+    Field('opening_date', 'datetime', default=request.now),
     Field('due_date','datetime'),
     Field('filename','upload'))
 
@@ -140,9 +144,9 @@ if db(db.auth_user).isempty():
                 stop_date=datetime.date(2014,12,1),
                 signup_deadline=datetime.date(2014,11,10))
             rows = db(db.auth_user).select(limitby=(0,10),orderby='<random>')
-            db.membership.insert(course_section=i, auth_user=mdp_id, role='teacher')
+            db.membership.insert(course_section=i, auth_user=mdp_id, role=TEACHER)
             for row in rows:
-                db.membership.insert(course_section=i, auth_user=row.id, role='student')
+                db.membership.insert(course_section=i, auth_user=row.id, role=STUDENT)
 
 # add logic to add me and massimo to the admin and teacter groups
 # students = db((db.auth_user.first_name != 'Massimo') | (db.auth_user.first_name != 'Bryan')).select(db.auth_user.id)

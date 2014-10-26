@@ -150,6 +150,7 @@ def my_events():
 #
 ################################################################################
 if db(db.event_visibility).isempty():
+<<<<<<< HEAD
     db.event_visibility.bulk_insert([{'visibility':'admin'},
                                      {'visibility':'public'},
                                      {'visibility':'school'},
@@ -166,3 +167,10 @@ if db(db.event_visibility).isempty():
 #         populate(db.auth_user, 5)
 #     if db(db.cal_event).isempty():
 #         populate(db.cal_event, 10)
+=======
+    db.event_visibility.bulk_insert([{'event_level':'admin'},
+                                     {'event_level':'public'},
+                                     {'event_level':'school'},
+                                     {'event_level':'class'},
+                                     {'event_level':'staff'}])
+>>>>>>> upstream
