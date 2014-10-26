@@ -1,0 +1,30 @@
+{{extend 'layout.html'}}
+
+{{if cal:}}
+  <table>
+	<tr>
+	  <th>Name</th>
+	  <th>Details</th>
+	  <th>Start Date</th>
+	  <th>End Date</th>
+	  <th>Visibility</th>
+	  <th>Course</th>
+	</tr>
+  {{for event in cal:}}
+    <tr>
+	  <td>{{=event.name}}</td>
+	  <td>{{=event.details}}</td>
+	  <td>{{=event.start_date.strftime('%Y-%m-%d')}}</td>
+	  <td>
+		  {{if event.end_date:}}
+		    {{=event.end_date.strftime('%Y-%m-%d')}}
+		  {{pass}}
+	  </td>
+	  <td>{{=event.visibility}}</td>
+	  <td>{{=event.course}}</td>
+	</tr>
+  {{pass}}
+  </table>
+{{else:}}
+  <p>No events found</p>
+{{pass}}
