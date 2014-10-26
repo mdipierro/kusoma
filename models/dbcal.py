@@ -145,7 +145,6 @@ if db(db.event_visibility).isempty():
                                      {'visibility':'school'},
                                      {'visibility':'class'},
                                      {'visibility':'staff'}])
-
 # if DEBUG:
 #     from gluon.contrib.populate import populate
 #     if db(db.auth_user).count() == 1:
