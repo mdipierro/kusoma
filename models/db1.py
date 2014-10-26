@@ -47,11 +47,22 @@ db.define_table(
     Field('filename','upload',label='Content'),   
     auth.signature)
 
+"""
+Organize homeworks into folders for a particular class section
+"""
+db.define_table(
+    'folder',
+    Field('name', 'string', requires=NE),
+    Field('course_section', 'reference course_section'))
+
 db.define_table(
     'homework',
     Field('name',requires=NE),
     Field('course_section','reference course_section'),
+    Field('folder', 'reference folder',
+          requires=IS_EMPTY_OR(IS_IN_DB(db,'folder.id','%(name)s'))),
     Field('description','text'),
+    Field('opening_date', 'datetime', default=request.now),
     Field('due_date','datetime'),
     Field('filename','upload'))
 
