@@ -1,13 +1,43 @@
-.idea/
+# ignore the git ignore config file
+.gitignore
+
+.idea/*
 
 #do not track local sessions
-sessions/
+sessions/*
 
 #do not track local errors
-errors/
+errors/*
 
 #do not track local databases
-databases/
+databases/*
 
 #do not track local logs
 progress.log
+
+# ignore unneeded python files
+*.pyc
+.pythonhistory
+
+# personal stuff
+models/z_db_personal.py
+
+# Stuff from master project
+.*
+*.pyc
+*.pyo
+*~
+#*
+*.1
+*.bak
+*.bak2
+*.svn
+*.w2p
+*.class
+*.rej
+*.orig
+databases/*
+sessions/*
+errors/*
+cache/*
+uploads/*
