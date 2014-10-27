@@ -4,3 +4,10 @@
 def index():
     youtube_id='dQw4w9WgXcQ'
     return locals()
+
+def video():
+
+    return dict()
+
+def create():
+    return  dict()
