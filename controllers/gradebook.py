@@ -24,15 +24,13 @@ def teacher():
     response.files.insert(0,URL('static','css/grading.css'))
 
     session.flash = 'Welcome Teacher'
-
-
-
-
-
-
-
     student = get_all_students(session_id)
-    return dict(role="Teacher", users= student)
+
+    for st in student:
+        st.score = get_grades_student(session_id, st.auth_user.id)
+
+
+    return dict(role="Teacher", users=student, names=student[0].score)
 
 @auth.requires_login()
 def student():

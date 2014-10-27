@@ -14,31 +14,36 @@
 <div id="example1console"></div>
 
 
-
 <script>
  var data = [
  {{for row in users:}}
-
      {
        id:  '{{=row.auth_user.id }}',
-       name: '{{=row.auth_user.first_name  + " " + row.auth_user.last_name}}',
-       name: '{{=row.auth_user.first_name  + " " + row.auth_user.last_name}}',
-       message:'{{=row.auth_user.student_code }}'
-     },
+       name: '{{=row.auth_user.first_name  + " " + row.auth_user.last_name}}'
+        {{for hw in row.score:}}
+            ,{{=hw.homework.name}}:
+                    {{if hw.assignment_grade.grade:}}
+                        '{{=hw.assignment_grade.grade}}'
+                    {{else:}}
+                        ''
+                    {{pass}}
+
+        {{pass}}
+      },
   {{pass}}
-
-
-
   ];
 
 
+
   $('#dataTable').handsontable({
+
     data: data,
-    colHeaders: ['id', 'name', 'message'],
-    minSpareRows: 1,
+    colHeaders: ['id', 'name'{{for n in names:}},'{{=n.homework.name}}'{{pass}}],
+    columnSorting: true,
     contextMenu: true,
     currentRowClassName: 'currentRow',
     currentColClassName: 'currentCol',
+    fixedColumnsLeft: 2,
     rowHeaders: true
   });
 
