@@ -64,7 +64,10 @@ db.define_table(
     Field('description','text'),
     Field('opening_date', 'datetime', default=request.now),
     Field('due_date','datetime'),
-    Field('filename','upload'))
+    Field('filename','upload'),
+    Field('points', 'integer'),
+    Field('assignment_order', 'integer'),
+    format='%(name)s')
 
 db.define_table(
     'occurrance',
