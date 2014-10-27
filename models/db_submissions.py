@@ -5,12 +5,6 @@ from gluon.tools import Auth
 auth = Auth(db)
 
 """
-Organize assignments
-"""
-db.define_table('folder',
-                Field('name', 'string', requires=IS_NOT_EMPTY()))
-
-"""
 Assignment that pertains to a course
 """
 db.define_table('assignments',

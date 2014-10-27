@@ -70,7 +70,7 @@ def students():
     shows students and teachers and graders in a course section
     """
     section_id = request.args(0,cast=int)
-    if not (is_user_teacher(section_id) or auth.user.is_aministrator):
+    if not (is_user_teacher(section_id) or auth.user.is_administrator):
         session.flash = 'Not authorized'
         redirect(URL('section',args=section_id)) 
     section = db.course_section(section_id)
