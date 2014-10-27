@@ -45,7 +45,7 @@ db.define_table(
     Field('details', 'text'),
     Field('start_date', 'datetime', requires=NE),
     Field('end_date', 'datetime'),
-    Field('visibility', 'reference event_visibilty'),
+    Field('visibility', 'reference event_visibility'),
     auth.signature,
     format='%(name)s')
 db.cal_event.id.readable = db.cal_event.id.writable = False
