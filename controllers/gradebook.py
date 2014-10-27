@@ -47,8 +47,28 @@ def student():
 @auth.requires_login()
 def savedata():
     import gluon.contrib.simplejson
-    data = gluon.contrib.simplejson.loads(request.body.read())
-    return response.json(data)
+
+    students = gluon.contrib.simplejson.loads(request.body.read())
+
+    section_id = request.args(0, cast=int)
+    print section_id
+    for student in students['data']:
+        id=student['id']
+        hws = get_homework_section(section_id)
+        for hw in hws:
+            grade = student[hw.name]
+            print id, hw.name, section_id, grade
+
+            #db.assignment_grade.update_or_insert((db.assignment_grade.section_id==1)& (db.assignment_grade.assignment_id==1)& (db.assignment_grade.user_id==id), grade=10, assignment_comment='')
+            db.assignment_grade.update_or_insert((db.assignment_grade.section_id==1)& (db.assignment_grade.assignment_id==1)& (db.assignment_grade.user_id==id), grade=10, assignment_comment='')
+
+
+    return response.json(students)
+
+
+
+
+
 
 @auth.requires_login()
 def addhw():
