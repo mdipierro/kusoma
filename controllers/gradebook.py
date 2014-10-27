@@ -26,6 +26,11 @@ def teacher():
     session.flash = 'Welcome Teacher'
 
 
+
+
+
+
+
     student = get_all_students(session_id)
     return dict(role="Teacher", users= student)
 
@@ -46,3 +51,14 @@ def savedata():
     import gluon.contrib.simplejson
     data = gluon.contrib.simplejson.loads(request.body.read())
     return response.json(data)
+
+@auth.requires_login()
+def addhw():
+    grid = SQLFORM.smartgrid(db.homework)
+    return dict(grid=grid)
+
+@auth.requires_login()
+def addgrade():
+    grid = SQLFORM.smartgrid(db.assignment_grade)
+    return dict(grid=grid)
+
