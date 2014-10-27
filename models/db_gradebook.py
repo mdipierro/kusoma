@@ -14,11 +14,26 @@ db.define_table(
     Field('grade'),
     Field('teacher_comment'))
 
+
+
+db.define_table(
+    'course_features',
+    Field('section_id', 'reference course_section'),
+    Field('name'),
+    Field('is_available', 'boolean', default=False))
+
+
 def get_all_students(section_id):
     query = (db.membership.course_section==section_id)&(db.membership.auth_user==db.auth_user.id)&(db.membership.role!='teacher')
-    return db(query).select()
+    return db(query).select(orderby=db.auth_user.last_name|db.auth_user.first_name)
 
- 
+def get_grades_student(section_id, student_id):
+
+    query = (db.homework.course_section==section_id)
+
+    return db(query).select(left=db.assignment_grade.on(db.homework.id==db.assignment_grade.assignment_id &(db.assignment_grade.user_id==student_id)), orderby=db.homework.assignment_order)
+
+
 
 
 def is_user_teacher(section_id):
