@@ -27,13 +27,8 @@ NE = IS_NOT_EMPTY()
 ################################################################################
 db.define_table(
     'event_visibility',
-<<<<<<< HEAD
-    Field('levels', unique=True, requires=NE),
-    format='%(levels)s')
-=======
     Field('visibility', unique=True, requires=NE),
     format='%(visibility)s')
->>>>>>> 09116cc8dc09a92c5d4914797cd3e1a6c4131082
 db.event_visibility.id.readable = db.event_visibility.id.writable = False
 
 ################################################################################
@@ -50,15 +45,10 @@ db.define_table(
     Field('owner_id', 'reference auth_user', default=auth.user_id),
     Field('title', requires=NE),                        ## FC Event field
     Field('details', 'text'),
-<<<<<<< HEAD
-    Field('start_date', 'datetime', requires=NE),
-    Field('end_date', 'datetime'),
-=======
     Field('start_date', 'datetime', requires=NE),       ## FC Event field
     Field('end_date', 'datetime'),                      ## FC Event field
     Field('allDay', 'boolean', default=False),          ## FC Event field
     Field('url'),                                       ## FC Event field
->>>>>>> 09116cc8dc09a92c5d4914797cd3e1a6c4131082
     Field('visibility', 'reference event_visibility'),
     auth.signature,
     format='%(title)s')
@@ -160,13 +150,6 @@ def my_events():
 #
 ################################################################################
 if db(db.event_visibility).isempty():
-<<<<<<< HEAD
-    db.event_visibility.bulk_insert([{'levels':'admin'},
-                                     {'levels':'public'},
-                                     {'levels':'school'},
-                                     {'levels':'class'},
-                                     {'levels':'staff'}])
-=======
     db.event_visibility.bulk_insert([{'visibility':'admin'},
                                      {'visibility':'public'},
                                      {'visibility':'school'},
@@ -182,4 +165,3 @@ if db(db.event_visibility).isempty():
 #         populate(db.auth_user, 5)
 #     if db(db.cal_event).isempty():
 #         populate(db.cal_event, 10)
->>>>>>> 09116cc8dc09a92c5d4914797cd3e1a6c4131082

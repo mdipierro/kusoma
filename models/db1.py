@@ -51,14 +51,11 @@ db.define_table(
 Organize homeworks into folders for a particular class section
 """
 db.define_table(
-<<<<<<< HEAD
-=======
     'folder',
     Field('name', 'string', requires=NE),
     Field('course_section', 'reference course_section'))
 
 db.define_table(
->>>>>>> 09116cc8dc09a92c5d4914797cd3e1a6c4131082
     'homework',
     Field('name',requires=NE),
     Field('course_section','reference course_section'),
