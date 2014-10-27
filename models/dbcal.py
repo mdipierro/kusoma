@@ -9,6 +9,8 @@
 #        Do we need/want a table for "event type" for filtering? Eg: assignment, seminar, etc.
 #
 ####################################################################################################
+from datetime import date
+DEBUG = True
 
 # Define some useful constants.
 NE = IS_NOT_EMPTY()
@@ -25,8 +27,8 @@ NE = IS_NOT_EMPTY()
 ################################################################################
 db.define_table(
     'event_visibility',
-    Field('event_level', unique=True, requires=NE),
-    format='%(event_level)s')
+    Field('visibility', unique=True, requires=NE),
+    format='%(visibility)s')
 db.event_visibility.id.readable = db.event_visibility.id.writable = False
 
 ################################################################################
@@ -39,16 +41,19 @@ db.event_visibility.id.readable = db.event_visibility.id.writable = False
 #
 ################################################################################
 db.define_table(
-    'cal_event',
-    Field('owner_id', 'reference auth_user'),
-    Field('name', requires=NE),
+    'cal_event',                                        ## (id) FC Event field
+    Field('owner_id', 'reference auth_user', default=auth.user_id),
+    Field('title', requires=NE),                        ## FC Event field
     Field('details', 'text'),
-    Field('start_date', 'datetime', requires=NE),
-    Field('end_date', 'datetime'),
-#    Field('visibility', 'reference event_visibilty'),
+    Field('start_date', 'datetime', requires=NE),       ## FC Event field
+    Field('end_date', 'datetime'),                      ## FC Event field
+    Field('allDay', 'boolean', default=False),          ## FC Event field
+    Field('url'),                                       ## FC Event field
+    Field('visibility', 'reference event_visibility'),
     auth.signature,
-    format='%(name)s')
+    format='%(title)s')
 db.cal_event.id.readable = db.cal_event.id.writable = False
+db.cal_event.owner_id.readable = db.cal_event.owner_id.writable = False
 
 ################################################################################
 # course_event
@@ -62,16 +67,71 @@ db.define_table(
 db.course_event.id.readable = db.course_event.id.writable = False
 
 #########################
+# Classes
+#########################
+
+class CalendarEvent(object):
+    def __init__(self, owner_id, title, start, visibility, details='',
+                 end=None, course=None, event_id=None, allDay=False):
+        self.id = event_id
+        self.owner_id = owner_id
+        self.name = title
+        self.details = details
+        self.start_date = start
+        self.end_date = end
+        self.all_day = allDay
+        self.visibility = visibility
+        self.course = course
+    # def __call__(self):
+    #     return dict(populate dict with object fields)
+
+#########################
 # Function definitions
 #########################
 
-################################################################################
-# my_events(filter=[])
-#    Events for the logged-in user. filter is a list of event_visibility ids
-#    of event types to include. Default is an empty list, which means
-#    include everything.
-#
-################################################################################
+# def add_event(event_name, event_visibility, owner=auth.user_id, event_details='',
+#               event_start_date=date.today(), event_end_date=None, event_course_id=None):
+def add_event(event):
+    """
+    Add a new event to the table.
+    """
+    if db(db.cal_event.id == event.id).count() == 0:
+        new_id = db.cal_event.insert(ower_id=event.owner_id,
+                                     name=event.name,
+                                     details=event.details,
+                                     start_date=event.start_date,
+                                     end_date=event.end_date,
+                                     visibility=event.visibility)
+        event.id = new_id
+        if event.course:
+            db.course_event.insert(couse_id=course_id, event_id=new_id)
+    return event
+
+def my_events():
+    """
+    Events for the logged-in user.
+    """
+    events =  db((db.cal_event.owner_id == auth.user.id) &
+                 (db.cal_event.owner_id == db.auth_user.id) &
+                 (db.cal_event.visibility == db.event_visibility.id)).select(db.cal_event.id,
+                                                                             db.cal_event.owner_id,
+                                                                             db.cal_event.name,
+                                                                             db.cal_event.details,
+                                                                             db.cal_event.start_date,
+                                                                             db.cal_event.end_date,
+                                                                             db.event_visibility.visibility,
+                                                                             orderby=~db.cal_event.start_date)
+    cal = []
+    for e in events:
+        cal.append(CalendarEvent(event_id=e.id,
+                                 owner_id=e.owner_id,
+                                 title=e.name,
+                                 details=e.details,
+                                 start=e.start_date,
+                                 visibility=e.visibility,
+                                 end=e.end_date))
+    return cal
+                                 
 
 #########################
 # Load defaults
@@ -90,8 +150,18 @@ db.course_event.id.readable = db.course_event.id.writable = False
 #
 ################################################################################
 if db(db.event_visibility).isempty():
-    db.event_visibility.bulk_insert([{'event_level':'admin'},
-                                     {'event_level':'public'},
-                                     {'event_level':'school'},
-                                     {'event_level':'class'},
-                                     {'event_level':'staff'}])
+    db.event_visibility.bulk_insert([{'visibility':'admin'},
+                                     {'visibility':'public'},
+                                     {'visibility':'school'},
+                                     {'visibility':'class'},
+                                     {'visibility':'staff'}])
+# if DEBUG:
+#     from gluon.contrib.populate import populate
+#     if db(db.auth_user).count() == 1:
+#         # auth.get_or_create_user(first_name='Bryan',
+#         #                         last_name='Patzke',
+#         #                         email='bryan.patzke@insignis.com',
+#         #                         password=CRYPT('bobbob'))
+#         populate(db.auth_user, 5)
+#     if db(db.cal_event).isempty():
+#         populate(db.cal_event, 10)
