@@ -1,7 +1,7 @@
 NE = IS_NOT_EMPTY()
 
 """
-Basic information pertainint to
+Basic information pertaining to
 a chat session.
 """
 db.define_table(
