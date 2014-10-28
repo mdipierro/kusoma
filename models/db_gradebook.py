@@ -3,7 +3,7 @@ db.define_table(
     Field('section_id', 'reference course_section'),
     Field('assignment_id', 'reference homework'),
     Field('user_id', 'reference auth_user'),
-    Field('grade', 'integer'),
+    Field('grade', 'float'),
     Field('assignment_comment')
 )
 
@@ -28,11 +28,12 @@ def get_all_students(section_id):
     return db(query).select(orderby=db.auth_user.last_name|db.auth_user.first_name)
 
 def get_grades_student(section_id, student_id):
-
     query = (db.homework.course_section==section_id)
-
     return db(query).select(left=db.assignment_grade.on(db.homework.id==db.assignment_grade.assignment_id &(db.assignment_grade.user_id==student_id)), orderby=db.homework.assignment_order)
 
+def get_homework_section(section_id):
+    query = (db.homework.course_section==section_id)
+    return db(query).select();
 
 
 
