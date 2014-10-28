@@ -25,7 +25,7 @@ LMS299 Calendar Control
             headerCenter: 'month,basicWeek',
             height: 500p,
             view: 'month',
-            width: 500           
+            width: 500
         });
     });
    **/
@@ -33,11 +33,13 @@ LMS299 Calendar Control
         options: {
             created: false,
             disabled: false,
+            events: {},
             headerCenter: 'month,basicWeek',
             headerLeft: 'title',
             headerRight: 'today prev,next',
             height: 'auto',
             view: 'month',
+            userQuery: true,
             width: ''
         },
         _create: function (options) {
@@ -48,19 +50,23 @@ LMS299 Calendar Control
             if (!self.options.created) {
                     self._createCalendar();
                 }
-                self.options.created = true;
-            },
+            self.options.created = true;
+            if (self.options.userQuery === true) {
+                //append search toolbar
+            }
+        },
         _createCalendar: function () {
-            var self = this;
+            var self = this, jsonEvents;
             self.element.addClass('lms299-calendar');
             self._container = $('<div id="lms299calendar-container"></div>').appendTo(this.element);
+            jsonEvents = $.parseJSON(self.options.events.replace(/&quot;/g,'"'));
             $('#lms299calendar-container').fullCalendar({
-                header: {        
+                header: {
                     left:   self.options.headerLeft,
                     center: self.options.headerCenter,
                     right:  self.options.headerRight
-                },       
-                events: self.options.events,
+                },
+                events: jsonEvents,
                 height: self.options.height
             });
             if (self.options.width !== '') {
@@ -69,6 +75,3 @@ LMS299 Calendar Control
         }
     });
 }(jQuery, window, document, moment));
-
-
-

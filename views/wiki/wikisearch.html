@@ -1,3 +1,4 @@
 {{extend 'layout.html'}}
-<h1>Search wiki</h1>
-{{=BEAUTIFY(response._vars)}}
+<h1>Search wiki pages</h1>
+[ {{=A('Show all related wiki', _href=URL('wikishow'))}}]<br />
+{{=form}}<br />{{=target_div}}

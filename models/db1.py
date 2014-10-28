@@ -32,6 +32,7 @@ db.define_table(
     Field('inclass','boolean',default=True),
     format='%(name)s')
 
+
 db.define_table(
     'membership',
     Field('course_section','reference course_section'),
@@ -46,13 +47,27 @@ db.define_table(
     Field('filename','upload',label='Content'),   
     auth.signature)
 
+"""
+Organize homeworks into folders for a particular class section
+"""
+db.define_table(
+    'folder',
+    Field('name', 'string', requires=NE),
+    Field('course_section', 'reference course_section'))
+
 db.define_table(
     'homework',
     Field('name',requires=NE),
     Field('course_section','reference course_section'),
+    Field('folder', 'reference folder',
+          requires=IS_EMPTY_OR(IS_IN_DB(db,'folder.id','%(name)s'))),
     Field('description','text'),
+    Field('opening_date', 'datetime', default=request.now),
     Field('due_date','datetime'),
-    Field('filename','upload'))
+    Field('filename','upload'),
+    Field('points', 'integer'),
+    Field('assignment_order', 'integer'),
+    format='%(name)s')
 
 db.define_table(
     'occurrance',
@@ -64,7 +79,6 @@ db.define_table(
     Field('course_section','reference course_section',
           requires=IS_EMPTY_OR(IS_IN_DB(db,'course_section.id','%(name)s'))),
     auth.signature)
-
 
 def my_sections(user_id=auth.user_id, course_id=None, roles=[TEACHER, STUDENT],max_sections=20):
     """
@@ -134,8 +148,13 @@ if db(db.auth_user).isempty():
                 signup_deadline=datetime.date(2014,11,10))
             rows = db(db.auth_user).select(limitby=(0,10),orderby='<random>')
             db.membership.insert(course_section=i, auth_user=mdp_id, role=TEACHER)
+
+            for h in range(1,7):
+                db.homework.insert(name='hw'+str(h), course_section=i,points=10, assignment_order=h)
+
             for row in rows:
                 db.membership.insert(course_section=i, auth_user=row.id, role=STUDENT)
+
 
 # add logic to add me and massimo to the admin and teacter groups
 # students = db((db.auth_user.first_name != 'Massimo') | (db.auth_user.first_name != 'Bryan')).select(db.auth_user.id)
