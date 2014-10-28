@@ -2,7 +2,7 @@
 
 
 <h1>Welcome to Grade Interface</h1>
-<a class="btn btn-primary" href="{{=URL('index',args=1)}}"> back</a>
+<a class="btn btn-primary" href="{{=URL('student',args=1)}}"> Student</a>
 <h4>{{=role}}</h4>
 
 
@@ -14,32 +14,42 @@
 <div id="example1console"></div>
 
 
-
 <script>
  var data = [
  {{for row in users:}}
-
      {
        id:  '{{=row.auth_user.id }}',
-       name: '{{=row.auth_user.first_name  + " " + row.auth_user.last_name}}',
-       name: '{{=row.auth_user.first_name  + " " + row.auth_user.last_name}}',
-       message:'{{=row.auth_user.student_code }}'
-     },
+       name: '{{=row.auth_user.first_name  + " " + row.auth_user.last_name}}'
+        {{for hw in row.score:}}
+            ,{{=hw.homework.name}}:
+                    {{if hw.assignment_grade.grade:}}
+                        '{{=hw.assignment_grade.grade}}'
+                    {{else:}}
+                        ''
+                    {{pass}}
+        {{pass}}
+      },
   {{pass}}
-
-
-
   ];
+
 
 
   $('#dataTable').handsontable({
     data: data,
-    colHeaders: ['id', 'name', 'message'],
-    minSpareRows: 1,
+    colHeaders: ['id', 'name'{{for n in names:}},'{{=n.homework.name}}'{{pass}}],
+    columnSorting: true,
     contextMenu: true,
     currentRowClassName: 'currentRow',
     currentColClassName: 'currentCol',
-    rowHeaders: true
+    fixedColumnsLeft: 2,
+    rowHeaders: true,
+    cells: function (row, col, prop) {
+        var cellProperties = {}
+        if(col === 0 ||col === 1  ) {
+          cellProperties.readOnly = true;
+        }
+        return cellProperties;
+      }
   });
 
  var $console = $("#example1console");

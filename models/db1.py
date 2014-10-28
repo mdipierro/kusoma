@@ -148,8 +148,13 @@ if db(db.auth_user).isempty():
                 signup_deadline=datetime.date(2014,11,10))
             rows = db(db.auth_user).select(limitby=(0,10),orderby='<random>')
             db.membership.insert(course_section=i, auth_user=mdp_id, role=TEACHER)
+
+            for h in range(1,7):
+                db.homework.insert(name='hw'+str(h), course_section=i,points=10, assignment_order=h)
+
             for row in rows:
                 db.membership.insert(course_section=i, auth_user=row.id, role=STUDENT)
+
 
 # add logic to add me and massimo to the admin and teacter groups
 # students = db((db.auth_user.first_name != 'Massimo') | (db.auth_user.first_name != 'Bryan')).select(db.auth_user.id)
