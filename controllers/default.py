@@ -40,7 +40,7 @@ def section():
     """
     this one shows details about a course section
     """
-    section_id = request.args(0,cast=int)
+    section_id = request.args(0,cast=int) # http://.../lms/default/section/3
     section = db.course_section(section_id) or redirect(URL('search'))
     add_section_menu(section_id)
     course = section.course
@@ -73,23 +73,19 @@ def students():
     if not (is_user_teacher(section_id) or auth.user.is_administrator):
         session.flash = 'Not authorized'
         redirect(URL('section',args=section_id)) 
+    add_section_menu(section_id)
     section = db.course_section(section_id)
     course = section.course
     students = users_in_section(section_id,roles=[STUDENT])
     return dict(course=course, section=section, students=students)    
 
-@auth.requires_login()
+@auth.requires(auth.user and auth.user.is_administrator)
 def manage_users():
     return dict(grid=SQLFORM.smartgrid(db.auth_user))
 
-@auth.requires_login()
+@auth.requires(auth.user and auth.user.is_administrator)
 def manage_courses():
     return dict(grid=SQLFORM.smartgrid(db.course))
-
-@auth.requires_login()
-def manage_courses():
-    grid = SQLFORM.smartgrid(db.course)
-    return dict(grid=grid)
 
 def user():
     return dict(form=auth())
