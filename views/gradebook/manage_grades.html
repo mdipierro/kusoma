@@ -5,7 +5,7 @@
 <h1>Grade Interface</h1><br><br>
 
 {{if auth.user and auth.user.is_teacher:}}
-<a class="btn btn-primary" href="{{=URL('teacher',args=section_id)}}">Teacher Portal</a>
+<a class="btn btn-primary" href="{{=URL('teacher',args=section_id)}}">Manage Assignments</a>
 {{else:}}
 <h4>{{=section.name}} - {{=auth.user.first_name}} {{=auth.user.last_name}}</h4>
 <table class="table">
