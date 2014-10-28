@@ -7,6 +7,7 @@ a chat session.
 db.define_table(
     'group_chat_session',
     Field('title'),
+    Field('course_section', 'reference course_section', requires=NE),
     Field('start_time', 'datetime', default=request.now),
     Field('end_time', 'datetime'),
     Field('is_active', 'boolean', default=True),
