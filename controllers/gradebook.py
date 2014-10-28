@@ -13,8 +13,8 @@ def manage_grades():
 
 @auth.requires_login()
 def teacher():
-    session_id = request.args(0, cast=int)
-    if not (is_user_teacher(session_id)):
+    section_id = request.args(0, cast=int)
+    if not (is_user_teacher(section_id)):
         session.flash = 'Not authorized'
         redirect(URL('student',args=section_id))
 
@@ -24,11 +24,10 @@ def teacher():
     response.files.insert(0,URL('static','css/grading.css'))
 
     session.flash = 'Welcome Teacher'
-    student = get_all_students(session_id)
+    student = get_all_students(section_id)
 
     for st in student:
-        st.score = get_grades_student(session_id, st.auth_user.id)
-
+        st.score = get_grades_student(section_id, st.auth_user.id)
 
     return dict(role="Teacher", users=student, names=student[0].score)
 
@@ -37,7 +36,7 @@ def student():
     session.flash = 'Welcome Student'
     section_id = request.args(0, cast=int)
     section = db.course_section(section_id)
-    section_name=section.name	
+    section_name=section.name
     member = db.membership(course_section=section_id, auth_user=auth.user.id)
     role = 'student' #role = db.auth_group(member.role)
     student_grades = db( (db.grade.section_id==section.id) & (db.grade.auth_user==auth.user.id)).select()
