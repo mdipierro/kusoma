@@ -10,7 +10,7 @@ db.define_table(
     Field('start_time', 'datetime', default=request.now),
     Field('end_time', 'datetime'),
     Field('is_active', 'boolean', default=True),
-    Field('initiator', 'reference auth_user'),
+    Field('initiator', 'reference membership'),
     Field('on_page')
 )
 
@@ -22,7 +22,7 @@ single chat message).
 db.define_table(
     'group_chat_message',
     Field('chat_message'),
-    Field('sender_id', 'reference auth_user', requires=NE),
+    Field('sender_id', 'reference membership', requires=NE),
     Field('to_session_id', 'reference group_chat_session', requires=NE),
     Field('time_sent', 'datetime', default=request.now)
 )
@@ -32,7 +32,7 @@ Individual chat settings for a user.
 """
 db.define_table(
     'group_chat_user_settings',
-    Field('auth_user','reference auth_user', requires=NE),
+    Field('user_id','reference membership', requires=NE),
     Field('use_microphone', 'boolean'),
     Field('use_web_camera', 'boolean')
 )
@@ -44,5 +44,5 @@ links the users to their respective chat sessions.
 db.define_table(
     'group_chat_user_session',
     Field('session_id', 'reference group_chat_session', requires=NE),
-    Field('auth_user', 'reference auth_user', requires=NE)
+    Field('user_id', 'reference membership', requires=NE)
 )
