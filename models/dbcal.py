@@ -29,7 +29,7 @@ db.define_table(
     'event_visibility',
     Field('visibility', unique=True, requires=NE),
     format='%(visibility)s')
-db.event_visibility.id.readable = db.event_visibility.id.writable = False
+# db.event_visibility.id.readable = db.event_visibility.id.writable = False
 
 ################################################################################
 # cal_event
@@ -64,31 +64,23 @@ db.define_table(
     'course_event',
     Field('course_id', 'reference course'),
     Field('event_id', 'reference cal_event'))
-db.course_event.id.readable = db.course_event.id.writable = False
+# db.course_event.id.readable = db.course_event.id.writable = False
 
 #########################
 # Classes
 #########################
-
-class CalendarEvent(object):
-    def __init__(self, owner_id, title, start, visibility, details='',
-                 end=None, course=None, event_id=None, allDay=False):
-        self.id = event_id
-        self.owner_id = owner_id
-        self.name = title
-        self.details = details
-        self.start_date = start
-        self.end_date = end
-        self.all_day = allDay
-        self.visibility = visibility
-        self.course = course
-    def __string__(self):
-        # val = '{"id": %d, "title": "%s", "start": "%s", "end": "%s"}' % (self.id,
-        val = '{id: %d, title: %s, start: %s, end: %s}' % (self.id,
-                                                                         self.name,
-                                                                         self.start_date.isoformat(),
-                                                                         self.end_date.isoformat())
-        return val
+# class CalendarEvent(object):
+#     def __init__(self, owner_id, title, start, visibility, details='',
+#                  end=None, course=None, event_id=None, allDay=False):
+#         self.id = event_id
+#         self.owner_id = owner_id
+#         self.name = title
+#         self.details = details
+#         self.start_date = start
+#         self.end_date = end
+#         self.all_day = allDay
+#         self.visibility = visibility
+#         self.course = course
 
 #########################
 # Function definitions
@@ -96,32 +88,59 @@ class CalendarEvent(object):
 
 # def add_event(event_name, event_visibility, owner=auth.user_id, event_details='',
 #               event_start_date=date.today(), event_end_date=None, event_course_id=None):
-def add_event(event):
-    """
-    Add a new event to the table.
-    """
-    if db(db.cal_event.id == event.id).count() == 0:
-        new_id = db.cal_event.insert(ower_id=event.owner_id,
-                                     name=event.name,
-                                     details=event.details,
-                                     start_date=event.start_date,
-                                     end_date=event.end_date,
-                                     visibility=event.visibility)
-        event.id = new_id
-        if event.course:
-            db.course_event.insert(couse_id=course_id, event_id=new_id)
-    return event
+# def add_event(event):
+#     """
+#     Add a new event to the table.
+#     """
+#     if db(db.cal_event.id == event.id).count() == 0:
+#         new_id = db.cal_event.insert(ower_id=event.owner_id,
+#                                      name=event.name,
+#                                      details=event.details,
+#                                      start_date=event.start_date,
+#                                      end_date=event.end_date,
+#                                      visibility=event.visibility)
+#         event.id = new_id
+#         if event.course:
+#             db.course_event.insert(couse_id=course_id, event_id=new_id)
+#     return event
 
-def my_events():
+def my_events(start_date, end_date):
     """
     Events for the logged-in user.
     """
-    return {'title': 'A1', 'start': '2014-10-20'}
-    # return {'id':1,
-    #         'title':'A1',
-    #         'details':'A1 details',
-    #         'start':date(2014, 10, 20).isoformat(),
-    #         'end':date(2014, 10, 21).isoformat()}
+    try:
+        query = ((db.cal_event.owner_id == auth.user.id) &
+                 (db.cal_event.visibility == db.event_visibility.id) &
+                 (db.cal_event.start_date >= start_date) &
+                 ((db.cal_event.end_date == None) | (db.cal_event.end_date <= end_date)))
+        fields = [db.cal_event.id,
+                  db.cal_event.owner_id,
+                  db.cal_event.title,
+                  db.cal_event.details,
+                  db.cal_event.start_date,
+                  db.cal_event.end_date,
+                  db.event_visibility.visibility,
+                  db.cal_event.visibility]
+    except:
+        return
+    return _get_events_json(query, fields)
+
+def _get_events_json(query, fields):
+    # To do:
+    # This needs error handling
+    # Choose date format based on whether the event is associated with a specific time.
+    events =  db(query).select(*fields)
+    cal = []
+    for evt in events:
+        c = {'id': evt.cal_event.id,
+             'title': evt.cal_event.title,
+             'details': evt.cal_event.details,
+             'start': evt.cal_event.start_date.strftime('%Y-%m-%d'),
+             'visibility': evt.event_visibility.visibility}
+        if evt.cal_event.end_date:
+            c['end'] = evt.cal_event.end_date.strftime('%Y-%m-%d')
+        cal.append(c)
+    return cal
 
 #########################
 # Load defaults
