@@ -4,7 +4,7 @@
 def manage_grades():
     section_id=request.args(0, cast=int)
 
-    if not (is_user_teacher(section_id) or auth.user.is_aministrator):
+    if not (is_user_teacher(section_id) or auth.user.is_administrator):
         session.flash = 'Not authorized'
         redirect(URL('student',args=section_id))
 
@@ -34,15 +34,11 @@ def teacher():
 
 @auth.requires_login()
 def student():
-    session.flash = 'Welcome Student'
+    session.flash = "Welcome %s %s" % (auth.user.first_name, auth.user.last_name)
     section_id = request.args(0, cast=int)
     section = db.course_section(section_id)
-    section_name=section.name	
-    member = db.membership(course_section=section_id, auth_user=auth.user.id)
-    role = 'student' #role = db.auth_group(member.role)
-    student_grades = db( (db.grade.section_id==section.id) & (db.grade.auth_user==auth.user.id)).select()
-    return dict(section=section, member=member, role=role, student_grades=student_grades)
-    #return dict(role="student")
+    student_grades = get_grades_student(section_id, auth.user.id)
+    return dict(student_grades=student_grades, section=section)
 
 @auth.requires_login()
 def savedata():
