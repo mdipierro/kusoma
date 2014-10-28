@@ -126,6 +126,7 @@ def my_events(start_date, end_date):
     return _get_events_json(query, fields)
 
 def _get_events_json(query, fields):
+    ############## Refactor this ##############
     # To do:
     # This needs error handling
     # Choose date format based on whether the event is associated with a specific time.
