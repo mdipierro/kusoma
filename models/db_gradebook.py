@@ -3,7 +3,7 @@ db.define_table(
     Field('section_id', 'reference course_section'),
     Field('assignment_id', 'reference homework'),
     Field('user_id', 'reference auth_user'),
-    Field('grade', 'integer'),
+    Field('grade', 'float'),
     Field('assignment_comment')
 )
 
