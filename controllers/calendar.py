@@ -4,15 +4,11 @@ import json
 
 @auth.requires_login()
 def index():
-    # form = SQLFORM(db.cal_event)
-    # db.cal_event.owner_id.default = auth.user_id
-    # return dict(form=form)
-    # form = db(db.cal_event.owner_id == auth.user_id).select(db.cal_event.id,
-    #                                                         db.cal_event.title,
-    #                                                         db.cal_event.start_date,
-    #                                                         db.cal_event.end_date)
-    # return form
-    return dict(form=my_events())
+    # start = request.args(0)
+    # end = request.args(1)
+    # params = {'start': start, 'end': end}
+    # return dict(form=my_events(), params=params)
+    return dict()
 
 @auth.requires_login()
 def calendar():

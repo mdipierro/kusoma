@@ -5,16 +5,15 @@
 <script src="{{=URL('static', 'js/lms299calendar.js')}}"></script>
 <script>
 	$(document).ready(function() {
-	    $('#calendar').fullCalendar({
-	    	height: 500,
-	        eventSources: [ { url: {{=XML('\'' + URL('calendar', 'index.json') + '\'')}}, type: 'POST' } ]
-	        //events: {{=XML('\'' + URL('calendar', 'index.json') + '\'')}}
-	        //events: {'start': '2014-10-20', 'title': 'A1'}
-	        //events: [ {start: "2014-10-20", title: "A1"} ]
+	    $('#calendar').lmsCalendar({
+	            height: 500,
+                header: {
+                   left:   'today prevYear,prev,next,nextYear',
+                   center: 'title',
+                   right:  'month,agendaWeek,agendaDay'
+                },
+	        events: {{=XML('\'' + URL('calendar', 'index.json') + '\'')}}
 	    });
 	});
 </script>
 <div id="calendar"></div>
-
-<h3>Form</h3>
-{{=form}}
