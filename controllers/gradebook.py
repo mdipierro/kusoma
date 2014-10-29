@@ -54,8 +54,7 @@ def savedata():
             grade = student[hw.name]
             print id, hw.name, section_id, grade
 
-            #db.assignment_grade.update_or_insert((db.assignment_grade.section_id==1)& (db.assignment_grade.assignment_id==1)& (db.assignment_grade.user_id==id), grade=10, assignment_comment='')
-            db.assignment_grade.update_or_insert((db.assignment_grade.section_id==1)& (db.assignment_grade.assignment_id==1)& (db.assignment_grade.user_id==id), grade=10, assignment_comment='')
+            db.assignment_grade.update_or_insert((db.assignment_grade.section_id==section_id) & (db.assignment_grade.assignment_id==hw.id)  & (db.assignment_grade.user_id==id), section_id=section_id, assignment_id=hw.id, grade=grade,  user_id=id, assignment_comment='')
 
 
     return response.json(students)
@@ -74,4 +73,3 @@ def addhw():
 def addgrade():
     grid = SQLFORM.smartgrid(db.assignment_grade)
     return dict(grid=grid)
-
