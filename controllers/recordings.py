@@ -20,7 +20,7 @@ def view():
     video_id = request.args(0,cast=int)
     video = db(db.recording.id==video_id).select().first()
     section_id = video.course_id
-    if not is_user_student(section_id) or not is_user_teacher(section_id):
+    if not is_user_student(section_id) and not is_user_teacher(section_id):
         redirect(URL('default','section', args=section_id))
     return dict(video=video)
 
