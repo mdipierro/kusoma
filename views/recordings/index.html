@@ -2,7 +2,12 @@
 
 <h1>Class recordings for section {{=section.name}}</h1>
 
+{{if is_teacher:}}
+    <h2>Make a new recording</h2>
+    <p>You are a teacher in this section, so we are eventually going to add a button here for you to create a new recording...</p>
+{{pass}}
 {{if videos:}}
+    <h2>Recordings</h2>
     {{for video in videos:}}
         <p><iframe width="420" height="315" src="//www.youtube.com/embed/{{=video.youtube_id}}" frameborder="0" allowfullscreen></iframe></p>
     {{pass}}
