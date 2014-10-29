@@ -1,9 +1,13 @@
 {{extend 'layout.html'}}
 
+
 <h1>
 LMS Themes
 </h1>
 
-<p>
-  {{=themes}}
-</p>
+
+<table>
+  {{for row in rows:}}
+  <a href="{{=URL('redirect', args=row.URL)}}">{{=row.name}}</a></br>
+  {{pass}}
+</table>
