@@ -43,9 +43,8 @@
        HTML5 elements & feature detects -->
   <script src="{{=URL('static','js/modernizr.custom.js')}}"></script>
 
-  {{layout_sheet = session.current_theme
-  print layout_sheet
-  }}
+  <!-- Get our current css layout theme from session object-->
+  {{layout_sheet = session.current_theme}}
 
   <!-- include stylesheets -->
   {{
