@@ -78,7 +78,7 @@ def add_group_chat_message(message, group_chat_session_id, user_id=auth.user_id)
                                  to_session_id=group_chat_session_id)
     db.commit();
 
-def add_user_grou_chat_settings(user_id=request.now, use_microphone=False, use_web_camera=False):
+def add_user_group_chat_settings(user_id=request.now, use_microphone=False, use_web_camera=False):
     """
     Sets up passed in user's group chat preferences.
     """
