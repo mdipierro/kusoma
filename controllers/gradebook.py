@@ -29,7 +29,7 @@ def teacher():
     for st in student:
         st.score = get_grades_student(section_id, st.auth_user.id)
 
-    return dict(role="Teacher", users=student, names=student[0].score)
+    return dict(section_id=section_id, users=student, names=student[0].score)
 
 @auth.requires_login()
 def student():
@@ -44,18 +44,21 @@ def savedata():
     import gluon.contrib.simplejson
 
     students = gluon.contrib.simplejson.loads(request.body.read())
-
     section_id = request.args(0, cast=int)
+    hws = get_homework_section(section_id)
     print section_id
     for student in students['data']:
         id=student['id']
-        hws = get_homework_section(section_id)
-        for hw in hws:
-            grade = student[hw.name]
-            print id, hw.name, section_id, grade
 
-            #db.assignment_grade.update_or_insert((db.assignment_grade.section_id==1)& (db.assignment_grade.assignment_id==1)& (db.assignment_grade.user_id==id), grade=10, assignment_comment='')
-            db.assignment_grade.update_or_insert((db.assignment_grade.section_id==1)& (db.assignment_grade.assignment_id==1)& (db.assignment_grade.user_id==id), grade=10, assignment_comment='')
+        for hw in hws:
+            homeworks = student["hw"]
+            grade = homeworks[str(hw.id)]
+            print grade
+            if grade:
+                db.assignment_grade.update_or_insert((db.assignment_grade.section_id==section_id)&(db.assignment_grade.assignment_id==hw.id)&(db.assignment_grade.user_id==id),section_id=section_id, assignment_id=hw.id, user_id=id, grade=grade, assignment_comment='')
+            pass
+
+          #  db.assignment_grade.update_or_insert((db.assignment_grade.section_id==1)& (db.assignment_grade.assignment_id==1)& (db.assignment_grade.user_id==id), grade=10, assignment_comment='')
 
 
     return response.json(students)
