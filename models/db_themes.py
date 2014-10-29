@@ -17,13 +17,14 @@ db.define_table('theme',
 
 if db(db.theme).isempty():
     db.theme.insert(name="Light Theme", 
-                        URL = URL('static', 'css/bootstrap-light.min.css'))
+                        URL = 'css/bootstrap-light.min.css')
     db.theme.insert(name="Dark Theme",
-                        URL = URL('static', 'css/bootstrap-dark.min.css'))
+                        URL = 'css/bootstrap-dark.min.css')
     db.theme.insert(name="Default",
-                        URL = URL('static', 'css/bootstrap-dark.min.css'))
+                        URL = 'css/bootstrap-dark.min.css')
 
 if not session.current_theme:
     rows = db(db.theme.name=="Default").select()
-    session.current_theme = rows[0].URL
+    session.current_theme = URL('static', rows[0].URL)
+
 
