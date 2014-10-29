@@ -4,15 +4,20 @@
 <h4>{{=section.name}} - {{=auth.user.first_name}} {{=auth.user.last_name}}</h4>
 <table class="table">
   <tr>
-        <th>Assignment</th>	
-	<th>Score</th>
+    <th>Assignment</th>	
+    <th>Grade</th>
   </tr>
   {{for g in student_grades:}}
   <tr>
         <td>{{=g.homework.name}}</td>
-        <td>{{=g.homework.course_section}}</td>
+        <td>
+        {{if g.assignment_grade.grade:}}
+            {{=g.assignment_grade.grade}}
+        {{else:}}
+            
+        {{pass}}
+        </td>
   <tr>
   {{pass}}
  </table>
 {{pass}}
-
