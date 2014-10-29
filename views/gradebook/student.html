@@ -12,9 +12,9 @@
         <td>{{=g.homework.name}}</td>
         <td>
         {{if g.assignment_grade.grade:}}
-            {{=g.assignment_grade.grade}}
+            {{=g.assignment_grade.grade}} / {{=g.homework.points}}
         {{else:}}
-            
+            - / {{=g.homework.points}}
         {{pass}}
         </td>
   <tr>
