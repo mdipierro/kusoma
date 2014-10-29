@@ -29,9 +29,7 @@ def get_all_students(section_id):
 
 def get_grades_student(section_id, student_id):
     query = (db.homework.course_section==section_id)
-    leftJoin = db.assignment_grade.on((db.homework.id==db.assignment_grade.assignment_id) & (db.assignment_grade.user_id==student_id))
-
-    return db(query).select(left=leftJoin, orderby=db.homework.assignment_order)
+    return db(query).select(left=db.assignment_grade.on(db.homework.id==db.assignment_grade.assignment_id &(db.assignment_grade.user_id==student_id)), orderby=db.homework.assignment_order)
 
 def get_homework_section(section_id):
     query = (db.homework.course_section==section_id)

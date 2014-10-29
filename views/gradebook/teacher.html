@@ -2,8 +2,8 @@
 
 
 <h1>Welcome to Grade Interface</h1>
-<a class="btn btn-primary" href="{{=URL('student',args=section_id)}}"> Student</a>
-
+<a class="btn btn-primary" href="{{=URL('student',args=1)}}"> Student</a>
+<h4>{{=role}}</h4>
 
 
 
@@ -19,18 +19,15 @@
  {{for row in users:}}
      {
        id:  '{{=row.auth_user.id }}',
-       name: '{{=row.auth_user.first_name  + " " + row.auth_user.last_name}}',
-       hw: {
-             {{for hw in row.score:}}
-                 '{{=hw.homework.id}}':{{if hw.assignment_grade.grade:}}
-                                            '{{=hw.assignment_grade.grade}}'
-                                    {{else:}}
-                                            ''
-                                    {{pass}}
-            ,
-
-            {{pass}}
-        }
+       name: '{{=row.auth_user.first_name  + " " + row.auth_user.last_name}}'
+        {{for hw in row.score:}}
+            ,{{=hw.homework.name}}:
+                    {{if hw.assignment_grade.grade:}}
+                        '{{=hw.assignment_grade.grade}}'
+                    {{else:}}
+                        ''
+                    {{pass}}
+        {{pass}}
       },
   {{pass}}
   ];
@@ -39,29 +36,20 @@
 
   $('#dataTable').handsontable({
     data: data,
+    colHeaders: ['id', 'name'{{for n in names:}},'{{=n.homework.name}}'{{pass}}],
     columnSorting: true,
     contextMenu: true,
     currentRowClassName: 'currentRow',
     currentColClassName: 'currentCol',
     fixedColumnsLeft: 2,
+    rowHeaders: true,
     cells: function (row, col, prop) {
         var cellProperties = {}
         if(col === 0 ||col === 1  ) {
           cellProperties.readOnly = true;
         }
         return cellProperties;
-    },
-    colHeaders: true,
-    columns: [
-      {data: "id"},
-      {data: "name"}
-        {{for hw in names:}}
-       ,{
-            data: "hw.{{=hw.homework.id}}", title: "{{=hw.homework.name}}"
-        }
-
-        {{pass}}
-    ],
+      }
   });
 
  var $console = $("#example1console");
@@ -69,7 +57,7 @@
 
     $("button[name='save']").click(function () {
       $.ajax({
-        url: "{{=URL('savedata',args=section_id)}}",
+        url: "{{=URL('savedata',args=1)}}",
         data: JSON.stringify({"data": handsontable.getData()}), //returns all cells' data
         dataType: 'json',
         type: 'POST',
