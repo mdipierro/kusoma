@@ -46,21 +46,46 @@
     fixedColumnsLeft: 2,
     cells: function (row, col, prop) {
         var cellProperties = {}
-        if(col === 0 ||col === 1  ) {
-          cellProperties.readOnly = true;
-        }
+//        if(col === 0 ||col === 1  ) {
+//          cellProperties.readOnly = true;
+//        }
         return cellProperties;
     },
     colHeaders: true,
     columns: [
-      {data: "id"},
-      {data: "name"}
+      { data: "id",
+        readOnly:true
+      },
+      {
+          data: "name",
+          readOnly:true
+      }
         {{for hw in names:}}
        ,{
-            data: "hw.{{=hw.homework.id}}", title: "{{=hw.homework.name}}"
+            data: "hw.{{=hw.homework.id}}"
+            ,title: "{{=hw.homework.name}}"
+            ,tp: "{{=hw.homework.points}}}"
+            ,type: 'numeric'
+            ,format: '0,0'
+            ,allowInvalid: false
         }
 
         {{pass}}
+      ,{
+            data: "total",
+            title:"computed Grade",
+            readOnly:true,
+            renderer:calGrad
+      },{
+            data: "total1",
+            title:"Final Grade",
+            readOnly:false
+      }
+      ,{
+            data: "comment",
+            title:"Comment",
+            width:300
+      }
     ],
   });
 
@@ -87,5 +112,31 @@
         }
       });
     });
+
+    function calGrad(instance, td, row, col, prop, value, cellProperties)
+    {
+
+        var studentHWs = $('#dataTable').data('handsontable').getDataAtRowProp(row, "hw");
+        var earnedPoints = 0;
+        {{point =0}}
+            {{for hw in row.score:}}
+                {{point += hw.homework.points}}
+             {{pass}}
+        var totalAvailablePoints = {{=point}};
+
+        for (var key in studentHWs ) {
+          if (studentHWs.hasOwnProperty(key)) {
+
+              if ( studentHWs[key])
+                earnedPoints += parseInt(studentHWs[key]);
+          }
+        }
+
+        value = (earnedPoints/totalAvailablePoints) * 100;
+        value = Math.round(value*100)/100;
+
+        Handsontable.renderers.TextRenderer.apply(this, arguments);
+    }
+
 
 </script>
