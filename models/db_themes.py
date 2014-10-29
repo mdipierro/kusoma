@@ -21,7 +21,7 @@ if db(db.theme).isempty():
     db.theme.insert(name="Dark Theme",
                         URL = 'css/bootstrap-dark.min.css')
     db.theme.insert(name="Default",
-                        URL = 'css/bootstrap-dark.min.css')
+                        URL = 'css/bootstrap-responsive.min.css')
 
 if not session.current_theme:
     rows = db(db.theme.name=="Default").select()
