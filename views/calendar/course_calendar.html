@@ -1,5 +1,6 @@
 {{import HTMLParser}}
-<{{mport cgi}}
+{{import cgi}}
+{{from gluon.serializers import json}}
 
 {{extend 'layout.html'}}
 
@@ -8,13 +9,27 @@
 <script src="../static/js/lms299calendar.js"></script>
 <script>
 	$(document).ready(function() {
+        $(function() {
+            $( "#courses" ).selectmenu();
+        });
+        {{if session.selectedCourse:}}
 	    $('#calendar').lmsCalendar({
-            events: '{{=courseEventsJSON}}'
-
+            events: {{=XML(json(selectedCourseEvents))}}
 	    });
+        {{pass}}
 	});
 </script>
-<div id="calendar"></div>
-{{=session}}
 
-// try cgi.unescape({{=courseEventsJSON}});
+<label for="courses">Select a course to view</label>
+<select name="courses" id="courses">
+    {{for course in myCourses:}}
+        <option>{{=course.name}}</option>
+    {{pass}}
+</select>
+
+<div id="calendar"></div>
+{{=myCourses}}
+
+{{=rows}}
+
+{{=selectedCourseEvents}}
