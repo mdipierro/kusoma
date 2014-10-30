@@ -50,6 +50,7 @@ db.define_table(
     Field('allDay', 'boolean', default=False),          ## FC Event field
     Field('url'),                                       ## FC Event field
     Field('visibility', 'reference event_visibility'),
+    Field('course_id', 'reference course'),
     auth.signature,
     format='%(title)s')
 db.cal_event.id.readable = db.cal_event.id.writable = False
@@ -60,10 +61,10 @@ db.cal_event.owner_id.readable = db.cal_event.owner_id.writable = False
 #    This table maps courses to events.
 #
 ################################################################################
-db.define_table(
-    'course_event',
-    Field('course_id', 'reference course'),
-    Field('event_id', 'reference cal_event'))
+#db.define_table(
+#    'course_event',
+#    Field('course_id', 'reference course'),
+#    Field('event_id', 'reference cal_event'))
 # db.course_event.id.readable = db.course_event.id.writable = False
 
 #########################
@@ -110,6 +111,27 @@ def my_events(start_date, end_date):
     """
     try:
         query = ((db.cal_event.owner_id == auth.user.id) &
+                 (db.cal_event.visibility == db.event_visibility.id) &
+                 (db.cal_event.start_date >= start_date) &
+                 ((db.cal_event.end_date == None) | (db.cal_event.end_date <= end_date)))
+        fields = [db.cal_event.id,
+                  db.cal_event.owner_id,
+                  db.cal_event.title,
+                  db.cal_event.details,
+                  db.cal_event.start_date,
+                  db.cal_event.end_date,
+                  db.event_visibility.visibility,
+                  db.cal_event.visibility]
+    except:
+        return
+    return _get_events_json(query, fields)
+
+def course_events(start_date, end_date, course_id):
+    """
+    Events for the selected-course-in user.
+    """
+    try:
+        query = ((db.cal_event.course_id == course_id) &
                  (db.cal_event.visibility == db.event_visibility.id) &
                  (db.cal_event.start_date >= start_date) &
                  ((db.cal_event.end_date == None) | (db.cal_event.end_date <= end_date)))
