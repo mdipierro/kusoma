@@ -4,6 +4,7 @@
 @auth.requires_login()
 def index():
     section_id = request.args(0,cast=int)
+    add_section_menu(section_id)
     section=db(db.course_section.id == section_id).select().first()
     if not section: redirect(URL('default','index'))
     
