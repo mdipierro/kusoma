@@ -69,4 +69,4 @@ def course_calendar():
     #
     # The view will use the json object as a datasource for fullcalendar and display the events
     #return dict(courseEventsJSON=courseEventsJSON)
-    return dict(courseEventsJSON = courseEventsJSON, courseEventList = courseEventList)
+    return dict(courseEventsJSON = courseEventsJSON, session = session)

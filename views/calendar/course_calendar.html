@@ -1,4 +1,5 @@
 {{import HTMLParser}}
+<{{mport cgi}}
 
 {{extend 'layout.html'}}
 
@@ -8,9 +9,12 @@
 <script>
 	$(document).ready(function() {
 	    $('#calendar').lmsCalendar({
-	    	height: 500,
             events: '{{=courseEventsJSON}}'
+
 	    });
 	});
 </script>
 <div id="calendar"></div>
+{{=session}}
+
+// try cgi.unescape({{=courseEventsJSON}});
