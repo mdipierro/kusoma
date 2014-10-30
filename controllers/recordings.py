@@ -6,6 +6,9 @@ def index():
     section_id = request.args(0,cast=int)
     section=db(db.course_section.id == section_id).select().first()
     if not section: redirect(URL('default','index'))
+        
+    add_section_menu(section_id)
+        
     videos = db(db.recording.course_id==section_id).select()
     if is_user_student(section_id):
         is_teacher=False
