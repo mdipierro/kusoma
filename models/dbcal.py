@@ -1,3 +1,4 @@
+'''
 ####################################################################################################
 # dbcal.py
 #
@@ -165,3 +166,4 @@ if db(db.event_visibility).isempty():
 #         populate(db.auth_user, 5)
 #     if db(db.cal_event).isempty():
 #         populate(db.cal_event, 10)
+'''
