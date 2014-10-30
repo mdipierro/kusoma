@@ -36,7 +36,7 @@
   <link rel="apple-touch-icon" href="{{=URL('static','images/favicon.png')}}">
     
   <!-- Bootstrap core CSS -->
-  <link href="http://getbootstrap.com/dist/css/bootstrap.min.css" rel="stylesheet">
+  <!-- link href="http://getbootstrap.com/dist/css/bootstrap.min.css" rel="stylesheet" -->
   
   
   <!-- All JavaScript at the bottom, except for Modernizr which enables
@@ -101,19 +101,6 @@
 
   <div class="container">
     <!-- Masthead ================================================== -->
-    <header class="mastheader row" id="header">
-      {{if response.title:}}
-        <div class="span12">
-            <div class="page-header">
-                <h1>
-                    {{=response.title}}
-                    <small>{{=response.subtitle or ''}}</small>
-                </h1>
-            </div>
-        </div>
-	{{pass}}
-    </header>
-
     <section id="main" class="main row">
         {{if left_sidebar_enabled:}}
         <div class="span3 left-sidebar">
