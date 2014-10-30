@@ -27,9 +27,9 @@ def teacher():
     student = get_all_students(section_id)
 
     for st in student:
-        st.score = get_grades_student(section_id, st.auth_user.id)
+        st.hws = get_grades_student(section_id, st.auth_user.id)
 
-    return dict(section_id=section_id, users=student, names=student[0].score)
+    return dict(section_id=section_id, users=student, names=student[0].hws)
 
 @auth.requires_login()
 def student():

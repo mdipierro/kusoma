@@ -21,7 +21,7 @@
        id:  '{{=row.auth_user.id }}',
        name: '{{=row.auth_user.first_name  + " " + row.auth_user.last_name}}',
        hw: {
-             {{for hw in row.score:}}
+             {{for hw in row.hws:}}
                  '{{=hw.homework.id}}':{{if hw.assignment_grade.grade:}}
                                             '{{=hw.assignment_grade.grade}}'
                                     {{else:}}
@@ -119,7 +119,7 @@
         var studentHWs = $('#dataTable').data('handsontable').getDataAtRowProp(row, "hw");
         var earnedPoints = 0;
         {{point =0}}
-            {{for hw in row.score:}}
+            {{for hw in row.hws:}}
                 {{point += hw.homework.points}}
              {{pass}}
         var totalAvailablePoints = {{=point}};
