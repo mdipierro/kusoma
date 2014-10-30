@@ -24,12 +24,13 @@ def teacher():
     response.files.insert(0,URL('static','css/grading.css'))
 
     session.flash = 'Welcome Teacher'
-    student = get_all_students(section_id)
+    students = get_all_students(section_id)
 
-    for st in student:
+    for st in students:
         st.hws = get_grades_student(section_id, st.auth_user.id)
+        st.final = get_final_grade(section_id, st.auth_user.id).first()
 
-    return dict(section_id=section_id, users=student, names=student[0].hws)
+    return dict(section_id=section_id, users=students, names=students.first().hws)
 
 @auth.requires_login()
 def student():
@@ -46,14 +47,15 @@ def savedata():
     students = gluon.contrib.simplejson.loads(request.body.read())
     section_id = request.args(0, cast=int)
     hws = get_homework_section(section_id)
-    print section_id
     for student in students['data']:
         id=student['id']
+        final = student['final']
+        comment = student['comment']
+        db.course_grade.update_or_insert((db.course_grade.section_id==section_id) &(db.course_grade.auth_user==id),section_id=section_id,auth_user=id,grade=final,teacher_comment=comment)
 
         for hw in hws:
             homeworks = student["hw"]
             grade = homeworks[str(hw.id)]
-            print grade
             if grade:
                 db.assignment_grade.update_or_insert((db.assignment_grade.section_id==section_id)&(db.assignment_grade.assignment_id==hw.id)&(db.assignment_grade.user_id==id),section_id=section_id, assignment_id=hw.id, user_id=id, grade=grade, assignment_comment='')
             pass
