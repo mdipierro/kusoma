@@ -1,16 +1,7 @@
 {{extend 'layout.html'}}
-<<<<<<< HEAD
-<!--Coding with reference from web2py manual wiki example  -->
-<h1>This is the wiki test page</h1>
-[ {{=A('search', _href=URL('wikisearch'))}} ]<br />
-<!-- <ul>{{for page in pages:}}
-     {{=LI(A(page.title, _href=URL('show', args=page.id)))}}
-{{pass}}</ul> -->
-=======
 <h1>Available wiki pages</h1>
 [ {{=A('search', _href=URL('wikisearch'))}} ]<br />
 <ul>{{for page in pages:}}
      {{=LI(A(page.title, _href=URL('wikishow', args=page.id)))}}
 {{pass}}</ul>
->>>>>>> 74ed9a7704d97630a4d91272c68760558305ce49
 [ {{=A('create page', _href=URL('wikicreate'))}} ]
