@@ -125,3 +125,10 @@ def calendar():
     rows = my_sections(course_id, auth.user_id)
     return dict(course=course, rows=rows, current_sections=current_sections,
                 past_sections=past_sections)
+
+################################################################################
+# DO NOT DELETE THIS!!!
+# IT NEEDS TO BE HERE FOR LOGING/REGISTRATION TO WORK!!!
+################################################################################
+def user():
+    return dict(form=auth())
