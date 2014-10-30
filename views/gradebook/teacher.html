@@ -2,8 +2,8 @@
 
 
 <h1>Welcome to Grade Interface</h1>
-<a class="btn btn-primary" href="{{=URL('index',args=1)}}"> back</a>
-<h4>{{=role}}</h4>
+<a class="btn btn-primary" href="{{=URL('student',args=section_id)}}"> Student</a>
+
 
 
 
@@ -14,32 +14,79 @@
 <div id="example1console"></div>
 
 
-
 <script>
  var data = [
  {{for row in users:}}
-
      {
        id:  '{{=row.auth_user.id }}',
        name: '{{=row.auth_user.first_name  + " " + row.auth_user.last_name}}',
-       name: '{{=row.auth_user.first_name  + " " + row.auth_user.last_name}}',
-       message:'{{=row.auth_user.student_code }}'
-     },
+       hw: {
+             {{for hw in row.score:}}
+                 '{{=hw.homework.id}}':{{if hw.assignment_grade.grade:}}
+                                            '{{=hw.assignment_grade.grade}}'
+                                    {{else:}}
+                                            ''
+                                    {{pass}}
+            ,
+
+            {{pass}}
+        }
+      },
   {{pass}}
-
-
-
   ];
+
 
 
   $('#dataTable').handsontable({
     data: data,
-    colHeaders: ['id', 'name', 'message'],
-    minSpareRows: 1,
+    columnSorting: true,
     contextMenu: true,
     currentRowClassName: 'currentRow',
     currentColClassName: 'currentCol',
-    rowHeaders: true
+    fixedColumnsLeft: 2,
+    cells: function (row, col, prop) {
+        var cellProperties = {}
+//        if(col === 0 ||col === 1  ) {
+//          cellProperties.readOnly = true;
+//        }
+        return cellProperties;
+    },
+    colHeaders: true,
+    columns: [
+      { data: "id",
+        readOnly:true
+      },
+      {
+          data: "name",
+          readOnly:true
+      }
+        {{for hw in names:}}
+       ,{
+            data: "hw.{{=hw.homework.id}}"
+            ,title: "{{=hw.homework.name}}"
+            ,tp: "{{=hw.homework.points}}}"
+            ,type: 'numeric'
+            ,format: '0,0'
+            ,allowInvalid: false
+        }
+
+        {{pass}}
+      ,{
+            data: "total",
+            title:"computed Grade",
+            readOnly:true,
+            renderer:calGrad
+      },{
+            data: "total1",
+            title:"Final Grade",
+            readOnly:false
+      }
+      ,{
+            data: "comment",
+            title:"Comment",
+            width:300
+      }
+    ],
   });
 
  var $console = $("#example1console");
@@ -47,7 +94,7 @@
 
     $("button[name='save']").click(function () {
       $.ajax({
-        url: "{{=URL('savedata',args=1)}}",
+        url: "{{=URL('savedata',args=section_id)}}",
         data: JSON.stringify({"data": handsontable.getData()}), //returns all cells' data
         dataType: 'json',
         type: 'POST',
@@ -65,5 +112,49 @@
         }
       });
     });
+
+    function calGrad(instance, td, row, col, prop, value, cellProperties)
+    {
+
+        var studentHWs = $('#dataTable').data('handsontable').getDataAtRowProp(row, "hw");
+        var earnedPoints = 0;
+        {{point =0}}
+            {{for hw in row.score:}}
+                {{point += hw.homework.points}}
+             {{pass}}
+        var totalAvailablePoints = {{=point}};
+
+        for (var key in studentHWs ) {
+          if (studentHWs.hasOwnProperty(key)) {
+
+              if ( studentHWs[key])
+                earnedPoints += parseInt(studentHWs[key]);
+          }
+        }
+
+        value = (earnedPoints/totalAvailablePoints) * 100;
+        value = Math.round(value*100)/100;
+
+
+        if (value)
+        {
+            var color;
+
+            if ( value<70)
+                color = "red";
+            else if (value<80)
+                color = "yellow";
+
+            if ( color)
+            {
+              $(td).css({
+                background: color
+              });
+            }
+        }
+
+        Handsontable.renderers.TextRenderer.apply(this, arguments);
+    }
+
 
 </script>
