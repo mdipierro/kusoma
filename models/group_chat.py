@@ -86,3 +86,10 @@ def add_user_group_chat_settings(user_id=request.now, use_microphone=False, use_
                                        use_microphone=use_microphone,
                                        use_web_camera=use_web_camera)
     db.commit();
+
+
+def get_user_group_chat_settings(user_id=request.now):
+    """
+    Retrieves a user's group chat settings.
+    """
+    return db(db.group_chat_user_settings.user_id == user_id).select()
