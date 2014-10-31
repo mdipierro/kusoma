@@ -36,18 +36,19 @@ def teacher():
     stat=[]
     for hw in hws:
         s = convert_to_list(get_assignment_by_homework(section_id, hw.id))
-        stat.append({
-            'min':numpy.min(s),
-            'max':numpy.max(s),
-            'average':numpy.average(s),
-            'median':numpy.median(s),
-            'mean':numpy.mean(s),
-            'sum':numpy.sum(s),
-            'cov':numpy.cov(s),
-            'var':numpy.var(s),
-            'std':numpy.std(s),
-            'hw':hw
-        })
+        if s:
+            stat.append({
+                'min':numpy.min(s),
+                'max':numpy.max(s),
+                'average':numpy.average(s),
+                'median':numpy.median(s),
+                'mean':numpy.mean(s),
+                'sum':numpy.sum(s),
+                'cov':numpy.cov(s),
+                'var':numpy.var(s),
+                'std':numpy.std(s),
+                'hw':hw
+            })
     return dict(section_id=section_id, users=students, names=students.first().hws, stat=stat)
 
 @auth.requires_login()
