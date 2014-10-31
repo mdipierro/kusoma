@@ -16,11 +16,6 @@ db.define_table(
 
 
 
-db.define_table(
-    'course_features',
-    Field('section_id', 'reference course_section'),
-    Field('name'),
-    Field('is_available', 'boolean', default=False))
 
 
 def get_all_students(section_id):
@@ -33,9 +28,14 @@ def get_grades_student(section_id, student_id):
 
     return db(query).select(left=leftJoin, orderby=db.homework.assignment_order)
 
+def get_final_grade(section_id, student_id):
+    query = ((db.course_grade.auth_user == student_id) & (db.course_grade.section_id == section_id))
+    return db(query).select()
+
+
 def get_homework_section(section_id):
     query = (db.homework.course_section==section_id)
-    return db(query).select();
+    return db(query).select()
 
 
 

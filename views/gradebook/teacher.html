@@ -21,16 +21,19 @@
        id:  '{{=row.auth_user.id }}',
        name: '{{=row.auth_user.first_name  + " " + row.auth_user.last_name}}',
        hw: {
-             {{for hw in row.score:}}
+             {{for hw in row.hws:}}
                  '{{=hw.homework.id}}':{{if hw.assignment_grade.grade:}}
                                             '{{=hw.assignment_grade.grade}}'
                                     {{else:}}
                                             ''
                                     {{pass}}
             ,
-
             {{pass}}
-        }
+        },
+       total:'',
+       final:'{{if row.final:}} {{=row.final.grade}} {{pass}}',
+       comment:'{{if row.final:}} {{=row.final.teacher_comment}} {{pass}}'
+
       },
   {{pass}}
   ];
@@ -77,7 +80,7 @@
             readOnly:true,
             renderer:calGrad
       },{
-            data: "total1",
+            data: "final",
             title:"Final Grade",
             readOnly:false
       }
@@ -119,7 +122,7 @@
         var studentHWs = $('#dataTable').data('handsontable').getDataAtRowProp(row, "hw");
         var earnedPoints = 0;
         {{point =0}}
-            {{for hw in row.score:}}
+            {{for hw in row.hws:}}
                 {{point += hw.homework.points}}
              {{pass}}
         var totalAvailablePoints = {{=point}};
