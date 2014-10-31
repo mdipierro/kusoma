@@ -30,7 +30,25 @@ def teacher():
         st.hws = get_grades_student(section_id, st.auth_user.id)
         st.final = get_final_grade(section_id, st.auth_user.id).first()
 
-    return dict(section_id=section_id, users=students, names=students.first().hws)
+
+    import numpy
+    hws = get_homework_section(section_id)
+    stat=[]
+    for hw in hws:
+        s = convert_to_list(get_assignment_by_homework(section_id, hw.id))
+        stat.append({
+            'min':numpy.min(s),
+            'max':numpy.max(s),
+            'average':numpy.average(s),
+            'median':numpy.median(s),
+            'mean':numpy.mean(s),
+            'sum':numpy.sum(s),
+            'cov':numpy.cov(s),
+            'var':numpy.var(s),
+            'std':numpy.std(s),
+            'hw':hw
+        })
+    return dict(section_id=section_id, users=students, names=students.first().hws, stat=stat)
 
 @auth.requires_login()
 def student():
@@ -56,18 +74,14 @@ def savedata():
         for hw in hws:
             homeworks = student["hw"]
             grade = homeworks[str(hw.id)]
-            if grade:
+
+            if grade > -1:
                 db.assignment_grade.update_or_insert((db.assignment_grade.section_id==section_id)&(db.assignment_grade.assignment_id==hw.id)&(db.assignment_grade.user_id==id),section_id=section_id, assignment_id=hw.id, user_id=id, grade=grade, assignment_comment='')
             pass
 
           #  db.assignment_grade.update_or_insert((db.assignment_grade.section_id==1)& (db.assignment_grade.assignment_id==1)& (db.assignment_grade.user_id==id), grade=10, assignment_comment='')
-
-
+    session.flash = "Data Saved"
     return response.json(students)
-
-
-
-
 
 
 @auth.requires_login()
