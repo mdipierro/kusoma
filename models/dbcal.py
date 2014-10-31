@@ -48,7 +48,7 @@ db.define_table(
     Field('start_date', 'datetime', requires=NE),       ## FC Event field
     Field('end_date', 'datetime'),                      ## FC Event field
     Field('allDay', 'boolean', default=False),          ## FC Event field
-    Field('url'),                                       ## FC Event field
+    Field('url', requires=IS_URL()),                    ## FC Event field
     Field('visibility', 'reference event_visibility'),
     Field('course_id', 'reference course'),
     auth.signature,
