@@ -57,6 +57,7 @@ def teacher():
 def student():
     session.flash = "Welcome %s %s" % (auth.user.first_name, auth.user.last_name)
     section_id = request.args(0, cast=int)
+    add_section_menu(section_id)
     section = db.course_section(section_id)
     student_grades = get_grades_student(section_id, auth.user.id)
     
