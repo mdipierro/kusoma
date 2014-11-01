@@ -1,5 +1,5 @@
 {{extend 'layout.html'}}
-
+{{block head}}
 <script src="{{=URL('static', 'js/moment.min.js')}}" ></script>
 <script src="{{=URL('static', 'js/fullcalendar.js')}}" ></script>
 <script src="{{=URL('static', 'js/lms299calendar.js')}}"></script>
@@ -16,4 +16,7 @@
 	    });
 	});
 </script>
+{{end}}
+
+<h3>Calendar</h3>
 <div id="calendar"></div>
