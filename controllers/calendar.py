@@ -65,8 +65,10 @@ def course_calendar():
     if selectedCourse:
         query = db.course_section.name == selectedCourse
         rows = db(query).select()
-        if is_user_student(rows[0].id) or is_user_teacher(rows[0].id):
-            selectedCourseEvents = course_events(datetime.date.min, datetime.date.max, rows[0].course.id)
-        else:
+        if len(rows) == 0:
+            response.flash = 'Course section is not valid'
+        elif not is_user_student(rows[0].id) and not is_user_teacher(rows[0].id):
             response.flash = 'You are not authorized to view the events for this course section'
+        else:
+            selectedCourseEvents = course_events(datetime.date.min, datetime.date.max, rows[0].course.id)
     return dict(myCourses = my_sections(), rows = rows, selectedCourseEvents = selectedCourseEvents, selectedCourse = selectedCourse)
