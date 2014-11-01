@@ -82,4 +82,8 @@
    {{pass}}
   <tr>
  </table>
+<h5> Teacher's feedback on course performance</h5>
+{{for gr in grade_record:}}
+    <h7>{{=gr.teacher_comment}}</h7>
+{{pass}}
 {{pass}}

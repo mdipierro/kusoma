@@ -60,7 +60,7 @@ def student():
     add_section_menu(section_id)
     section = db.course_section(section_id)
     student_grades = get_grades_student(section_id, auth.user.id)
-    
+    grade_record = get_final_grade(section_id, auth.user.id)    
     import numpy
     hws = get_homework_section(section_id)
 
@@ -81,7 +81,7 @@ def student():
                 'hw':hw
             })
 
-    return dict(student_grades=student_grades, section=section, stat=stat)
+    return dict(student_grades=student_grades, section=section, stat=stat, grade_record=grade_record)
 
 @auth.requires_login()
 def savedata():
