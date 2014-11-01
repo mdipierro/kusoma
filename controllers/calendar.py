@@ -15,6 +15,7 @@ def calendar():
     return dict()
 
 @auth.requires_login()
+#@auth.requires(db.auth_user.is_teacher or db.auth_user.is_administrator)   NOT YET TESTED 
 def create_event():
     # Display a form the user can use to create a new event.
     #
@@ -23,7 +24,13 @@ def create_event():
     # When the event is created in db.cal_event, a record is also created in db.course_event
     # where the course_id is the course that the user selected and the referenced event is the
     # record just created in db.cal_event
-    form = SQLFORM(db.cal_event).process(next=URL('calendar'))
+    form = SQLFORM(db.cal_event).process()
+    if form.accepted:
+        response.flash = 'Event created successfully'
+    elif form.errors:
+        response.flash = 'Form has some error, REVIEW please !'
+    else :
+        response.flash = 'Please fill in the form !'
     return dict(form=form)
 
 @auth.requires_login()
