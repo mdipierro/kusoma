@@ -51,10 +51,15 @@ def course_calendar():
     # use course picker list to select a course
     # With the given course ID, query all of the events related to that course
     #
-    session.selectedCourse = 'CSC205-701'
-    if session.selectedCourse:
-        query = db.course_section.name == session.selectedCourse
-        rows = db(query).select()
-        selectedCourseEvents = course_events(datetime.date.min, datetime.date.max, rows[0].course.id)
     # The view will use the object as a datasource for fullcalendar and display the events
-    return dict(session = session, selectedCourseEvents = selectedCourseEvents, myCourses = my_sections(), rows = rows)
+    selectedCourse = request.vars.selectedCourse
+    rows = ''
+    selectedCourseEvents = ''
+    if selectedCourse:
+        query = db.course_section.name == selectedCourse
+        rows = db(query).select()
+        if is_user_student(rows[0].id) or is_user_teacher(rows[0].id):
+            selectedCourseEvents = course_events(datetime.date.min, datetime.date.max, rows[0].course.id)
+        else:
+            response.flash = 'You are not authorized to view the events for this course section'
+    return dict(myCourses = my_sections(), rows = rows, selectedCourseEvents = selectedCourseEvents, selectedCourse = selectedCourse)
