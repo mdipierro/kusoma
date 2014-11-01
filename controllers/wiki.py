@@ -37,3 +37,14 @@ def wikiedit():
      form = SQLFORM(db.wikipage, this_page).process(
          next = URL('show',args=request.args))
      return dict(form=form)
+
+
+
+@auth.requires_login()
+def wikidocuments():
+     """browser, edit all documents attached to a certain page"""
+     page = db.wikipage(request.args(0,cast=int)) or redirect(URL('wiki'))
+     db.wikidocument.page_id.default = page.id
+     db.wikidocument.page_id.writable = False
+     grid = SQLFORM.grid(db.wikidocument.page_id==page.id,args=[page.id])
+     return dict(page=page, grid=grid)
