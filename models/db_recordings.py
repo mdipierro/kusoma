@@ -18,8 +18,8 @@ db.define_table('recording',
     )
 
 #Some sample videos for testing
-db.recording.truncate()
-db.recording.insert(youtube_id='M5IPlMe83yI',course_id=1,recorder=1)
-db.recording.insert(youtube_id='iMUX9NdN8YE',course_id=1,recorder=1)
-db.recording.insert(youtube_id='-eztsQogulk',course_id=1,recorder=1)
-db.recording.insert(youtube_id='VTJFvi0L-MI',course_id=1,recorder=1)
+if db(db.recording).isempty():
+    db.recording.insert(youtube_id='M5IPlMe83yI',course_id=1,recorder=1)
+    db.recording.insert(youtube_id='iMUX9NdN8YE',course_id=1,recorder=1)
+    db.recording.insert(youtube_id='-eztsQogulk',course_id=1,recorder=1)
+    db.recording.insert(youtube_id='VTJFvi0L-MI',course_id=1,recorder=1)
