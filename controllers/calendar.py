@@ -4,10 +4,10 @@ import datetime
 
 @auth.requires_login()
 def index():
-    # start = request.args(0)
-    # end = request.args(1)
+    # start = first_of_month().strftime('%Y-%m-%d')
+    # end = last_of_month().strftime('%Y-%m-%d')
     # params = {'start': start, 'end': end}
-    # return dict(form=my_events(), params=params)
+    # return dict(form=my_events(start, end), params=params)
     return dict()
 
 @auth.requires_login()
