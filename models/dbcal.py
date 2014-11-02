@@ -57,8 +57,11 @@ db.define_table(
 db.cal_event.id.readable = db.cal_event.id.writable = False
 db.cal_event.owner_id.readable = db.cal_event.owner_id.writable = False
 
+class DATE_DEFAULT(object):
+    start = 0
+    end = 1
+
 # We use auth.user_id because it doesn't throw an exception when noone is logged in.
-DATE_DEFAULTS = ['start', 'end']
 PERSONAL_EVENTS = (db.cal_event.owner_id == auth.user_id)
 PUBLIC_EVENTS = (db.event_visibility.visibility=='public')
 MY_EVENTS = (PERSONAL_EVENTS | PUBLIC_EVENTS)
@@ -112,18 +115,18 @@ def COURSE_EVENTS(course_id):
 
 def add_event(title, visibility, owner=auth.user_id, details='',
               start_date=date.today(), end_date=None, all_date=False, url=None, course_id=None):
-    """
-    Add a new event to the table.
-    """
+    """Add a new event to the table."""
     from datetime import datetime
-    if start_date:
-        start = datetime.strptime(start_date, DATE_FORMAT)
-    else:
-        start = _first_of_month()
-    if end_date:
-        end = datetime.strptime(end_date, DATE_FORMAT)
-    else:
-        end = None
+    # if start_date & (type(start_date) is StringType):
+    #     start = datetime.strptime(start_date, DATE_FORMAT)
+    # else:
+    #     start = _first_of_month()
+    # if end_date:
+    #     end = datetime.strptime(end_date, DATE_FORMAT)
+    # else:
+    #     end = None
+    start = _convert_string_to_date(start_date, default=DATE_DEFAULT.start)
+    end = _convert_string_to_date(end_date, default=DATE_DEFAULT.end)
     db.cal_event.insert(ower_id=owner,
                         title=title,
                         details=details,
@@ -134,19 +137,33 @@ def add_event(title, visibility, owner=auth.user_id, details='',
                         visibility=visibility,
                         course_id=course_id)
 
+def update_event(event_id, user_id=auth.user_id):
+    """Update the given event."""
+    # Check if the user is the owner of the event.
+    # If not, don't allow them to update it.
+    pass
+
+def delete_event(event_id, user_id=auth.user_id):
+    """Delete the given event."""
+    # Check if the user is the owner of the event.
+    # If not, don't allow them to delete it.
+    pass
+
 def my_events(start_date, end_date, json=False):
     """
     Events for the logged-in user.
     """
     from datetime import datetime
-    if start_date:
-        start = datetime.strptime(start_date, DATE_FORMAT)
-    else:
-        _first_of_month()
-    if end_date:
-        end = datetime.strptime(end_date, DATE_FORMAT)
-    else:
-        end = _last_of_month()
+    # if start_date & (type(start_date) is StringType):
+    #     start = datetime.strptime(start_date, DATE_FORMAT)
+    # else:
+    #     _first_of_month()
+    # if end_date:
+    #     end = datetime.strptime(end_date, DATE_FORMAT)
+    # else:
+    #     end = _last_of_month()
+    start = _convert_string_to_date(start_date, default=DATE_DEFAULT.start)
+    end = _convert_string_to_date(end_date, default=DATE_DEFAULT.end)
     try:
         query = (MY_EVENTS &
                  IS_IN_DATE_RANGE(start, end) &
@@ -163,14 +180,16 @@ def course_events(start_date, end_date, course_id):
     Events for the selected-course-in user.
     """
     from datetime import datetime
-    if start_date:
-        start = datetime.strptime(start_date, DATE_FORMAT)
-    else:
-        _first_of_month()
-    if end_date:
-        end = datetime.strptime(end_date, DATE_FORMAT)
-    else:
-        end = _last_of_month()
+    # if start_date:
+    #     start = datetime.strptime(start_date, DATE_FORMAT)
+    # else:
+    #     _first_of_month()
+    # if end_date:
+    #     end = datetime.strptime(end_date, DATE_FORMAT)
+    # else:
+    #     end = _last_of_month()
+    start = _convert_string_to_date(start_date, default=DATE_DEFAULT.start)
+    end = _convert_string_to_date(end_date, default=DATE_DEFAULT.end)
     try:
         query = (COURSE_EVENTS &
                  IS_IN_DATE_RANGE(start, end) &
@@ -189,7 +208,7 @@ def course_events(start_date, end_date, course_id):
         #           db.cal_event.visibility]
     except:
         return
-    return _get_events_json(query, fields)
+    return _get_events_json(query, EVENT_FIELDS)
 
 def _get_events(query, fields, groupby=None):
     return  db(query).select(*fields, groupby=groupby)
@@ -232,18 +251,19 @@ def _last_of_month():
 
 def _convert_string_to_date(date, default=None):
     from datetime import datetime
-    if date:
+    from types import StringType
+    if type(date) is StringType:
         return datetime.strptime(date, DATE_FORMAT)
     else:
         if default:
-            if default == DATE_DEFAULTS['start']:
+            if default == DATE_DEFAULT.start:
                 return _first_of_month()
-            elif default == DATE_DEFAULTS['end']:
+            elif default == DATE_DEFAULT.end:
                 return _last_of_month()
             else:
-                return None
+                return date
         else:
-            return None
+            return date
 
 #########################
 # Load defaults

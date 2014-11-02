@@ -9,13 +9,16 @@ uploads/
 errors/
 databases/
 
-# Do not track local logs
+# Do not track local logs.
 progress.log
 
 # Ignore unneeded python files
 **/*.pyc
 .pythonhistory
 **/__init__*
+
+# Ignore temp files.
+**/#*
 
 # personal stuff
 models/z_db_personal.py
