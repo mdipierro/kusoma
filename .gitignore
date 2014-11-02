@@ -19,6 +19,3 @@ progress.log
 
 # Ignore temp files.
 **/#*
-
-# personal stuff
-models/z_db_personal.py
