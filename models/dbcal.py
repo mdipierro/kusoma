@@ -90,7 +90,7 @@ def NO_END_DATE_OR_ENDS_BEFORE_DATE(date):
 def IS_IN_DATE_RANGE(start_date, end_date=None):
     return (STARTS_AFTER_DATE(start_date) | NO_END_DATE_OR_ENDS_BEFORE_DATE(end_date))
 
-def COURSE_EVENTS(course_id):
+def EVENTS_FOR_COURSE(course_id):
     return (db.cal_event.course_id == course_id)
 
 #########################
@@ -191,7 +191,7 @@ def course_events(start_date, end_date, course_id):
     start = _convert_string_to_date(start_date, default=DATE_DEFAULT.start)
     end = _convert_string_to_date(end_date, default=DATE_DEFAULT.end)
     try:
-        query = (COURSE_EVENTS &
+        query = (EVENTS_FOR_COURSE(course_id) &
                  IS_IN_DATE_RANGE(start, end) &
                  (db.cal_event.visibility == db.event_visibility.id))
         # query = ((db.cal_event.course_id == course_id) &
