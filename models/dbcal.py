@@ -270,7 +270,7 @@ if db(db.event_visibility).isempty():
 # if DEBUG:
 #     from gluon.contrib.populate import populate
 #     if db(db.auth_user).count() == 1:
-#         # auth.get_`or_create_user(first_name='Bryan',
+#         # auth.get_or_create_user(first_name='Bryan',
 #         #                         last_name='Patzke',
 #         #                         email='bryan.patzke@insignis.com',
 #         #                         password=CRYPT('bobbob'))
