@@ -4,10 +4,10 @@ import datetime
 
 @auth.requires_login()
 def index():
-    # start = request.args(0)
-    # end = request.args(1)
+    # start = first_of_month().strftime('%Y-%m-%d')
+    # end = last_of_month().strftime('%Y-%m-%d')
     # params = {'start': start, 'end': end}
-    # return dict(form=my_events(), params=params)
+    # return dict(form=my_events(start, end), params=params)
     return dict()
 
 @auth.requires_login()
@@ -24,6 +24,16 @@ def create_event():
     # where the course_id is the course that the user selected and the referenced event is the
     # record just created in db.cal_event
     form = SQLFORM(db.cal_event).process(next=URL('calendar'))
+    if form.accepts(request, session, dbio=False):
+        add_event(title=form.vars.title,
+                  details=form.vars.details,
+                  start_date=form.vars.start_date,
+                  end_date=form.vars.end_date,
+                  all_day=form.vars.all_day,
+                  url=form.vars.url,
+                  visibility=form.vars.visiblity,
+                  course_id=form.vars.course_id)
+                  
     return dict(form=form)
 
 @auth.requires_login()
