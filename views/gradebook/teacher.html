@@ -86,6 +86,16 @@
   {{pass}}
   ];
 
+var nonnegative_validator_fn = function (value, callback) {
+  setTimeout(function(){
+    if (parseFloat(value) >= 0) {
+      callback(true);
+    }
+    else {
+      callback(false);
+    }
+  }, 300);
+};
 
 
   $('#dataTable').handsontable({
@@ -116,8 +126,9 @@
             data: "hw.{{=hw.homework.id}}"
             ,title: "{{=hw.homework.name}}"
             ,tp: "{{=hw.homework.points}}}"
-            ,type: 'numeric'
+           ,type: 'numeric'
             ,format: '0,0'
+            ,validator: nonnegative_validator_fn
             ,allowInvalid: false
         }
 
@@ -206,6 +217,8 @@
 
         Handsontable.renderers.TextRenderer.apply(this, arguments);
     }
+
+
 
 
 </script>
