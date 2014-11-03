@@ -59,14 +59,13 @@ LMS299 Calendar Control
             var self = this, jsonEvents;
             self.element.addClass('lms299-calendar');
             self._container = $('<div id="lms299calendar-container"></div>').appendTo(this.element);
-            jsonEvents = $.parseJSON(self.options.events.replace(/&quot;/g,'"'));
             $('#lms299calendar-container').fullCalendar({
                 header: {
                     left:   self.options.headerLeft,
                     center: self.options.headerCenter,
                     right:  self.options.headerRight
                 },
-                events: jsonEvents,
+                events: self.options.events,
                 height: self.options.height
             });
             if (self.options.width !== '') {
