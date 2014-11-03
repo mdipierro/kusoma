@@ -88,7 +88,7 @@
 
 var nonnegative_validator_fn = function (value, callback) {
   setTimeout(function(){
-    if (parseFloat(value) >= 0) {
+    if (new String(value).valueOf() != new String("NaN").valueOf() && (!value || parseFloat(value) >= 0) )  {
       callback(true);
     }
     else {
@@ -123,10 +123,10 @@ var nonnegative_validator_fn = function (value, callback) {
       }
         {{for hw in names:}}
        ,{
-            data: "hw.{{=hw.homework.id}}"
+             data: "hw.{{=hw.homework.id}}"
             ,title: "{{=hw.homework.name}}"
             ,tp: "{{=hw.homework.points}}}"
-           ,type: 'numeric'
+            ,type: 'numeric'
             ,format: '0,0'
             ,validator: nonnegative_validator_fn
             ,allowInvalid: false
@@ -142,6 +142,8 @@ var nonnegative_validator_fn = function (value, callback) {
             data: "final",
             title:"Final Grade",
             readOnly:false
+            ,validator: nonnegative_validator_fn
+            ,allowInvalid: false
       }
       ,{
             data: "comment",
