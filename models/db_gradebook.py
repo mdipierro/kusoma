@@ -12,7 +12,7 @@ db.define_table(
     Field('section_id', 'reference course_section'),
     Field('auth_user', 'reference auth_user'),
     Field('grade'),
-    Field('teacher_comment'))
+    Field('teacher_comment', 'text'))
 
 
 def get_all_students(section_id):
