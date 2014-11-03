@@ -9,7 +9,7 @@ def index():
     return dict(rows = rows)
 
 
-def redirect():
+def theme_picked():
 
     '''
     Build the url to the css style page from arg, 
@@ -21,7 +21,14 @@ def redirect():
     css_pathname = static_subfolder + '/'  + css_filename
     session.current_theme = URL('static', css_pathname)
 
-    ### redirect in 10 seconds, or give option to go back and choose different theme
-    #redirect('http://www.google.com')
+    redirect(URL('themes', 'index'))    
 
+    return dict()
+
+def preview():
+    
+    subfolder = request.args(0)
+    filename = request.args(1)
+
+    session.preview_theme = subfolder + '/' + filename
     return dict()
