@@ -16,7 +16,7 @@ def calendar():
 
 @auth.requires_login()
 #@auth.requires(db.auth_user.is_teacher or db.auth_user.is_administrator)   NOT YET TESTED 
-def create_event():
+def create():
     # Display a form the user can use to create a new event.
     #
     # The form should allow the user to select a course.
@@ -34,7 +34,7 @@ def create_event():
     return dict(form=form)
 
 @auth.requires_login()
-def delete_event():
+def delete():
     # get a list of events that the current user created
     # display the events in a grid or a picklist
     # The user can selects an event and clicks a delete button
