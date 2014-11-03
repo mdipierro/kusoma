@@ -64,7 +64,7 @@ class DATE_DEFAULT(object):
 # We use auth.user_id because it doesn't throw an exception when noone is logged in.
 PERSONAL_EVENTS = (db.cal_event.owner_id == auth.user_id)
 PUBLIC_EVENTS = (db.event_visibility.visibility=='public')
-MY_EVENTS = (PERSONAL_EVENTS | PUBLIC_EVENTS)
+ALL_MY_EVENTS = (PERSONAL_EVENTS | PUBLIC_EVENTS)
 NO_END_DATE = (db.cal_event.end_date == None)
 EVENT_FIELDS = [db.cal_event.id,
                 db.cal_event.owner_id,
@@ -114,7 +114,7 @@ def EVENTS_FOR_COURSE(course_id):
 #########################
 
 def add_event(title, visibility, owner=auth.user_id, details='',
-              start_date=date.today(), end_date=None, all_date=False, url=None, course_id=None):
+              start_date=date.today(), end_date=None, all_day=False, url=None, course_id=None):
     """Add a new event to the table."""
     from datetime import datetime
     # if start_date & (type(start_date) is StringType):
@@ -127,7 +127,7 @@ def add_event(title, visibility, owner=auth.user_id, details='',
     #     end = None
     start = _convert_string_to_date(start_date, default=DATE_DEFAULT.start)
     end = _convert_string_to_date(end_date, default=DATE_DEFAULT.end)
-    db.cal_event.insert(ower_id=owner,
+    db.cal_event.insert(owner_id=owner,
                         title=title,
                         details=details,
                         start_date=start,
@@ -137,11 +137,23 @@ def add_event(title, visibility, owner=auth.user_id, details='',
                         visibility=visibility,
                         course_id=course_id)
 
-def update_event(event_id, user_id=auth.user_id):
+def event_update(event_id, title, owner, details, start_date, end_date, all_day, url, visibility, course_id):
     """Update the given event."""
     # Check if the user is the owner of the event.
     # If not, don't allow them to update it.
-    pass
+    query = db.cal_event.id == event_id
+    oid = db(query).select(db.calevent.id).first().id
+    if oid == auth.user_id:
+        from datetime import datetime
+        db(query).update(owner_id=owner,
+                         title=title,
+                         details=details,
+                         start_date=start,
+                         end_date=end,
+                         all_day=all_day,
+                         url=url,
+                         visibility=visibility,
+                         course_id=course_id)
 
 def delete_event(event_id, user_id=auth.user_id):
     """Delete the given event."""
@@ -150,23 +162,12 @@ def delete_event(event_id, user_id=auth.user_id):
     pass
 
 def my_events(start_date, end_date, json=False):
-    """
-    Events for the logged-in user.
-    """
+    """ Events for the logged-in user. """
     from datetime import datetime
-    # if start_date & (type(start_date) is StringType):
-    #     start = datetime.strptime(start_date, DATE_FORMAT)
-    # else:
-    #     _first_of_month()
-    # if end_date:
-    #     end = datetime.strptime(end_date, DATE_FORMAT)
-    # else:
-    #     end = _last_of_month()
     start = _convert_string_to_date(start_date, default=DATE_DEFAULT.start)
     end = _convert_string_to_date(end_date, default=DATE_DEFAULT.end)
     try:
-        query = (MY_EVENTS &
-                 IS_IN_DATE_RANGE(start, end) &
+        query = (ALL_MY_EVENTS & IS_IN_DATE_RANGE(start, end) &
                  (db.cal_event.visibility == db.event_visibility.id))
     except:
         return
@@ -180,38 +181,18 @@ def course_events(start_date, end_date, course_id):
     Events for the selected-course-in user.
     """
     from datetime import datetime
-    # if start_date:
-    #     start = datetime.strptime(start_date, DATE_FORMAT)
-    # else:
-    #     _first_of_month()
-    # if end_date:
-    #     end = datetime.strptime(end_date, DATE_FORMAT)
-    # else:
-    #     end = _last_of_month()
     start = _convert_string_to_date(start_date, default=DATE_DEFAULT.start)
     end = _convert_string_to_date(end_date, default=DATE_DEFAULT.end)
     try:
         query = (EVENTS_FOR_COURSE(course_id) &
                  IS_IN_DATE_RANGE(start, end) &
                  (db.cal_event.visibility == db.event_visibility.id))
-        # query = ((db.cal_event.course_id == course_id) &
-        #          (db.cal_event.visibility == db.event_visibility.id) &
-        #          (db.cal_event.start_date >= start_date) &
-        #          ((db.cal_event.end_date == None) | (db.cal_event.end_date <= end_date)))
-        # fields = [db.cal_event.id,
-        #           db.cal_event.owner_id,
-        #           db.cal_event.title,
-        #           db.cal_event.details,
-        #           db.cal_event.start_date,
-        #           db.cal_event.end_date,
-        #           db.event_visibility.visibility,
-        #           db.cal_event.visibility]
     except:
         return
     return _get_events_json(query, EVENT_FIELDS)
 
 def _get_events(query, fields, groupby=None):
-    return  db(query).select(*fields, groupby=groupby)
+    return db(query).select(*fields, groupby=groupby)
 
 def _get_events_json(query, fields, groupby=None):
     ############## Refactor this ##############
@@ -239,17 +220,21 @@ def _get_events_json(query, fields, groupby=None):
     return cal
 
 def _first_of_month():
-    first = datetime.date.today()
+    """Returns the first day of the current month."""
+    first = datetime.today()
     first = first.replace(day=1)
     return first
 
 def _last_of_month():
-    last = datetime.date.today()
-    last = datetime.date(last.year, last.month + 1, 1)
+    """Returns the last day of the current month."""
+    last = datetime.today()
+    last = datetime(last.year, last.month + 1, 1)
     last = last + timedelta(days=-1)
     return last
 
 def _convert_string_to_date(date, default=None):
+    """Converts a date string to a datetime object.
+       If date isn't a string, it just gets returned."""
     from datetime import datetime
     from types import StringType
     if type(date) is StringType:
