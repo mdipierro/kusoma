@@ -27,6 +27,19 @@
         <th>var</th>
         <th>std</th>
     </tr>
+        <tr>
+        <th>Enable stats for student</th>
+        <td><input data-size="mini" type="checkbox" class="checkbox-switcher" name="" /></td>
+        <td><input data-size="mini" type="checkbox" class="checkbox-switcher" name="" /></td>
+        <td><input data-size="mini" type="checkbox" class="checkbox-switcher" name="" /></td>
+        <td><input data-size="mini" type="checkbox" class="checkbox-switcher" name="" /></td>
+        <td><input data-size="mini" type="checkbox" class="checkbox-switcher" name="" /></td>
+        <td><input data-size="mini" type="checkbox" class="checkbox-switcher" name="" /></td>
+        <td><input data-size="mini" type="checkbox" class="checkbox-switcher" name="" /></td>
+        <td><input data-size="mini" type="checkbox" class="checkbox-switcher" name="" /></td>
+        <td><input data-size="mini" type="checkbox" class="checkbox-switcher" name="" /></td>
+    </tr>
+
     {{for a in stat:}}
         <tr>
             <td>{{=a['hw'].name}}</td>
@@ -48,6 +61,7 @@
 
 <script>
 
+    $(".checkbox-switcher").bootstrapSwitch();
 
  var data = [
  {{for row in users:}}

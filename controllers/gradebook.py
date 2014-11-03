@@ -23,6 +23,9 @@ def teacher():
     response.files.insert(0,URL('static','css/jquery.handsontable.full.css'))
     response.files.insert(0,URL('static','css/grading.css'))
 
+    response.files.insert(0,URL('static','js/bootstrap-switch.min.js'))
+    response.files.insert(0,URL('static','css/bootstrap-switch.min.css'))
+
     session.flash = 'Welcome Teacher'
     students = get_all_students(section_id)
 
