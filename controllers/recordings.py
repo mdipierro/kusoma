@@ -4,11 +4,11 @@
 @auth.requires_login()
 def index():
     section_id = request.args(0,cast=int)
+
     add_section_menu(section_id)
+
     section=db(db.course_section.id == section_id).select().first()
     if not section: redirect(URL('default','index'))
-    
-    add_section_menu(section_id)
     
     videos = db(db.recording.course_id==section_id).select()
     if is_user_student(section_id):
@@ -20,7 +20,7 @@ def index():
     return dict(section=section, videos=videos, is_teacher=is_teacher)
 
 @auth.requires_login()
-def add_recording():
+def update_recording():
     '''
     This is a callback function to register a new recording.
     request.args[0]= The section_id
@@ -54,5 +54,44 @@ def view():
     return dict(video=video)
 
 @auth.requires_login()
+def edit():
+    video_id = request.args(0,cast=int)
+
+    if video_id:
+        video = db(db.recording.id==video_id).select().first()
+        if not video:
+            redirect(URL('default/index'))
+
+    section_id = video.course_id
+    if is_user_teacher(section_id):
+        fields = ['name', 'is_class']
+    elif is_user_student(section_id):
+        fields = ['name']
+
+    form = SQLFORM(db.recording, fields=fields)
+    return dict(form=form)
+
+@auth.requires_login()
 def create():
-    return dict()
+    # Get section id if provided
+    section_id = request.args(0,cast=int)
+
+    # Test if current user is teacher or student for class
+    # if teacher, is_class field can be set to true
+    if is_user_teacher(section_id):
+        fields = ['name', 'is_class']
+    elif is_user_student(section_id):
+        fields = ['name']
+    else:
+        redirect(URL('section',args=section_id))
+
+    start = False
+
+    form = SQLFORM(db.recording, fields=fields)
+
+    # If form is accepted we show start a hangout button
+    # TODO add condition to verify hangout has not yet been started
+    if form.process().accepted:
+        start = True
+
+    return dict(form=form, start=start)
