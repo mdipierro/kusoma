@@ -1,6 +1,7 @@
 def index():
     return dict()
 
+@auth.requires_login()
 def course_dropbox():
     """
     Author: Curtis Weir
@@ -8,9 +9,10 @@ def course_dropbox():
     Display assignments for a course section to the user
     """
     section_id = request.args(0,cast=int)
-    if not is_user_student(section_id, auth.user_id) and not is_user_teacher(section_id, auth.user_id):
-        return dict(rejected="Permission denied. You are not in this course section.")
+    if not is_user_student(section_id) and not is_user_teacher(section_id):
+        return dict(section_id=section_id, rejected="Permission denied. You are not in this course section.")
     section = db.course_section[section_id]
+    add_section_menu(section_id)
     folders = db(db.folder.course_section == section_id).select()
     homeworks = db(db.homework.course_section == section_id).select()
     form = add_folder(section_id)
@@ -31,6 +33,27 @@ def add_folder(section_id):
     elif form.errors:
         response.flash = 'form has errors'
     return form
+
+@auth.requires_login()
+def view_submissions():
+    """
+    Author: Curtis Weir
+    Date: 10/22/14
+    Display submissions for a course section to the teacher
+    """
+    section_id = request.args(0,cast=int)
+    if not is_user_teacher(section_id):
+        return dict(section_id=section_id, rejected="Permission denied. You are not the teacher of this course section.")
+    section = db.course_section[section_id]
+    homework_id = request.args(1,cast=int)
+    homework = db.homework[homework_id]
+    submissions = (db.submission.homework == db.homework.id)
+    students = (db.submission.id_student == db.auth_user.id)
+    student_submissions = db(submissions & students).select()
+    return dict(section_id=section_id, section=section, rejected=None, student_submissions=student_submissions)
+
+def download():
+    return response.download(request, db)
 
 def uploading():
     record = db.attachment(request.args(0))
