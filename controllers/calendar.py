@@ -39,7 +39,7 @@ def delete():
     # display the events in a grid or a picklist
     # The user can selects an event and clicks a delete button
     # Delete the event that the user selected
-    return dict()
+    return dict(grid=SQLFORM.smartgrid(db.cal_event))
     
 @auth.requires_login()
 def user_calendar():
