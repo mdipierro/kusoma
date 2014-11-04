@@ -1,13 +1,21 @@
-.idea/
+# Ignore the git ignore config file.
+.gitignore
 
-#do not track local sessions
+# The files under these directories are volatile
+# and should not be tracked.
 sessions/
-
-#do not track local errors
+cache/
+uploads/
 errors/
-
-#do not track local databases
 databases/
 
-#do not track local logs
+# Do not track local logs.
 progress.log
+
+# Ignore unneeded python files
+**/*.pyc
+.pythonhistory
+**/__init__*
+
+# Ignore temp files.
+**/#*
