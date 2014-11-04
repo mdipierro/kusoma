@@ -1,0 +1,32 @@
+{{extend 'layout.html'}}
+
+<h1>Class recordings for section {{=section.name}}</h1>
+
+{{if is_teacher:}}
+    <h2>Make a new recording</h2>
+    <p>This button will make a new Hangout URL but it is not yet feeding the youtube_id of the new recording back to the database.</p>
+    <script src="https://apis.google.com/js/platform.js"></script>
+    <div id="placeholder-div3"></div>
+    <script>
+      gapi.hangout.render('placeholder-div3', {
+        'render': 'createhangout',
+        'hangout_type': 'onair',
+        //'initial_apps': [{'app_id' : '184219133185', 'start_data' : 'dQw4w9WgXcQ', 'app_type' : 'ROOM_APP' }],
+        'widget_size': 175
+      });
+    </script>
+
+{{pass}}
+{{if videos:}}
+    <h2>Recordings</h2>
+    {{for video in videos:}}
+        <p><iframe width="420" height="315" src="//www.youtube.com/embed/{{=video.youtube_id}}" frameborder="0" allowfullscreen></iframe></p>
+    {{pass}}
+
+    <!-- Just keeping an example of how to make a standard link -->
+    <h2>Link to video:</h2>
+    <a href="https://youtu.be/{{=videos.first().youtube_id}}">Lecture 1</a>
+
+{{else:}}
+    <p>No videos found.</p>
+{{pass}}
