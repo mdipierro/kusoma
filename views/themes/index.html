@@ -1,0 +1,23 @@
+{{extend 'layout.html'}}
+{{include 'web2py_ajax.html'}}
+
+
+<h1>
+LMS Themes
+</h1>
+
+
+<table>
+  {{for row in rows:}}
+
+  {{=A(row.name, _href=URL('theme_picked', args=row.URL))}}
+  &nbsp&nbsp&nbsp&nbsp 
+  {{=A('preview', callback=URL('preview', args=row.image_URL), target='theme_preview')}}
+
+  </br>
+  {{pass}}
+  
+  <div id='theme_preview'></div>
+ 
+
+</table>

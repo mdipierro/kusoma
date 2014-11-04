@@ -5,3 +5,4 @@ response.menu += [
             (T('Search Wiki'), False, URL('wiki', 'wikisearch'), [])
     ])
 ]
+
