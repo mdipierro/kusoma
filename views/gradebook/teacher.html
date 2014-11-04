@@ -14,7 +14,55 @@
 <div id="example1console"></div>
 
 
+<table class="table">
+    <tr>
+        <th>Homework</th>
+        <th>min</th>
+        <th>max</th>
+        <th>average</th>
+        <th>median</th>
+        <th>mean</th>
+        <th>sum</th>
+        <th>cov</th>
+        <th>var</th>
+        <th>std</th>
+    </tr>
+        <tr>
+        <th>Enable stats for student</th>
+        <td><input data-size="mini" type="checkbox" class="checkbox-switcher" name="" /></td>
+        <td><input data-size="mini" type="checkbox" class="checkbox-switcher" name="" /></td>
+        <td><input data-size="mini" type="checkbox" class="checkbox-switcher" name="" /></td>
+        <td><input data-size="mini" type="checkbox" class="checkbox-switcher" name="" /></td>
+        <td><input data-size="mini" type="checkbox" class="checkbox-switcher" name="" /></td>
+        <td><input data-size="mini" type="checkbox" class="checkbox-switcher" name="" /></td>
+        <td><input data-size="mini" type="checkbox" class="checkbox-switcher" name="" /></td>
+        <td><input data-size="mini" type="checkbox" class="checkbox-switcher" name="" /></td>
+        <td><input data-size="mini" type="checkbox" class="checkbox-switcher" name="" /></td>
+    </tr>
+
+    {{for a in stat:}}
+        <tr>
+            <td>{{=a['hw'].name}}</td>
+            <td>{{=a['min']}}</td>
+            <td>{{=a['max']}}</td>
+            <td>{{=a['average']}}</td>
+            <td>{{=a['median']}}</td>
+            <td>{{=a['mean']}}</td>
+            <td>{{=a['sum']}}</td>
+            <td>{{=a['cov']}}</td>
+            <td>{{=a['var']}}</td>
+            <td>{{=a['std']}}</td>
+
+        </tr>
+
+    {{pass}}
+
+</table>
+
 <script>
+
+    $(".checkbox-switcher").bootstrapSwitch();
+
  var data = [
  {{for row in users:}}
      {
@@ -22,7 +70,7 @@
        name: '{{=row.auth_user.first_name  + " " + row.auth_user.last_name}}',
        hw: {
              {{for hw in row.hws:}}
-                 '{{=hw.homework.id}}':{{if hw.assignment_grade.grade:}}
+                 '{{=hw.homework.id}}':{{if hw.assignment_grade.grade > -1:}}
                                             '{{=hw.assignment_grade.grade}}'
                                     {{else:}}
                                             ''
@@ -31,13 +79,23 @@
             {{pass}}
         },
        total:'',
-       final:'{{if row.final:}} {{=row.final.grade}} {{pass}}',
+       final:'{{if row.final:}} {{=row.final.grade }} {{pass}}',
        comment:'{{if row.final:}} {{=row.final.teacher_comment}} {{pass}}'
 
       },
   {{pass}}
   ];
 
+var nonnegative_validator_fn = function (value, callback) {
+  setTimeout(function(){
+    if (new String(value).valueOf() != new String("NaN").valueOf() && (!value || parseFloat(value) >= 0) )  {
+      callback(true);
+    }
+    else {
+      callback(false);
+    }
+  }, 300);
+};
 
 
   $('#dataTable').handsontable({
@@ -65,11 +123,12 @@
       }
         {{for hw in names:}}
        ,{
-            data: "hw.{{=hw.homework.id}}"
+             data: "hw.{{=hw.homework.id}}"
             ,title: "{{=hw.homework.name}}"
             ,tp: "{{=hw.homework.points}}}"
             ,type: 'numeric'
             ,format: '0,0'
+            ,validator: nonnegative_validator_fn
             ,allowInvalid: false
         }
 
@@ -83,13 +142,15 @@
             data: "final",
             title:"Final Grade",
             readOnly:false
+            ,validator: nonnegative_validator_fn
+            ,allowInvalid: false
       }
       ,{
             data: "comment",
             title:"Comment",
             width:300
       }
-    ],
+    ]
   });
 
  var $console = $("#example1console");
@@ -104,7 +165,7 @@
         success: function (res) {
             if(res)
             {
-                $console.text(JSON.stringify(res, undefined, 2));
+              //  $console.text(JSON.stringify(res, undefined, 2));
             }
              else {
                 $console.text('Save error');
@@ -158,6 +219,8 @@
 
         Handsontable.renderers.TextRenderer.apply(this, arguments);
     }
+
+
 
 
 </script>

@@ -23,6 +23,9 @@ def teacher():
     response.files.insert(0,URL('static','css/jquery.handsontable.full.css'))
     response.files.insert(0,URL('static','css/grading.css'))
 
+    response.files.insert(0,URL('static','js/bootstrap-switch.min.js'))
+    response.files.insert(0,URL('static','css/bootstrap-switch.min.css'))
+
     session.flash = 'Welcome Teacher'
     students = get_all_students(section_id)
 
@@ -30,15 +33,58 @@ def teacher():
         st.hws = get_grades_student(section_id, st.auth_user.id)
         st.final = get_final_grade(section_id, st.auth_user.id).first()
 
-    return dict(section_id=section_id, users=students, names=students.first().hws)
+
+    import numpy
+    hws = get_homework_section(section_id)
+    stat=[]
+
+
+    for hw in hws:
+        s = convert_to_list(get_assignment_by_homework(section_id, hw.id))
+        if s:
+            stat.append({
+                'min':round(numpy.min(s),2),
+                'max':round(numpy.max(s),2),
+                'average':round(numpy.average(s),2),
+                'median':round(numpy.median(s),2),
+                'mean':round(numpy.mean(s),2),
+                'sum':round(numpy.sum(s),2),
+                'cov':round(numpy.cov(s),2),
+                'var':round(numpy.var(s),2),
+                'std':round(numpy.std(s),2),
+                'hw':hw
+            })
+    return dict(section_id=section_id, users=students, names=students.first().hws, stat=stat)
 
 @auth.requires_login()
 def student():
     session.flash = "Welcome %s %s" % (auth.user.first_name, auth.user.last_name)
     section_id = request.args(0, cast=int)
+    add_section_menu(section_id)
     section = db.course_section(section_id)
     student_grades = get_grades_student(section_id, auth.user.id)
-    return dict(student_grades=student_grades, section=section)
+    grade_record = get_final_grade(section_id, auth.user.id)    
+    import numpy
+    hws = get_homework_section(section_id)
+
+    stat=[]
+    for hw in hws:
+        s = convert_to_list(get_assignment_by_homework(section_id, hw.id))
+        if s:
+            stat.append({
+                'min':round(numpy.min(s),2),
+                'max':round(numpy.max(s),2),
+                'average':round(numpy.average(s),2),
+                'median':round(numpy.median(s),2),
+                'mean':round(numpy.mean(s),2),
+                'sum':round(numpy.sum(s),2),
+                'cov':round(numpy.cov(s),2),
+                'var':round(numpy.var(s),2),
+                'std':round(numpy.std(s),2),
+                'hw':hw
+            })
+
+    return dict(student_grades=student_grades, section=section, stat=stat, grade_record=grade_record)
 
 @auth.requires_login()
 def savedata():
@@ -56,18 +102,14 @@ def savedata():
         for hw in hws:
             homeworks = student["hw"]
             grade = homeworks[str(hw.id)]
-            if grade:
+
+            if grade > -1:
                 db.assignment_grade.update_or_insert((db.assignment_grade.section_id==section_id)&(db.assignment_grade.assignment_id==hw.id)&(db.assignment_grade.user_id==id),section_id=section_id, assignment_id=hw.id, user_id=id, grade=grade, assignment_comment='')
             pass
 
           #  db.assignment_grade.update_or_insert((db.assignment_grade.section_id==1)& (db.assignment_grade.assignment_id==1)& (db.assignment_grade.user_id==id), grade=10, assignment_comment='')
-
-
+    session.flash = "Data Saved"
     return response.json(students)
-
-
-
-
 
 
 @auth.requires_login()
