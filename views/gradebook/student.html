@@ -1,18 +1,92 @@
+
+
+
 {{extend 'layout.html'}}
 <h1>Student Grade Interface</h1><br><br>
 
 <h4>{{=section.name}} - {{=auth.user.first_name}} {{=auth.user.last_name}}</h4>
 <table class="table">
   <tr>
-        <th>Assignment</th>	
-	<th>Score</th>
+   {{if True:}}
+    <th>Assignment</th>	
+   {{pass}}
+   {{if True:}}
+    <th>Grade</th>
+   {{pass}}
+   {{if True:}}
+    <th>Min</th>
+   {{pass}}
+   {{if True:}}
+    <th>Max</>
+   {{pass}}
+   {{if True:}}
+    <th>Average</th>
+   {{pass}}
+   {{if True:}}
+    <th>Median</th>
+   {{pass}}
+   {{if True:}}
+    <th>Mean</th>
+   {{pass}}
+   {{if True:}}
+    <th>Sum</th>
+   {{pass}}
+   {{if True:}}
+    <th>Covariance</th>
+   {{pass}}
+   {{if True:}}
+    <th>Variance</th>
+   {{pass}}
+   {{if True:}}
+    <th>Standard Deviation</th>
+   {{pass}}
   </tr>
   {{for g in student_grades:}}
   <tr>
         <td>{{=g.homework.name}}</td>
-        <td>{{=g.homework.course_section}}</td>
+        <td>
+        {{if g.assignment_grade.grade:}}
+            {{=g.assignment_grade.grade}} / {{=g.homework.points}}
+        {{else:}}
+            - / {{=g.homework.points}}
+        {{pass}}
+        </td>
+       {{for s in stat:}}
+          {{if s['hw'].name == g.homework.name:}}
+            {{if True:}}
+             <td>{{=s['min']}}</td>
+            {{pass}}
+            {{if True:}}
+             <td>{{=s['max']}}</td>
+            {{pass}}
+            {{if True:}}
+             <td>{{=s['average']}}</td>
+            {{pass}}
+            {{if True:}}
+             <td>{{=s['median']}}</td>
+            {{pass}}
+            {{if True:}}
+             <td>{{=s['mean']}}</td>
+            {{pass}}
+            {{if True:}}
+             <td>{{=s['sum']}}</td>
+            {{pass}}
+            {{if True:}}
+             <td>{{=s['cov']}}</td>
+            {{pass}}
+            {{if True:}}
+             <td>{{=s['var']}}</td>
+            {{pass}}
+            {{if True:}}
+             <td>{{=s['std']}}</td>
+            {{pass}}
+          {{pass}}
+       {{pass}}
+   {{pass}}
   <tr>
-  {{pass}}
  </table>
+<h5> Teacher's feedback on course performance</h5>
+{{for gr in grade_record:}}
+    <h7>{{=gr.teacher_comment}}</h7>
 {{pass}}
-
+{{pass}}
