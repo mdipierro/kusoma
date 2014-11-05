@@ -9,9 +9,9 @@ def manage_uploads():
     Display assignments for a course section to the user
     """
     section_id = request.args(0,cast=int)
-    if not is_user_student(section_id) and not is_user_teacher(section_id):
-        return dict(section_id=section_id, rejected="Permission denied. You are not in this course section.")
     section = db.course_section[section_id]
+    if not is_user_student(section_id) and not is_user_teacher(section_id):
+        return dict(section_id=section_id, section=section, rejected="Permission denied. You are not in this course section.")
     add_section_menu(section_id)
     folders = db(db.folder.course_section == section_id).select()
     homeworks = db(db.homework.course_section == section_id).select(orderby=db.homework.assignment_order)
@@ -27,9 +27,9 @@ def view_submissions():
     Display submissions for a course section to the teacher
     """
     section_id = request.args(0,cast=int)
-    if not is_user_teacher(section_id):
-        return dict(section_id=section_id, rejected="Permission denied. You are not the teacher of this course section.")
     section = db.course_section[section_id]
+    if not is_user_teacher(section_id):
+        return dict(section_id=section_id, section=section, rejected="Permission denied. You are not the teacher of this course section.")
     homework_id = request.args(1,cast=int)
     homework = db.homework[homework_id]
     submissions = (db.submission.homework == db.homework.id)
