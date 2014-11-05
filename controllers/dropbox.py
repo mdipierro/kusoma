@@ -2,7 +2,7 @@ def index():
     return dict()
 
 @auth.requires_login()
-def course_dropbox():
+def manage_uploads():
     """
     Author: Curtis Weir
     Date: 10/22/14
@@ -14,25 +14,10 @@ def course_dropbox():
     section = db.course_section[section_id]
     add_section_menu(section_id)
     folders = db(db.folder.course_section == section_id).select()
-    homeworks = db(db.homework.course_section == section_id).select()
-    form = add_folder(section_id)
+    homeworks = db(db.homework.course_section == section_id).select(orderby=db.homework.assignment_order)
     return dict(folders=folders, homeworks=homeworks,
                 section_id=section_id, user_id=auth.user_id,
-                section=section, rejected=None, form=form)
-
-def add_folder(section_id):
-    """
-    Creates a form to add a new folder.
-    Returns a SQLFORM
-    """
-    form = SQLFORM(db.folder, fields=['name'])
-    if form.process().accepted:
-        db.folder.insert(name=form.vars.name, course_section=section_id)
-        redirect(URL('course_dropbox',args=(section_id)))
-        response.flash = 'form accepted'
-    elif form.errors:
-        response.flash = 'form has errors'
-    return form
+                section=section, rejected=None)
 
 @auth.requires_login()
 def view_submissions():
@@ -51,6 +36,17 @@ def view_submissions():
     students = (db.submission.id_student == db.auth_user.id)
     student_submissions = db(submissions & students).select()
     return dict(section_id=section_id, section=section, rejected=None, student_submissions=student_submissions)
+
+@auth.requires_login()
+def feedback():
+    record = db.feedback(request.args(0))
+    form = SQLFORM(db.feedback, record)
+    if form.process().accepted:
+        response.flash = 'form accepted'
+    elif form.errors:
+        response.flash = 'form has errors'
+    return dict(form=form)
+
 
 def download():
     return response.download(request, db)

@@ -5,12 +5,16 @@ Date: 10/23/14
 
 {{extend 'layout.html'}}
 
+<h2>{{=section.name}} Dropbox</h2>
+<a href="{{=URL('../course_dropbox',args=(section.id))}}"
+   class="btn btn-primary">&lt;&lt; Go Back</a><p></p>
+
 {{if rejected is None:}}
-    <h2>{{=section.name}} Dropbox</h2>
     <table class="table">
     {{for submission in student_submissions:}}
         <tr>
             <td>{{=submission.auth_user.first_name}} {{=submission.auth_user.last_name}}</td>
+            <td>{{=submission.auth_user.email}}</td>
             <td><a href="{{=URL('download',args=submission.submission.file_upload)}}"
                    class="btn btn-primary btn-small">Download</td>
             <td><a href="{{=URL('feedback',args=(submission.submission.id))}}"
