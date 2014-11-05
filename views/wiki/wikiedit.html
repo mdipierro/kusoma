@@ -1,0 +1,5 @@
+{{extend 'layout.html'}}
+<h1>Edit wiki page</h1>
+[ {{=A('show', _href=URL('wikishow', args=request.args))}}
+| {{=A('documents', _href=URL('wikidocuments', args=request.args))}} ]<br />
+{{=form}}

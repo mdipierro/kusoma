@@ -1,0 +1,15 @@
+{{extend 'layout.html'}}
+
+<h2>{{=course.code}}: {{=course.name}}</h2>
+<h3>{{=section.name}}</h3>
+
+<table class="table">
+  {{for student in students:}}
+  <tr>
+    <td>
+      {{=student.first_name}} 
+      {{=student.last_name}}
+    </td>
+  </tr>
+  {{pass}}
+</table>

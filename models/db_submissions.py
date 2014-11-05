@@ -5,12 +5,6 @@ from gluon.tools import Auth
 auth = Auth(db)
 
 """
-Organize assignments
-"""
-db.define_table('folder',
-                Field('name', 'string', requires=IS_NOT_EMPTY()))
-
-"""
 Assignment that pertains to a course
 """
 db.define_table('assignments',
@@ -33,7 +27,7 @@ Contains file submissions for students
 """
 db.define_table('submission',
                 Field('file_upload', 'upload', requires=IS_NOT_EMPTY()),
-                Field('id_assignments', 'reference assignments'),
+                Field('homework', 'reference homework'),
                 Field('grade', 'double'),
                 Field('id_student', 'reference auth_user', default=auth.user_id))
 
@@ -50,6 +44,12 @@ db.assignments.id_course.requires = IS_IN_DB(db, db.course.id, '%(name)s')
 
 db.attachment.id_assignments.requires = IS_IN_DB(db, db.assignments.id, '%(title)s')
 
-db.submission.id_assignments.requires = IS_IN_DB(db, db.assignments.id, '%(title)s')
+db.submission.homework.requires = IS_IN_DB(db, db.homework.id, '%(name)s')
 
 db.feedback.id_submission.requires = IS_IN_DB(db, db.submission.id)
+
+def folder_is_empty(folder, homeworks):
+    for homework in homeworks:
+        if homework.folder == folder.id:
+            return False
+    return True

@@ -1,0 +1,5 @@
+{{extend 'layout.html'}}
+<h1>Documents for page: {{=page.title}}</h1>
+[ {{=A('show', _href=URL('wikishow', args=request.args))}} ]<br />
+<h2>Documents</h2>
+{{=grid}}
