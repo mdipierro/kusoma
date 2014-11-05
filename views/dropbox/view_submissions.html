@@ -6,7 +6,7 @@ Date: 10/23/14
 {{extend 'layout.html'}}
 
 <h2>{{=section.name}} Dropbox</h2>
-<a href="{{=URL('../course_dropbox',args=(section.id))}}"
+<a href="{{=URL('../manage_uploads',args=(section.id))}}"
    class="btn btn-primary">&lt;&lt; Go Back</a><p></p>
 
 {{if rejected is None:}}
