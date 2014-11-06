@@ -62,7 +62,8 @@ def enroll():
                              auth_user=auth.user.id)
         return 'Drop this class'        
     else:
-        return 'Sign Up for this class' 
+        return 'Sign Up for this class'
+
 
 @auth.requires_login()
 def students():
@@ -87,15 +88,6 @@ def manage_users():
 def manage_courses():
     return dict(grid=SQLFORM.smartgrid(db.course))
 
-def user():
-    return dict(form=auth())
-
-@cache.action()
-def download():
-    return response.download(request, db)
-
-############
-
 def section_docs():
     """
     shows students and teachers and graders in a course section
@@ -106,6 +98,13 @@ def section_docs():
     form = SQLFORM(db.doc).process()
     docs = db(db.doc.course_section==section_id).select()
     return locals()
+
+def user():
+    return dict(form=auth())
+
+@cache.action()
+def download():
+    return response.download(request, db)
 
 def calendar():
     """
@@ -122,9 +121,3 @@ def calendar():
     return dict(course=course, rows=rows, current_sections=current_sections,
                 past_sections=past_sections)
 
-################################################################################
-# DO NOT DELETE THIS!!!
-# IT NEEDS TO BE HERE FOR LOGING/REGISTRATION TO WORK!!!
-################################################################################
-def user():
-    return dict(form=auth())

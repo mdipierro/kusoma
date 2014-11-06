@@ -27,6 +27,19 @@
         <th>var</th>
         <th>std</th>
     </tr>
+        <tr>
+        <th>Enable stats for student</th>
+        <td><input data-size="mini" type="checkbox" class="checkbox-switcher" name="" /></td>
+        <td><input data-size="mini" type="checkbox" class="checkbox-switcher" name="" /></td>
+        <td><input data-size="mini" type="checkbox" class="checkbox-switcher" name="" /></td>
+        <td><input data-size="mini" type="checkbox" class="checkbox-switcher" name="" /></td>
+        <td><input data-size="mini" type="checkbox" class="checkbox-switcher" name="" /></td>
+        <td><input data-size="mini" type="checkbox" class="checkbox-switcher" name="" /></td>
+        <td><input data-size="mini" type="checkbox" class="checkbox-switcher" name="" /></td>
+        <td><input data-size="mini" type="checkbox" class="checkbox-switcher" name="" /></td>
+        <td><input data-size="mini" type="checkbox" class="checkbox-switcher" name="" /></td>
+    </tr>
+
     {{for a in stat:}}
         <tr>
             <td>{{=a['hw'].name}}</td>
@@ -48,6 +61,7 @@
 
 <script>
 
+    $(".checkbox-switcher").bootstrapSwitch();
 
  var data = [
  {{for row in users:}}
@@ -72,6 +86,16 @@
   {{pass}}
   ];
 
+var nonnegative_validator_fn = function (value, callback) {
+  setTimeout(function(){
+    if (new String(value).valueOf() != new String("NaN").valueOf() && (!value || parseFloat(value) >= 0) )  {
+      callback(true);
+    }
+    else {
+      callback(false);
+    }
+  }, 300);
+};
 
 
   $('#dataTable').handsontable({
@@ -99,11 +123,12 @@
       }
         {{for hw in names:}}
        ,{
-            data: "hw.{{=hw.homework.id}}"
+             data: "hw.{{=hw.homework.id}}"
             ,title: "{{=hw.homework.name}}"
             ,tp: "{{=hw.homework.points}}}"
             ,type: 'numeric'
             ,format: '0,0'
+            ,validator: nonnegative_validator_fn
             ,allowInvalid: false
         }
 
@@ -117,13 +142,15 @@
             data: "final",
             title:"Final Grade",
             readOnly:false
+            ,validator: nonnegative_validator_fn
+            ,allowInvalid: false
       }
       ,{
             data: "comment",
             title:"Comment",
             width:300
       }
-    ],
+    ]
   });
 
  var $console = $("#example1console");
@@ -192,6 +219,8 @@
 
         Handsontable.renderers.TextRenderer.apply(this, arguments);
     }
+
+
 
 
 </script>

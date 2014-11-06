@@ -61,17 +61,8 @@ def delete():
     # display the events in a grid or a picklist
     # The user can selects an event and clicks a delete button
     # Delete the event that the user selected
-    response.title = 'Edit event'
-    form = SQLFORM.grid(PERSONAL_EVENTS,
-                        fields=EVENT_FIELDS,
-                        left=db.event_visibility.on(db.event_visibility.id == db.cal_event.visibility),
-                        deletable=True,
-                        create=False,
-                        details=False,
-                        editable=False,
-                        csv=False)
-    return dict(form=form)
-
+    return dict(grid=SQLFORM.smartgrid(db.cal_event))
+    
 @auth.requires_login()
 def user_calendar():
     # input: a user id

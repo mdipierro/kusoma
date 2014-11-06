@@ -23,6 +23,9 @@ def teacher():
     response.files.insert(0,URL('static','css/jquery.handsontable.full.css'))
     response.files.insert(0,URL('static','css/grading.css'))
 
+    response.files.insert(0,URL('static','js/bootstrap-switch.min.js'))
+    response.files.insert(0,URL('static','css/bootstrap-switch.min.css'))
+
     session.flash = 'Welcome Teacher'
     students = get_all_students(section_id)
 
@@ -34,19 +37,21 @@ def teacher():
     import numpy
     hws = get_homework_section(section_id)
     stat=[]
+
+
     for hw in hws:
         s = convert_to_list(get_assignment_by_homework(section_id, hw.id))
         if s:
             stat.append({
-                'min':numpy.min(s),
-                'max':numpy.max(s),
-                'average':numpy.average(s),
-                'median':numpy.median(s),
-                'mean':numpy.mean(s),
-                'sum':numpy.sum(s),
-                'cov':numpy.cov(s),
-                'var':numpy.var(s),
-                'std':numpy.std(s),
+                'min':round(numpy.min(s),2),
+                'max':round(numpy.max(s),2),
+                'average':round(numpy.average(s),2),
+                'median':round(numpy.median(s),2),
+                'mean':round(numpy.mean(s),2),
+                'sum':round(numpy.sum(s),2),
+                'cov':round(numpy.cov(s),2),
+                'var':round(numpy.var(s),2),
+                'std':round(numpy.std(s),2),
                 'hw':hw
             })
     return dict(section_id=section_id, users=students, names=students.first().hws, stat=stat)
@@ -55,9 +60,31 @@ def teacher():
 def student():
     session.flash = "Welcome %s %s" % (auth.user.first_name, auth.user.last_name)
     section_id = request.args(0, cast=int)
+    add_section_menu(section_id)
     section = db.course_section(section_id)
     student_grades = get_grades_student(section_id, auth.user.id)
-    return dict(student_grades=student_grades, section=section)
+    grade_record = get_final_grade(section_id, auth.user.id)    
+    import numpy
+    hws = get_homework_section(section_id)
+
+    stat=[]
+    for hw in hws:
+        s = convert_to_list(get_assignment_by_homework(section_id, hw.id))
+        if s:
+            stat.append({
+                'min':round(numpy.min(s),2),
+                'max':round(numpy.max(s),2),
+                'average':round(numpy.average(s),2),
+                'median':round(numpy.median(s),2),
+                'mean':round(numpy.mean(s),2),
+                'sum':round(numpy.sum(s),2),
+                'cov':round(numpy.cov(s),2),
+                'var':round(numpy.var(s),2),
+                'std':round(numpy.std(s),2),
+                'hw':hw
+            })
+
+    return dict(student_grades=student_grades, section=section, stat=stat, grade_record=grade_record)
 
 @auth.requires_login()
 def savedata():
