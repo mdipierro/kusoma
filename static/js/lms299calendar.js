@@ -34,6 +34,10 @@ LMS299 Calendar Control
             created: false,
             disabled: false,
             events: {},
+			dayClick: true,
+			eventClick: true,
+			selectable: true,
+			select: true,
             headerCenter: 'month,basicWeek',
             headerLeft: 'title',
             headerRight: 'today prev,next',
@@ -66,6 +70,10 @@ LMS299 Calendar Control
                     right:  self.options.headerRight
                 },
                 events: self.options.events,
+				dayClick: self.options.dayClick,
+				eventClick: self.options.eventClick,
+				selectable: self.options.selectable,
+				select: self.options.select,
                 height: self.options.height
             });
             if (self.options.width !== '') {

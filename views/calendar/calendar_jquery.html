@@ -1,9 +1,9 @@
 <script src="{{=URL('static', 'js/moment.min.js')}}"></script>
 <script src="{{=URL('static', 'js/fullcalendar.js')}}"></script>
-<!-- <script src="{{#=URL('static', 'js/lms299calendar.js')}}"></script> -->
+<script src="{{=URL('static', 'js/lms299calendar.js')}}"></script>
 <script>
   $(document).ready(function() {
-    $('#calendar').fullCalendar({
+    $('#calendar').lmsCalendar({
       height: 500,
       header: {
         left:   'today prevYear,prev,next,nextYear',
