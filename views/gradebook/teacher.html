@@ -124,7 +124,7 @@ var nonnegative_validator_fn = function (value, callback) {
         {{for hw in names:}}
        ,{
              data: "hw.{{=hw.homework.id}}"
-            ,title: "{{=hw.homework.name}}"
+            ,title: "{{=hw.homework.name}}({{=hw.homework.points}})"
             ,tp: "{{=hw.homework.points}}}"
             ,type: 'numeric'
             ,format: '0,0'
@@ -135,7 +135,7 @@ var nonnegative_validator_fn = function (value, callback) {
         {{pass}}
       ,{
             data: "total",
-            title:"computed Grade",
+            title:"Computed Grade",
             readOnly:true,
             renderer:calGrad
       },{
