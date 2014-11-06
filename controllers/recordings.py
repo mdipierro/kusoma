@@ -59,16 +59,14 @@ def edit():
 
     if video_id:
         video = db(db.recording.id==video_id).select().first()
-        if not video:
-            redirect(URL('default/index'))
+        if (not video or not is_user_teacher(video.course_id)):
+            redirect(URL('index', args=video.course_id))
 
-    section_id = video.course_id
-    if is_user_teacher(section_id):
-        fields = ['name', 'is_class']
-    elif is_user_student(section_id):
-        fields = ['name']
-
-    form = SQLFORM(db.recording, fields=fields)
+    form = SQLFORM(db.recording, video, fields=fields)
+    if form.process().accepted:
+       response.flash = 'Form accepted'
+    elif form.errors:
+       response.flash = 'Form has errors'
     return dict(form=form)
 
 @auth.requires_login()

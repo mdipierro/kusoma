@@ -1,6 +1,6 @@
 {{extend 'layout.html'}}
 
-<h2>Class recordings for {{=section.name}}</h2>
+<h2>Recordings for {{=section.name}}</h2>
 
 {{if is_teacher:}}
     <h2>Make a new recording</h2>
@@ -18,17 +18,26 @@
 
 {{pass}}
 {{if videos:}}
-    <h2>Recordings</h2>
 	<p><iframe width="560" height="420" src="//www.youtube.com/embed/{{=videos.first().youtube_id}}" frameborder="0" allowfullscreen name="videoFrame"  id="videoFrame"></iframe></p>
 	
 	<table class="table">
-    {{for video in videos:}}
-        <tr>
-            <td><a href="javascript:void(0)" onclick="ScrollToVideo('https://www.youtube.com/embed/{{=video.youtube_id}}')">{{=video.name}}</a></td>
-            <td>{{=video.class_date.date()}}</td>
-            <td>{{=video.class_date.time()}}</td>
+		<tr>
+            <th>Name</th>
+            <th>Date</th>
+            <th>Time</th>
+            <th>Is Class</th>
         </tr>
-    {{pass}}
+		{{for video in videos:}}
+			<tr>
+				<td><a href="javascript:void(0)" onclick="ScrollToVideo('https://www.youtube.com/embed/{{=video.youtube_id}}')">{{=video.name}}</a></td>
+				<td>{{=video.class_date.date()}}</td>
+				<td>{{=video.class_date.time()}}</td>
+				<td>{{=video.is_class}}</td>
+				{{if is_teacher:}}
+					<td><a class="btn btn-primary" href="{{=URL('edit', args=video.id)}}">Edit</a></td>
+				{{pass}}
+			</tr>
+		{{pass}}
 	</table>
 {{else:}}
     <p>No videos found.</p>
