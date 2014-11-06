@@ -36,7 +36,8 @@ def teacher():
 
     import numpy
     hws = get_homework_section(section_id)
-    stat=[]
+    option = get_statistics(section_id)
+    stat= []
 
 
     for hw in hws:
@@ -54,7 +55,7 @@ def teacher():
                 'std':round(numpy.std(s),2),
                 'hw':hw
             })
-    return dict(section_id=section_id, users=students, names=students.first().hws, stat=stat)
+    return dict(section_id=section_id, users=students, names=students.first().hws, stat=stat, option=option)
 
 @auth.requires_login()
 def student():
@@ -121,4 +122,3 @@ def addhw():
 def addgrade():
     grid = SQLFORM.smartgrid(db.assignment_grade)
     return dict(grid=grid)
-
