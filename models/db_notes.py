@@ -15,6 +15,7 @@ db.define_table('note_version',
                 Field('note_id', 'reference notes_main', notnull=True),
                 Field('modify_by', 'reference auth_user', default=auth.user_id),
                 Field('modify_on', 'datetime', default=request.now),
+                Field('title'),
                 Field('note_content'))
 
 db.define_table('note_favorite',
