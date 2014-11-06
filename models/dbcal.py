@@ -11,7 +11,8 @@
 ####################################################################################################
 from datetime import datetime, date, timedelta
 DEBUG = True
-DATE_FORMAT = '%Y-%m-%d'
+OUTPUT_DATE_FORMAT = '%Y-%m-%d'
+INPUT_DATE_FORMAT = '%Y-%m-%d %H:%M:%S'
 
 # Define some useful constants.
 NE = IS_NOT_EMPTY()
@@ -94,22 +95,6 @@ def EVENTS_FOR_COURSE(course_id):
     return (db.cal_event.course_id == course_id)
 
 #########################
-# Classes
-#########################
-# class CalendarEvent(object):
-#     def __init__(self, owner_id, title, start, visibility, details='',
-#                  end=None, course=None, event_id=None, allDay=False):
-#         self.id = event_id
-#         self.owner_id = owner_id
-#         self.name = title
-#         self.details = details
-#         self.start_date = start
-#         self.end_date = end
-#         self.all_day = allDay
-#         self.visibility = visibility
-#         self.course = course
-
-#########################
 # Function definitions
 #########################
 
@@ -137,23 +122,25 @@ def add_event(title, visibility, owner=auth.user_id, details='',
                         visibility=visibility,
                         course_id=course_id)
 
-def event_update(event_id, title, owner, details, start_date, end_date, all_day, url, visibility, course_id):
+def update_event(event_id, title, details, start_date, end_date, all_day, url, visibility, course_id):
     """Update the given event."""
-    # Check if the user is the owner of the event.
-    # If not, don't allow them to update it.
-    query = db.cal_event.id == event_id
-    oid = db(query).select(db.calevent.id).first().id
-    if oid == auth.user_id:
-        from datetime import datetime
-        db(query).update(owner_id=owner,
-                         title=title,
-                         details=details,
-                         start_date=start,
-                         end_date=end,
-                         all_day=all_day,
-                         url=url,
-                         visibility=visibility,
-                         course_id=course_id)
+    event = db(db.cal_event.id == event_id).select(db.cal_event.id, db.cal_event.owner_id).first()
+    if event:
+        if auth.user_id != event.owner_id:
+            raise Exception('You do not own the event "%s".' % title)
+        start = _convert_string_to_date(start_date, fmt=INPUT_DATE_FORMAT, default=DATE_DEFAULT.start)
+        end = _convert_string_to_date(end_date, fmt=INPUT_DATE_FORMAT, default=DATE_DEFAULT.end)
+        start, end = _sort_dates(start, end)
+        db(db.cal_event.id == event_id).update(title=title,
+                                               details=details,
+                                               start_date=start,
+                                               end_date=end,
+                                               all_day=all_day,
+                                               url=url,
+                                               visibility=visibility,
+                                               course_id=course_id)
+    else:
+        raise Exception('Could not find event')
 
 def delete_event(event_id, user_id=auth.user_id):
     """Delete the given event."""
@@ -162,19 +149,19 @@ def delete_event(event_id, user_id=auth.user_id):
     pass
 
 def my_events(start_date, end_date, json=False):
-    """ Events for the logged-in user. """
+    """Events for the logged-in user."""
     from datetime import datetime
-    start = _convert_string_to_date(start_date, default=DATE_DEFAULT.start)
-    end = _convert_string_to_date(end_date, default=DATE_DEFAULT.end)
+    start = _convert_string_to_date(start_date, fmt=OUTPUT_DATE_FORMAT, default=DATE_DEFAULT.start)
+    end = _convert_string_to_date(end_date, fmt=OUTPUT_DATE_FORMAT, default=DATE_DEFAULT.end)
     try:
         query = (ALL_MY_EVENTS & IS_IN_DATE_RANGE(start, end) &
                  (db.cal_event.visibility == db.event_visibility.id))
     except:
         return
     if json:
-        return _get_events_json(query, EVENT_FIELDS, db.cal_event.id)
+        return _get_events_json(query, EVENT_FIELDS) # , db.cal_event.id)
     else:
-        return _get_events(query, EVENT_FIELDS, db.cal_event.id)
+        return _get_events(query, EVENT_FIELDS) # , db.cal_event.id)
 
 def course_events(start_date, end_date, course_id):
     """
@@ -205,24 +192,23 @@ def _get_events_json(query, fields, groupby=None):
     cal = []
     for evt in events:
         c = {'id': evt.cal_event.id,
-             'owner_id' : evt.cal_event.owner_id,
              'title': evt.cal_event.title,
              'details': evt.cal_event.details,
-             'start': evt.cal_event.start_date.strftime('%Y-%m-%d'),
+             'start': evt.cal_event.start_date.strftime(OUTPUT_DATE_FORMAT),
              'allDay': evt.cal_event.all_day,
              'url': evt.cal_event.url,
              'visibility': evt.event_visibility.visibility,
-             'vis_code': evt.cal_event.visibility,
+             'vis_code': evt.event_visibility.visibility,
              'course_id': evt.cal_event.course_id}
         if evt.cal_event.end_date:
-            c['end'] = evt.cal_event.end_date.strftime('%Y-%m-%d')
+            c['end'] = evt.cal_event.end_date.strftime(OUTPUT_DATE_FORMAT)
         cal.append(c)
     return cal
 
 def _first_of_month():
     """Returns the first day of the current month."""
     first = datetime.today()
-    first = first.replace(day=1)
+    first = datetime(first.year, first.month, 1)
     return first
 
 def _last_of_month():
@@ -232,23 +218,32 @@ def _last_of_month():
     last = last + timedelta(days=-1)
     return last
 
-def _convert_string_to_date(date, default=None):
-    """Converts a date string to a datetime object.
-       If date isn't a string, it just gets returned."""
+def _convert_string_to_date(date, fmt=INPUT_DATE_FORMAT, default=DATE_DEFAULT.start):
+    """
+	Converts a date string to a datetime object.
+	If date is already a datetime object, it just gets returned.
+	Otherwise, a default date is returned.
+	"""
     from datetime import datetime
     from types import StringType
     if type(date) is StringType:
-        return datetime.strptime(date, DATE_FORMAT)
+        return datetime.strptime(date, fmt)
+    elif isinstance(date, datetime):
+        return date
     else:
-        if default:
-            if default == DATE_DEFAULT.start:
-                return _first_of_month()
-            elif default == DATE_DEFAULT.end:
-                return _last_of_month()
-            else:
-                return date
+        if default == DATE_DEFAULT.start:
+            return _first_of_month()
+        elif default == DATE_DEFAULT.end:
+            return _last_of_month()
         else:
-            return date
+            return _first_of_month()
+
+def _sort_dates(start, end):
+    if end < start:
+        tmp = start
+        start = end
+        end = tmp
+    return (start, end)
 
 #########################
 # Load defaults

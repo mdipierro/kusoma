@@ -1,0 +1,27 @@
+<script src="{{=URL('static', 'js/moment.min.js')}}"></script>
+<script src="{{=URL('static', 'js/fullcalendar.js')}}"></script>
+<!-- <script src="{{#=URL('static', 'js/lms299calendar.js')}}"></script> -->
+<script>
+  $(document).ready(function() {
+    $('#calendar').fullCalendar({
+      height: 500,
+      header: {
+        left:   'today prevYear,prev,next,nextYear',
+        center: 'title',
+        right:  'month,agendaWeek,agendaDay'
+      },
+      events: {{=XML('\'' + URL('calendar', 'index.json') + '\'')}},
+      dayClick: function(date, jsEvent, view) {
+        window.location.href = "{{=URL('calendar', 'create') + '/'}}" + date.format();
+      },
+      eventClick: function(event, jsEvent, view) {
+        window.location.href = "{{=URL('calendar', 'update') + '/'}}" + event.id;
+      },
+      selectable: true,
+      select: function(start, end, jsevent, view) {
+        window.location.href = "{{=URL('calendar', 'create') + '/'}}" + start.format() +
+          '/' + end.format();
+      }
+    });
+  });
+</script>

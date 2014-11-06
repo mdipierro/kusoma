@@ -4,18 +4,11 @@ from datetime import datetime
 
 @auth.requires_login()
 def index():
-    # start = first_of_month().strftime('%Y-%m-%d')
-    # end = last_of_month().strftime('%Y-%m-%d')
-    # params = {'start': start, 'end': end}
-    # return dict(form=my_events(start, end), params=params)
+    response.title = 'Calendar'
     return dict()
 
 @auth.requires_login()
-def calendar():
-    return dict()
-
-@auth.requires_login()
-#@auth.requires(db.auth_user.is_teacher or db.auth_user.is_administrator)   NOT YET TESTED 
+#@auth.requires(db.auth_user.is_teacher or db.auth_user.is_administrator)   NOT YET TESTED
 def create():
     # Display a form the user can use to create a new event.
     #
@@ -24,30 +17,42 @@ def create():
     # When the event is created in db.cal_event, a record is also created in db.course_event
     # where the course_id is the course that the user selected and the referenced event is the
     # record just created in db.cal_event
-    form = SQLFORM(db.cal_event).process(next=URL('index'))
-    if form.accepts(request, session, dbio=False):
+    response.title = 'Create event'
+    start = _convert_string_to_date(request.args(0), fmt=OUTPUT_DATE_FORMAT) # or datetime.today() #.strftime('%Y-%m-%d')
+    db.cal_event.start_date.default = start
+    end = request.args(1)
+    db.cal_event.end_date.default = _convert_string_to_date(end, fmt=OUTPUT_DATE_FORMAT)
+    form = SQLFORM(db.cal_event).process(next=URL('index'), onsuccess=None)
+    if form.accepts(request, session, dbio=False, onvalidation=None):
         add_event(title=form.vars.title,
                   details=form.vars.details,
                   start_date=form.vars.start_date,
                   end_date=form.vars.end_date,
                   all_day=form.vars.all_day,
-                  url=form.vars.url,
-                  visibility=form.vars.visiblity,
-                  course_id=form.vars.course_id)
-                  
+                  url=form.vars.url)
     return dict(form=form)
 
 @auth.requires_login()
 def update():
     response.title = 'Edit event'
-    form = SQLFORM.grid(PERSONAL_EVENTS,
-                        fields=EVENT_FIELDS,
-                        left=db.event_visibility.on(db.event_visibility.id == db.cal_event.visibility),
-                        deletable=False,
-                        create=False,
-                        details=False,
-                        editable=True,
-                        csv=False)
+    event_id = request.args(0, cast=int) or redirect(URL('calendar', 'index'))
+    url = URL('calendar', 'index')
+    form = SQLFORM(db.cal_event, event_id)
+    if form.validate(onsuccess=None, dbio=False, onvalidation=None):
+        try:
+            update_event(event_id=event_id,
+                         title=form.vars.title,
+                         details=form.vars.details,
+                         start_date=form.vars.start_date,
+                         end_date=form.vars.end_date,
+                         all_day=form.vars.all_day,
+                         url=form.vars.url,
+                         visibility=form.vars.visibility,
+                         course_id=form.vars.course_id)
+        except Exception, e:
+            session.flash = e
+            response.flash = e
+        redirect(url)
     return dict(form=form)
 
 @auth.requires_login()
@@ -66,7 +71,7 @@ def delete():
                         editable=False,
                         csv=False)
     return dict(form=form)
-    
+
 @auth.requires_login()
 def user_calendar():
     # input: a user id
