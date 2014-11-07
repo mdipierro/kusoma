@@ -90,7 +90,6 @@ def student():
 @auth.requires_login()
 def savedata():
     import gluon.contrib.simplejson
-
     students = gluon.contrib.simplejson.loads(request.body.read())
     section_id = request.args(0, cast=int)
     hws = get_homework_section(section_id)
@@ -108,14 +107,15 @@ def savedata():
                 db.assignment_grade.update_or_insert((db.assignment_grade.section_id==section_id)&(db.assignment_grade.assignment_id==hw.id)&(db.assignment_grade.user_id==id),section_id=section_id, assignment_id=hw.id, user_id=id, grade=grade, assignment_comment='')
             pass
 
-          #  db.assignment_grade.update_or_insert((db.assignment_grade.section_id==1)& (db.assignment_grade.assignment_id==1)& (db.assignment_grade.user_id==id), grade=10, assignment_comment='')
     session.flash = "Data Saved"
     return response.json(students)
 
 def statistics():
+    section_id = request.args(0, cast=int)
     stat = request.vars['stat']
     value = request.vars['val']
-    return stat + " " +value
+
+    return str(section_id)  + " " + stat + " " +value
 
 @auth.requires_login()
 def addhw():

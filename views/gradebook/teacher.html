@@ -241,8 +241,8 @@ var nonnegative_validator_fn = function (value, callback) {
     function save_stat(stat, value)
     {
         $.ajax({
-        url: "{{=URL('statistics')}}",
-            data:{'stat' : stat, 'val' : value},
+        url: "{{=URL('statistics', args=section_id)}}",
+        data:{'stat' : stat, 'val' : value},
         type: 'GET',
         success: function (res) {
             if(res)
