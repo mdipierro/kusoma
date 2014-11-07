@@ -115,6 +115,34 @@ def statistics():
     stat = request.vars['stat']
     value = request.vars['val']
 
+    if(stat == "min"):
+        db.section_statistics.update_or_insert(db.section_statistics.section_id==section_id, section_id =section_id,
+             min_score=value)
+    if(stat == "max"):
+        db.section_statistics.update_or_insert(db.section_statistics.section_id==section_id, section_id =section_id,
+             max_score=value)
+    if(stat == "avg"):
+        db.section_statistics.update_or_insert(db.section_statistics.section_id==section_id, section_id =section_id,
+             avg_score=value)
+    if(stat == "med"):
+        db.section_statistics.update_or_insert(db.section_statistics.section_id==section_id, section_id =section_id,
+             median_score=value)
+    if(stat == "mea"):
+        db.section_statistics.update_or_insert(db.section_statistics.section_id==section_id, section_id =section_id,
+             mean_score=value)
+    if(stat == "sum"):
+        db.section_statistics.update_or_insert(db.section_statistics.section_id==section_id, section_id =section_id,
+             sum_score=value)
+    if(stat == "cov"):
+        db.section_statistics.update_or_insert(db.section_statistics.section_id==section_id, section_id =section_id,
+             cov=value)
+    if(stat == "var"):
+        db.section_statistics.update_or_insert(db.section_statistics.section_id==section_id, section_id =section_id,
+             var=value)
+    if(stat == "std"):
+        db.section_statistics.update_or_insert(db.section_statistics.section_id==section_id, section_id =section_id,
+             std=value)
+
     return str(section_id)  + " " + stat + " " +value
 
 @auth.requires_login()

@@ -19,6 +19,7 @@ db.define_table(
     Field('section_id', 'reference course_section'),
     Field('min_score'),
     Field('max_score'),
+    Field('avg_score'),
     Field('median_score'),
     Field('mean_score'),
     Field('sum_score'),
