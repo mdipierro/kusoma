@@ -112,6 +112,10 @@ def savedata():
     session.flash = "Data Saved"
     return response.json(students)
 
+def statistics():
+    stat = request.vars['stat']
+    value = request.vars['val']
+    return stat + " " +value
 
 @auth.requires_login()
 def addhw():

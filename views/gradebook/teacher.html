@@ -59,9 +59,7 @@
 </table>
 
 <script>
-
     $(".checkbox-switcher").bootstrapSwitch();
-
  var data = [
  {{for row in users:}}
      {
@@ -80,11 +78,9 @@
        total:'',
        final:'{{if row.final:}} {{=row.final.grade }} {{pass}}',
        comment:'{{if row.final:}} {{=row.final.teacher_comment}} {{pass}}'
-
       },
   {{pass}}
   ];
-
 var nonnegative_validator_fn = function (value, callback) {
   setTimeout(function(){
     if (new String(value).valueOf() != new String("NaN").valueOf() && (!value || parseFloat(value) >= 0) )  {
@@ -95,8 +91,6 @@ var nonnegative_validator_fn = function (value, callback) {
     }
   }, 300);
 };
-
-
   $('#dataTable').handsontable({
     data: data,
     columnSorting: true,
@@ -130,7 +124,6 @@ var nonnegative_validator_fn = function (value, callback) {
             ,validator: nonnegative_validator_fn
             ,allowInvalid: false
         }
-
         {{pass}}
       ,{
             data: "total",
@@ -151,10 +144,8 @@ var nonnegative_validator_fn = function (value, callback) {
       }
     ]
   });
-
  var $console = $("#example1console");
  var handsontable = $('#dataTable').data('handsontable');
-
     $("button[name='save']").click(function () {
       $.ajax({
         url: "{{=URL('savedata',args=section_id)}}",
@@ -175,10 +166,8 @@ var nonnegative_validator_fn = function (value, callback) {
         }
       });
     });
-
     function calGrad(instance, td, row, col, prop, value, cellProperties)
     {
-
         var studentHWs = $('#dataTable').data('handsontable').getDataAtRowProp(row, "hw");
         var earnedPoints = 0;
         {{point =0}}
@@ -186,28 +175,21 @@ var nonnegative_validator_fn = function (value, callback) {
                 {{point += hw.homework.points}}
              {{pass}}
         var totalAvailablePoints = {{=point}};
-
         for (var key in studentHWs ) {
           if (studentHWs.hasOwnProperty(key)) {
-
               if ( studentHWs[key])
                 earnedPoints += parseInt(studentHWs[key]);
           }
         }
-
         value = (earnedPoints/totalAvailablePoints) * 100;
         value = Math.round(value*100)/100;
-
-
         if (value)
         {
             var color;
-
             if ( value<70)
                 color = "red";
             else if (value<80)
                 color = "yellow";
-
             if ( color)
             {
               $(td).css({
@@ -215,53 +197,67 @@ var nonnegative_validator_fn = function (value, callback) {
               });
             }
         }
-
         Handsontable.renderers.TextRenderer.apply(this, arguments);
     }
 
-$(document).ready(function(){
+    $(document).ready(function(){
        $('#min').on('switchChange.bootstrapSwitch', function (event, state) {
-       alert(state);});
-});
+           save_stat('min', state)
+       });
 
-$(document).ready(function(){
        $('#max').on('switchChange.bootstrapSwitch', function (event, state) {
-       alert(state);});
-});
+           save_stat('max', state)
+       });
 
-$(document).ready(function(){
        $('#avg').on('switchChange.bootstrapSwitch', function (event, state) {
-       alert(state);});
-});
+           save_stat('avg', state)
+       });
 
-$(document).ready(function(){
        $('#med').on('switchChange.bootstrapSwitch', function (event, state) {
-       alert(state);});
-});
+           save_stat('med', state)
+       });
 
-$(document).ready(function(){
        $('#mea').on('switchChange.bootstrapSwitch', function (event, state) {
-       alert(state);});
-});
+           save_stat('mea', state)
+       });
 
-$(document).ready(function(){
        $('#sum').on('switchChange.bootstrapSwitch', function (event, state) {
-       alert(state);});
-});
+           save_stat('sum', state)
+       });
 
-$(document).ready(function(){
        $('#cov').on('switchChange.bootstrapSwitch', function (event, state) {
-       alert(state);});
-});
+           save_stat('cov', state)
+       });
 
-$(document).ready(function(){
        $('#var').on('switchChange.bootstrapSwitch', function (event, state) {
-       alert(state);});
-});
+           save_stat('var', state)
+       });
 
-$(document).ready(function(){
        $('#std').on('switchChange.bootstrapSwitch', function (event, state) {
-       alert(state);});
-});
+           save_stat('std', state)
+       });
+    });
+
+    function save_stat(stat, value)
+    {
+        $.ajax({
+        url: "{{=URL('statistics')}}",
+            data:{'stat' : stat, 'val' : value},
+        type: 'GET',
+        success: function (res) {
+            if(res)
+            {
+              alert(res);
+            }
+             else {
+                $console.text('Save error');
+            }
+        },
+        error: function () {
+          $console.text("Error something didn't work");
+        }
+      });
+    }
+
 
 </script>
