@@ -13,7 +13,6 @@
 
 <div id="example1console"></div>
 
-'{{=option}}'
 <table class="table">
     <tr>
         <th>Homework</th>
@@ -29,15 +28,15 @@
     </tr>
         <tr>
         <th>Enable stats for student</th>
-        <td><input data-size="mini" type="checkbox" class="checkbox-switcher" name="" /></td>
-        <td><input data-size="mini" type="checkbox" class="checkbox-switcher" name="" /></td>
-        <td><input data-size="mini" type="checkbox" class="checkbox-switcher" name="" /></td>
-        <td><input data-size="mini" type="checkbox" class="checkbox-switcher" name="" /></td>
-        <td><input data-size="mini" type="checkbox" class="checkbox-switcher" name="" /></td>
-        <td><input data-size="mini" type="checkbox" class="checkbox-switcher" name="" /></td>
-        <td><input data-size="mini" type="checkbox" class="checkbox-switcher" name="" /></td>
-        <td><input data-size="mini" type="checkbox" class="checkbox-switcher" name="" /></td>
-        <td><input data-size="mini" type="checkbox" class="checkbox-switcher" name="" /></td>
+        <td><input id = "min" data-size="mini" type="checkbox"   class="checkbox-switcher"></td>
+        <td><input id = "max" data-size="mini" type="checkbox"   class="checkbox-switcher"></td>
+        <td><input id = "avg" data-size="mini" type="checkbox"   class="checkbox-switcher"></td>
+        <td><input id = "med" data-size="mini" type="checkbox"   class="checkbox-switcher"></td>
+        <td><input id = "mea" data-size="mini" type="checkbox"   class="checkbox-switcher"></td>
+        <td><input id = "sum" data-size="mini" type="checkbox"   class="checkbox-switcher"></td>
+        <td><input id = "cov" data-size="mini" type="checkbox"   class="checkbox-switcher"></td>
+        <td><input id = "var" data-size="mini" type="checkbox"   class="checkbox-switcher"></td>
+        <td><input id = "std" data-size="mini" type="checkbox"   class="checkbox-switcher"></td>
     </tr>
 
     {{for a in stat:}}
@@ -220,7 +219,49 @@ var nonnegative_validator_fn = function (value, callback) {
         Handsontable.renderers.TextRenderer.apply(this, arguments);
     }
 
+$(document).ready(function(){
+       $('#min').on('switchChange.bootstrapSwitch', function (event, state) {
+       alert(state);});
+});
 
+$(document).ready(function(){
+       $('#max').on('switchChange.bootstrapSwitch', function (event, state) {
+       alert(state);});
+});
 
+$(document).ready(function(){
+       $('#avg').on('switchChange.bootstrapSwitch', function (event, state) {
+       alert(state);});
+});
+
+$(document).ready(function(){
+       $('#med').on('switchChange.bootstrapSwitch', function (event, state) {
+       alert(state);});
+});
+
+$(document).ready(function(){
+       $('#mea').on('switchChange.bootstrapSwitch', function (event, state) {
+       alert(state);});
+});
+
+$(document).ready(function(){
+       $('#sum').on('switchChange.bootstrapSwitch', function (event, state) {
+       alert(state);});
+});
+
+$(document).ready(function(){
+       $('#cov').on('switchChange.bootstrapSwitch', function (event, state) {
+       alert(state);});
+});
+
+$(document).ready(function(){
+       $('#var').on('switchChange.bootstrapSwitch', function (event, state) {
+       alert(state);});
+});
+
+$(document).ready(function(){
+       $('#std').on('switchChange.bootstrapSwitch', function (event, state) {
+       alert(state);});
+});
 
 </script>
