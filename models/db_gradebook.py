@@ -17,15 +17,15 @@ db.define_table(
 db.define_table(
     'section_statistics',
     Field('section_id', 'reference course_section'),
-    Field('min_score'),
-    Field('max_score'),
-    Field('avg_score'),
-    Field('median_score'),
-    Field('mean_score'),
-    Field('sum_score'),
-    Field('cov'),
-    Field('var'),
-    Field('std'),
+    Field('min_score', 'boolean'),
+    Field('max_score','boolean'),
+    Field('avg_score','boolean'),
+    Field('median_score','boolean'),
+    Field('mean_score','boolean'),
+    Field('sum_score','boolean'),
+    Field('cov','boolean'),
+    Field('var','boolean'),
+    Field('std','boolean'),
 )
 
 def get_statistics(section_id):

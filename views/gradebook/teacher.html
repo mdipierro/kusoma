@@ -1,7 +1,7 @@
 {{extend 'layout.html'}}
 
 
-<h1>Welcome to Grade Interface</h1>
+<h1>Welcome to Grade Interface  </h1>
 <a class="btn btn-primary" href="{{=URL('student',args=section_id)}}"> Student</a>
 
 
@@ -28,15 +28,24 @@
     </tr>
         <tr>
         <th>Enable stats for student</th>
-        <td><input id = "min" data-size="mini" type="checkbox"   class="checkbox-switcher"></td>
-        <td><input id = "max" data-size="mini" type="checkbox"   class="checkbox-switcher"></td>
-        <td><input id = "avg" data-size="mini" type="checkbox"   class="checkbox-switcher"></td>
-        <td><input id = "med" data-size="mini" type="checkbox"   class="checkbox-switcher"></td>
-        <td><input id = "mea" data-size="mini" type="checkbox"   class="checkbox-switcher"></td>
-        <td><input id = "sum" data-size="mini" type="checkbox"   class="checkbox-switcher"></td>
-        <td><input id = "cov" data-size="mini" type="checkbox"   class="checkbox-switcher"></td>
-        <td><input id = "var" data-size="mini" type="checkbox"   class="checkbox-switcher"></td>
-        <td><input id = "std" data-size="mini" type="checkbox"   class="checkbox-switcher"></td>
+        <td><input id = "min" data-size="mini" type="checkbox"   class="checkbox-switcher"
+                   {{if stat_options:}}{{if stat_options[0].min_score:}} checked {{pass}}{{pass}}></td>
+        <td><input id = "max" data-size="mini" type="checkbox"   class="checkbox-switcher"
+                   {{if stat_options:}}{{if stat_options[0].max_score:}} checked {{pass}}{{pass}}></td>
+        <td><input id = "avg" data-size="mini" type="checkbox"   class="checkbox-switcher"
+                   {{if stat_options:}}{{if stat_options[0].avg_score:}} checked {{pass}}{{pass}}></td>
+        <td><input id = "med" data-size="mini" type="checkbox"   class="checkbox-switcher"
+                   {{if stat_options:}}{{if stat_options[0].median_score:}} checked {{pass}}{{pass}}></td>
+        <td><input id = "mea" data-size="mini" type="checkbox"   class="checkbox-switcher"
+                   {{if stat_options:}}{{if stat_options[0].mean_score:}} checked {{pass}}{{pass}}></td>
+        <td><input id = "sum" data-size="mini" type="checkbox"   class="checkbox-switcher"
+                   {{if stat_options:}}{{if stat_options[0].sum_score:}} checked {{pass}}{{pass}}></td>
+        <td><input id = "cov" data-size="mini" type="checkbox"   class="checkbox-switcher"
+                   {{if stat_options:}}{{if stat_options[0].cov:}} checked {{pass}}{{pass}}></td>
+        <td><input id = "var" data-size="mini" type="checkbox"   class="checkbox-switcher"
+                   {{if stat_options:}}{{if stat_options[0].var:}} checked {{pass}}{{pass}}></td>
+        <td><input id = "std" data-size="mini" type="checkbox"   class="checkbox-switcher"
+                   {{if stat_options:}}{{if stat_options[0].std:}} checked {{pass}}{{pass}}></td>
     </tr>
 
     {{for a in stat:}}
@@ -59,7 +68,10 @@
 </table>
 
 <script>
-    $(".checkbox-switcher").bootstrapSwitch();
+  $(".checkbox-switcher").bootstrapSwitch();
+
+
+
  var data = [
  {{for row in users:}}
      {
@@ -200,7 +212,9 @@ var nonnegative_validator_fn = function (value, callback) {
         Handsontable.renderers.TextRenderer.apply(this, arguments);
     }
 
+
     $(document).ready(function(){
+
        $('#min').on('switchChange.bootstrapSwitch', function (event, state) {
            save_stat('min', state)
        });
@@ -247,7 +261,6 @@ var nonnegative_validator_fn = function (value, callback) {
         success: function (res) {
             if(res)
             {
-              alert(res);
             }
              else {
                 $console.text('Save error');

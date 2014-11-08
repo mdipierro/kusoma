@@ -36,9 +36,8 @@ def teacher():
 
     import numpy
     hws = get_homework_section(section_id)
-    option = get_statistics(section_id)
-    stat= []
-
+    stat_options = get_statistics(section_id)
+    stat=[]
 
     for hw in hws:
         s = convert_to_list(get_assignment_by_homework(section_id, hw.id))
@@ -55,7 +54,7 @@ def teacher():
                 'std':round(numpy.std(s),2),
                 'hw':hw
             })
-    return dict(section_id=section_id, users=students, names=students.first().hws, stat=stat, option=option)
+    return dict(section_id=section_id, users=students, names=students.first().hws,stat = stat, stat_options=stat_options)
 
 @auth.requires_login()
 def student():
@@ -64,7 +63,7 @@ def student():
     add_section_menu(section_id)
     section = db.course_section(section_id)
     student_grades = get_grades_student(section_id, auth.user.id)
-    grade_record = get_final_grade(section_id, auth.user.id)    
+    grade_record = get_final_grade(section_id, auth.user.id)
     import numpy
     hws = get_homework_section(section_id)
 
@@ -107,7 +106,7 @@ def savedata():
                 db.assignment_grade.update_or_insert((db.assignment_grade.section_id==section_id)&(db.assignment_grade.assignment_id==hw.id)&(db.assignment_grade.user_id==id),section_id=section_id, assignment_id=hw.id, user_id=id, grade=grade, assignment_comment='')
             pass
 
-    session.flash = "Data Saved"
+    session.flash = "Grades Saved"
     return response.json(students)
 
 def statistics():
@@ -142,7 +141,8 @@ def statistics():
     if(stat == "std"):
         db.section_statistics.update_or_insert(db.section_statistics.section_id==section_id, section_id =section_id,
              std=value)
-
+    
+    session.flash = "Statistics Options Changed"
     return str(section_id)  + " " + stat + " " +value
 
 @auth.requires_login()
