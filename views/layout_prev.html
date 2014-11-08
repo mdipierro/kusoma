@@ -44,7 +44,7 @@
   <script src="{{=URL('static','js/modernizr.custom.js')}}"></script>
 
   <!-- Get our current css layout theme from session object-->
-  {{layout_sheet = session.current_theme}}
+  {{layout_sheet = session.preview_theme}}
 
   <!-- include stylesheets -->
   {{
@@ -65,11 +65,10 @@
     (left_sidebar_enabled and 1 or 0)+(right_sidebar_enabled and 1 or 0)]
   }}
 
-  <!-- uncomment here to load jquery-ui -->
+  
        <link rel="stylesheet" href="http://ajax.googleapis.com/ajax/libs/jqueryui/1.10.3/themes/ui-lightness/jquery-ui.css" type="text/css" media="all" />
        <script src="http://ajax.googleapis.com/ajax/libs/jqueryui/1.10.3/jquery-ui.min.js" type="text/javascript"></script>
-       <!-- uncomment to load jquery-ui //-->
-
+       
   <noscript><link href="{{=URL('static', 'css/web2py_bootstrap_nojs.css')}}" rel="stylesheet" type="text/css" /></noscript>
   {{block head}}{{end}}
 </head>
@@ -165,6 +164,7 @@ m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
   <!-- End Google Analytics -->
   {{pass}}
   <script src="{{=URL('static','js/share.js',vars=dict(static=URL('static','images')))}}"></script>
+
 </body>
 </html>
 
