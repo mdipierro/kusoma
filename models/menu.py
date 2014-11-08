@@ -42,7 +42,7 @@ def add_section_menu(section_id):
                 ('Homeworks',False,URL('homeworks','manage_homeworks',args=section_id)),
                 ('Grades',False,URL('gradebook','manage_grades',args=section_id)),
                 ('Quizzes',False,URL('quizzes','manage_quizzes',args=section_id)),
-                ('Dropbox',False,URL('dropbox','manage_uploads',args=section_id)),
+                ('Dropbox',False,URL('dropbox','index',args=section_id)),
                 ('Chat',False,URL('chat','manage_chat',args=section_id)),
                 ('Recordings',False,URL('recordings','index',args=section_id)),
                 ]))
