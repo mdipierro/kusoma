@@ -53,3 +53,16 @@ def folder_is_empty(folder, homeworks):
         if homework.folder == folder.id:
             return False
     return True
+
+def has_submitted(user_id, homework_id):
+    student = (db.submission.id_student == user_id)
+    submission = (db.submission.homework == homework_id)
+    student_submission_count = db(student & submission).count()
+    if student_submission_count > 0:
+        return True
+    return False
+
+def can_submit(homework):
+    if (request.now > homework.opening_date):
+        return True
+    return False
