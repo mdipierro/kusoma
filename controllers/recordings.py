@@ -19,7 +19,7 @@ def index():
         redirect(URL('default','section', args=section_id))
     return dict(section=section, videos=videos, is_teacher=is_teacher)
 
-@auth.requires_login()
+#@auth.requires_login()   #John disabled for now, see below
 def update_recording():
     '''
     This is a callback function to register a new recording.
@@ -30,6 +30,20 @@ def update_recording():
     Visit lms299/recordings/add_recording/2/aKdV5FvXLuI
     Then visit lms299/recordings/index/2 to confirm recording was added
     '''
+    
+    '''
+    The following line is needed so that the Hangouts app is able to access this function.
+    Without it, the hangout javascript console will have an error:
+    
+    XMLHttpRequest cannot load ... No 'Access-Control-Allow-Origin' header is present
+    on the requested resource. Origin ... is therefore not allowed access.
+    
+    Note also, the same error appears when this function requires login because for
+    some reason, the hangout window is not sending the session cookie to the web2py
+    server, even when I am logged into the web2py server.
+    '''
+    response.headers['Access-Control-Allow-Origin'] = '*'
+    
     section_id = request.args(0,cast=int)
     youtube_id = xmlescape(request.args(1))
     section=db(db.course_section.id == section_id).select().first()
