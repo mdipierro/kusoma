@@ -19,3 +19,10 @@ progress.log
 
 # Ignore temp files.
 **/#*
+*~
+
+# Jetbrains
+.idea/*
+
+# Mac
+.DS_Store
