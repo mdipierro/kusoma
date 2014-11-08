@@ -60,3 +60,14 @@ def uploading():
        response.flash = 'form accepted'
        redirect(URL('index'))
     return form
+
+# coding: utf8
+# try something like
+def feedback():
+    
+ 
+   
+    feedbacks = db.feedback(request.args(0))
+    form = SQLFORM(db.feedback, feedbacks)
+    db.feedback.date_added.writable = True
+    return dict(form=form)
