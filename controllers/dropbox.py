@@ -1,5 +1,10 @@
+@auth.requires_login()
 def index():
-    return dict()
+    user_id = auth.user_id
+
+    courses = my_sections()
+
+    return dict(courses=courses)
 
 @auth.requires_login()
 def manage_uploads():
