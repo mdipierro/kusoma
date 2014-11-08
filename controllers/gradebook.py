@@ -36,7 +36,8 @@ def teacher():
 
     import numpy
     hws = get_homework_section(section_id)
-    stat=[]
+    option = get_statistics(section_id)
+    stat= []
 
 
     for hw in hws:
@@ -54,7 +55,7 @@ def teacher():
                 'std':round(numpy.std(s),2),
                 'hw':hw
             })
-    return dict(section_id=section_id, users=students, names=students.first().hws, stat=stat)
+    return dict(section_id=section_id, users=students, names=students.first().hws, stat=stat, option=option)
 
 @auth.requires_login()
 def student():
@@ -89,7 +90,6 @@ def student():
 @auth.requires_login()
 def savedata():
     import gluon.contrib.simplejson
-
     students = gluon.contrib.simplejson.loads(request.body.read())
     section_id = request.args(0, cast=int)
     hws = get_homework_section(section_id)
@@ -107,10 +107,43 @@ def savedata():
                 db.assignment_grade.update_or_insert((db.assignment_grade.section_id==section_id)&(db.assignment_grade.assignment_id==hw.id)&(db.assignment_grade.user_id==id),section_id=section_id, assignment_id=hw.id, user_id=id, grade=grade, assignment_comment='')
             pass
 
-          #  db.assignment_grade.update_or_insert((db.assignment_grade.section_id==1)& (db.assignment_grade.assignment_id==1)& (db.assignment_grade.user_id==id), grade=10, assignment_comment='')
     session.flash = "Data Saved"
     return response.json(students)
 
+def statistics():
+    section_id = request.args(0, cast=int)
+    stat = request.vars['stat']
+    value = request.vars['val']
+
+    if(stat == "min"):
+        db.section_statistics.update_or_insert(db.section_statistics.section_id==section_id, section_id =section_id,
+             min_score=value)
+    if(stat == "max"):
+        db.section_statistics.update_or_insert(db.section_statistics.section_id==section_id, section_id =section_id,
+             max_score=value)
+    if(stat == "avg"):
+        db.section_statistics.update_or_insert(db.section_statistics.section_id==section_id, section_id =section_id,
+             avg_score=value)
+    if(stat == "med"):
+        db.section_statistics.update_or_insert(db.section_statistics.section_id==section_id, section_id =section_id,
+             median_score=value)
+    if(stat == "mea"):
+        db.section_statistics.update_or_insert(db.section_statistics.section_id==section_id, section_id =section_id,
+             mean_score=value)
+    if(stat == "sum"):
+        db.section_statistics.update_or_insert(db.section_statistics.section_id==section_id, section_id =section_id,
+             sum_score=value)
+    if(stat == "cov"):
+        db.section_statistics.update_or_insert(db.section_statistics.section_id==section_id, section_id =section_id,
+             cov=value)
+    if(stat == "var"):
+        db.section_statistics.update_or_insert(db.section_statistics.section_id==section_id, section_id =section_id,
+             var=value)
+    if(stat == "std"):
+        db.section_statistics.update_or_insert(db.section_statistics.section_id==section_id, section_id =section_id,
+             std=value)
+
+    return str(section_id)  + " " + stat + " " +value
 
 @auth.requires_login()
 def addhw():
@@ -121,4 +154,3 @@ def addhw():
 def addgrade():
     grid = SQLFORM.smartgrid(db.assignment_grade)
     return dict(grid=grid)
-

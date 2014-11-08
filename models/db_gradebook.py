@@ -14,6 +14,23 @@ db.define_table(
     Field('grade'),
     Field('teacher_comment', 'text'))
 
+db.define_table(
+    'section_statistics',
+    Field('section_id', 'reference course_section'),
+    Field('min_score'),
+    Field('max_score'),
+    Field('avg_score'),
+    Field('median_score'),
+    Field('mean_score'),
+    Field('sum_score'),
+    Field('cov'),
+    Field('var'),
+    Field('std'),
+)
+
+def get_statistics(section_id):
+    query = (db.section_statistics.section_id==section_id)
+    return db(query).select()
 
 def get_all_students(section_id):
     query = (db.membership.course_section==section_id)&(db.membership.auth_user==db.auth_user.id)&(db.membership.role!='teacher')
