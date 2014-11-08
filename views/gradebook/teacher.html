@@ -51,15 +51,15 @@
     {{for a in stat:}}
         <tr>
             <td>{{=a['hw'].name}}</td>
-            <td>{{=a['min']}}</td>
-            <td>{{=a['max']}}</td>
-            <td>{{=a['average']}}</td>
-            <td>{{=a['median']}}</td>
-            <td>{{=a['mean']}}</td>
-            <td>{{=a['sum']}}</td>
-            <td>{{=a['cov']}}</td>
-            <td>{{=a['var']}}</td>
-            <td>{{=a['std']}}</td>
+            <td><div class='min display'>{{=a['min']}}</div></td>
+            <td><div class='max display'>{{=a['max']}}</div></td>
+            <td><div class='average display'>{{=a['average']}}</div></td>
+            <td><div class='median display'>{{=a['median']}}</div></td>
+            <td><div class='mean display'>{{=a['mean']}}</div></td>
+            <td><div class='sum display'>{{=a['sum']}}</div></td>
+            <td><div class='cov display'>{{=a['cov']}}</div></td>
+            <td><div class='var display'>{{=a['var']}}</div></td>
+            <td><div class='std display'>{{=a['std']}}</div></td>
 
         </tr>
 
@@ -214,41 +214,78 @@ var nonnegative_validator_fn = function (value, callback) {
 
 
     $(document).ready(function(){
+        if (!$('#min').is(':checked')){
+            changeColorByState('min display', false)
+        }
+        if (!$('#max').is(':checked')){
+            changeColorByState('max display', false)
+        }
+        if (!$('#avg').is(':checked')){
+            changeColorByState('average display', false)
+        }
+        if (!$('#med').is(':checked')){
+            changeColorByState('median display', false)
+        }
+        if (!$('#mea').is(':checked')){
+            changeColorByState('mean display', false)
+        }
+        if (!$('#sum').is(':checked')){
+            changeColorByState('sum display', false)
+        }
 
        $('#min').on('switchChange.bootstrapSwitch', function (event, state) {
            save_stat('min', state)
+           changeColorByState('min display', state)
        });
+       if (!$('#cov').is(':checked')){
+            changeColorByState('cov display', false)
+       }
+       if (!$('#var').is(':checked')){
+            changeColorByState('var display', false)
+       }
+       if (!$('#std').is(':checked')){
+            changeColorByState('std display', false)
+       }
+
 
        $('#max').on('switchChange.bootstrapSwitch', function (event, state) {
            save_stat('max', state)
+           changeColorByState('max display', state)
        });
 
        $('#avg').on('switchChange.bootstrapSwitch', function (event, state) {
            save_stat('avg', state)
+           changeColorByState('average display', state)
        });
 
        $('#med').on('switchChange.bootstrapSwitch', function (event, state) {
            save_stat('med', state)
+           changeColorByState('median display', state)
        });
 
        $('#mea').on('switchChange.bootstrapSwitch', function (event, state) {
            save_stat('mea', state)
+           changeColorByState('mean display', state)
        });
 
        $('#sum').on('switchChange.bootstrapSwitch', function (event, state) {
            save_stat('sum', state)
+           changeColorByState('sum display', state)
        });
 
        $('#cov').on('switchChange.bootstrapSwitch', function (event, state) {
            save_stat('cov', state)
+           changeColorByState('cov display', state)
        });
 
        $('#var').on('switchChange.bootstrapSwitch', function (event, state) {
            save_stat('var', state)
+           changeColorByState('var display', state)
        });
 
        $('#std').on('switchChange.bootstrapSwitch', function (event, state) {
            save_stat('std', state)
+           changeColorByState('std display', state)
        });
     });
 
@@ -271,6 +308,20 @@ var nonnegative_validator_fn = function (value, callback) {
         }
       });
     }
+
+function changeColorByState(matchClass, state) {
+    var elems = document.getElementsByTagName('*'), i;
+    for (i in elems) {
+        if((' ' + elems[i].className + ' ').indexOf(' ' + matchClass + ' ')
+                > -1) {
+            if(state){
+                elems[i].style.color = 'Black';
+            }else{
+                elems[i].style.color = 'Gray';
+            }
+        }
+    }
+}
 
 
 </script>
