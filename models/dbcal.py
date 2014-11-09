@@ -49,9 +49,9 @@ db.define_table(
     Field('start_date', 'datetime', requires=NE),                        ## FC Event field
     Field('end_date', 'datetime'),                                       ## FC Event field
     Field('all_day', 'boolean', default=False),                          ## FC Event field
-    Field('url'),                                                        ## FC Event field
+    Field('url', requires=IS_EMPTY_OR(IS_URL())),                        ## FC Event field
     Field('visibility', 'reference event_visibility'),
-    Field('course_id', 'reference course', required=False, requires=IS_EMPTY_OR(IS_IN_DB(db, 'course.id'))),
+    Field('course_id', 'reference course', required=False, requires=IS_EMPTY_OR(IS_IN_DB(db, 'course.id', '%(name)s - %(code)s'))),
     auth.signature,
     format='%(title)s')
 db.cal_event.id.readable = db.cal_event.id.writable = False
