@@ -8,6 +8,8 @@ Date: 10/23/14
 
 {{if rejected is None:}}
     <h2>{{=section.name}} Dropbox</h2>
+    <a href="{{=URL('../index')}}"
+   class="btn btn-primary">&lt;&lt; Go Back</a><p></p>
     {{is_student = is_user_student(section.id)}}
     {{if not homeworks and not folders:}}
         <h4 style="text-indent: 15px;">There is nothing to submit yet for this course section.</h4>
@@ -23,6 +25,7 @@ Date: 10/23/14
                 <th>Title</th>
                 <th>Opening Date</th>
                 <th>Due Date</th>
+                <th>Grade</th>
                 {{if is_student:}}
                 <th style="text-align: center;">Submit Homework</th>
                 <th style="text-align: center;">My Submission</th>
@@ -42,22 +45,33 @@ Date: 10/23/14
                     <td>-</td>
                     {{pass}}
                     {{if homework.due_date is not None:}}
-                    <td>{{=homework.due_date.strftime("%b %d, %Y %I:%S%p")}}</td>
+                        <td>{{=homework.due_date.strftime("%b %d, %Y %I:%S%p")}}</td>
                     {{else:}}
-                    <td>-</td>
+                        <td>-</td>
                     {{pass}}
+
+                    {{grade = get_grade(homework.id)}}
+                    {{points = get_points(homework.id, section_id)}}
+                    {{if grade is None:}}
+                        {{grade = "-"}}
+                    {{pass}}
+                    {{if points is None:}}
+                        {{points = "-"}}
+                    {{pass}}
+                    <td>{{=grade}}/{{=points}}</td>
+
                     {{if is_student:}}
                         <td style="text-align: center;">
                             {{if can_submit(homework):}}
-                            <a href="{{=URL('../..', 'homeworks', args=(section_id, homework.id))}}"
-                               class="btn btn-primary btn-small">Submit</a>
+                                <a href="{{=URL('../..', 'homeworks', args=(section_id, homework.id))}}"
+                                   class="btn btn-primary btn-small">Submit</a>
                             {{else:}}
                                 Not yet open
                             {{pass}}
                         </td>
                         <td style="text-align: center;">
                             {{if has_submitted(user_id, homework.id):}}
-                                <a href="{{=URL('my_submission',args=(homework.id, user_id))}}"
+                                <a href="{{=URL('my_submission',args=(section_id, homework.id))}}"
                                    class="btn btn-primary btn-small">Submission</a>
                             {{else:}}
                                 -
@@ -74,17 +88,20 @@ Date: 10/23/14
             {{pass}}
         </table>
     {{pass}}
+    </div>
     {{for homework in homeworks:}}
         {{if homework.folder is None:}}
             {{other_homeworks.append(homework)}}
         {{pass}}
     {{pass}}
+    <div style="border-style: solid; border-width: 1px; border-color: grey grey; border-radius: 10px;">
     {{if other_homeworks:}}
             <h4 style="text-indent: 15px;">No Category</h4>
             <table class="table">
                 <th>Title</th>
                 <th>Opening Date</th>
                 <th>Due Date</th>
+                <th>Grade</th>
                 {{if is_student:}}
                 <th style="text-align: center;">Submit Homework</th>
                 <th style="text-align: center;">My Submission</th>
@@ -106,6 +123,17 @@ Date: 10/23/14
                         {{else:}}
                         <td>-</td>
                         {{pass}}
+                        
+                        {{grade = get_grade(homework.id)}}
+                        {{points = get_points(homework.id, section_id)}}
+                        {{if grade is None:}}
+                            {{grade = "-"}}
+                        {{pass}}
+                        {{if points is None:}}
+                            {{points = "-"}}
+                        {{pass}}
+                        <td>{{=grade}}/{{=points}}</td>
+                        
                         {{if is_student:}}
                             <td style="text-align: center;">
                             {{if can_submit(homework):}}
@@ -117,7 +145,7 @@ Date: 10/23/14
                             </td>
                             <td style="text-align: center;">
                             {{if has_submitted(user_id, homework.id):}}
-                                <a href="{{=URL('my_submission',args=(homework.id, user_id))}}"
+                                <a href="{{=URL('my_submission',args=(section_id, homework.id))}}"
                                    class="btn btn-primary btn-small">Submission</a>
                             {{else:}}
                                 -
