@@ -10,7 +10,7 @@ def manage_grades():
         redirect(URL('student',args=section_id))
     else:
         session.flash = 'Not authorized'
-        redirect(URL('default/index', args=section_id))
+        redirect(URL('default','index', args=section_id))
 
     return dict()
 
@@ -20,7 +20,7 @@ def teacher():
     add_section_menu(section_id)
     if not (is_user_teacher(section_id)):
         session.flash = 'Not authorized'
-        redirect(URL('student',args=section_id))
+        redirect(URL('default','index',args=section_id))
 
     response.files.insert(0,URL('static','js/jquery.js'))
     response.files.insert(0,URL('static','js/jquery.handsontable.full.js'))
