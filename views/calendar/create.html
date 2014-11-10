@@ -1,7 +1,52 @@
 {{extend 'layout.html'}}
 
-<h1>
-    Create a new event
-</h1>
-{{=form}}
-{{=BEAUTIFY(response._vars)}}
+<h3>Create an event</h3>
+
+<div class="well">
+  {{=form.custom.begin}}
+  <div style="visibility: hidden;">{{=form.custom.widget.id}}</div>
+  <div class="label">Title</div>
+  <div>
+	{{=form.custom.widget.title}}
+	{{=form.custom.widget.all_day}} All day
+  </div>
+  <div class="label">Details</div>
+  <div>{{=form.custom.widget.details}}</div>
+  <div class="dtable">
+	<div class="drow">
+	  <div class="dcell"><span class="label">Start Date</span></div>
+	  <div class="dcell">{{=form.custom.widget.start_date}}</div>
+	</div>
+	<div class="drow">
+	  <div class="dcell"><span class="label">End Date</span></div>
+	  <div class="dcell">{{=form.custom.widget.end_date}}</div>
+	</div>
+	<div class="drow">
+	  <div class="dcell"><span class="label">Visibility</span></div>
+	  <div class="dcell">{{=form.custom.widget.visibility}}</div>
+	</div>
+	<div class="drow">
+	  <div class="dcell"><span class="label">Course ID</span></div>
+	  <div class="dcell">{{=form.custom.widget.course_id}}</div>
+	</div>
+	<div class="drow">
+	  <div class="dcell"><span class="label">URL</span></div>
+	  <div class="dcell">{{=form.custom.widget.url}}</div>
+	</div>
+	<div class="drow">
+	  <div class="dcell">{{=form.custom.submit}}</div>
+	  <div class="dcell"></div>
+	</div>
+  </div>
+  <div>{{=form.custom.end}}</div>
+</div>
+
+<!--h3>Form vars</h3>
+{{#=BEAUTIFY(form.vars)}}
+
+<h3>Form errors</h3>
+{{#=BEAUTIFY(form.errors)}}
+
+<h3>Response vars</h3>
+{{#=BEAUTIFY(response.vars)}}
+-->

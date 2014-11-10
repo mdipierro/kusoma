@@ -62,6 +62,8 @@ class DATE_DEFAULT(object):
     start = 0
     end = 1
 
+# class CalEventException(Exception): pass
+
 # We use auth.user_id because it doesn't throw an exception when noone is logged in.
 PERSONAL_EVENTS = (db.cal_event.owner_id == auth.user_id)
 PUBLIC_EVENTS = (db.event_visibility.visibility=='public')
@@ -102,32 +104,25 @@ def add_event(title, visibility, owner=auth.user_id, details='',
               start_date=date.today(), end_date=None, all_day=False, url=None, course_id=None):
     """Add a new event to the table."""
     from datetime import datetime
-    # if start_date & (type(start_date) is StringType):
-    #     start = datetime.strptime(start_date, DATE_FORMAT)
-    # else:
-    #     start = _first_of_month()
-    # if end_date:
-    #     end = datetime.strptime(end_date, DATE_FORMAT)
-    # else:
-    #     end = None
     start = _convert_string_to_date(start_date, default=DATE_DEFAULT.start)
     end = _convert_string_to_date(end_date, default=DATE_DEFAULT.end)
-    db.cal_event.insert(owner_id=owner,
-                        title=title,
-                        details=details,
-                        start_date=start,
-                        end_date=end,
+    new_event = db.cal_event.insert(owner_id=owner,
+                                    title=title,
+                                    details=details,
+                                    start_date=start,
+                                    end_date=end,
                         all_day=all_day,     ## Fix this to insert False when we get a None
                         url=url,
                         visibility=visibility,
                         course_id=course_id)
+    return new_event
 
 def update_event(event_id, title, details, start_date, end_date, all_day, url, visibility, course_id):
     """Update the given event."""
-    event = db(db.cal_event.id == event_id).select(db.cal_event.id, db.cal_event.owner_id).first()
+    event = db(db.cal_event.id == event_id).select(db.cal_event.id, db.cal_event.owner_id, db.cal_event.title).first()
     if event:
         if auth.user_id != event.owner_id:
-            raise Exception('You do not own the event "%s".' % title)
+            raise Exception('You do not own the event "%s" - update failed.' % event.title)
         start = _convert_string_to_date(start_date, fmt=INPUT_DATE_FORMAT, default=DATE_DEFAULT.start)
         end = _convert_string_to_date(end_date, fmt=INPUT_DATE_FORMAT, default=DATE_DEFAULT.end)
         start, end = _sort_dates(start, end)
@@ -142,11 +137,17 @@ def update_event(event_id, title, details, start_date, end_date, all_day, url, v
     else:
         raise Exception('Could not find event')
 
-def delete_event(event_id, user_id=auth.user_id):
+def delete_event(event_id):
     """Delete the given event."""
     # Check if the user is the owner of the event.
     # If not, don't allow them to delete it.
-    pass
+    event = db(db.cal_event.id == event_id).select(db.cal_event.id, db.cal_event.owner_id).first()
+    if event:
+        if auth.user_id != event.owner_id:
+            raise Exception('You do not own the event "%s".' % title)
+        db(db.cal_event.id == event_id).delete()
+    else:
+        raise Exception('Could not find event')
 
 def my_events(start_date, end_date, json=False):
     """Events for the logged-in user."""
@@ -159,9 +160,9 @@ def my_events(start_date, end_date, json=False):
     except:
         return
     if json:
-        return _get_events_json(query, EVENT_FIELDS) # , db.cal_event.id)
+        return _get_events_json(query, EVENT_FIELDS)
     else:
-        return _get_events(query, EVENT_FIELDS) # , db.cal_event.id)
+        return _get_events(query, EVENT_FIELDS)
 
 def course_events(start_date, end_date, course_id):
     """
@@ -177,6 +178,14 @@ def course_events(start_date, end_date, course_id):
     except:
         return
     return _get_events_json(query, EVENT_FIELDS)
+
+def get_event(event_id):
+    evt = db(db.cal_event.id == event_id).select().first()
+    if evt.owner_id != auth.user_id:
+        raise Exception('You don\'t own this event.')
+    # else:
+    #     raise Exception('Event Deleted.')
+    return evt
 
 def _get_events(query, fields, groupby=None):
     return db(query).select(*fields, groupby=groupby)

@@ -18,23 +18,42 @@ def create():
     # where the course_id is the course that the user selected and the referenced event is the
     # record just created in db.cal_event
     response.title = 'Create event'
-    start = _convert_string_to_date(request.args(0), fmt=OUTPUT_DATE_FORMAT) # or datetime.today() #.strftime('%Y-%m-%d')
+    if request.args:
+        if request.args(0):
+            start = _convert_string_to_date(request.args(0), fmt=OUTPUT_DATE_FORMAT)
+        else:
+            start = datetime.today()
+        if request.args(1):
+            end = _convert_string_to_date(request.args(1), fmt=OUTPUT_DATE_FORMAT)
+        else:
+            end = None
+    else:
+        start = datetime.today()
+        start = datetime(start.year, start.month, start.day)
+        end = datetime(start.year, start.month, start.day + 1)
     db.cal_event.start_date.default = start
-    end = request.args(1)
-    db.cal_event.end_date.default = _convert_string_to_date(end, fmt=OUTPUT_DATE_FORMAT)
-    form = SQLFORM(db.cal_event).process(next=URL('index'), onsuccess=None)
-    if form.accepts(request, session, dbio=False, onvalidation=None):
-        add_event(title=form.vars.title,
-                  details=form.vars.details,
-                  start_date=form.vars.start_date,
-                  end_date=form.vars.end_date,
-                  all_day=form.vars.all_day,
-                  url=form.vars.url)
+    db.cal_event.end_date.default = end
+    url = URL('calendar', 'index')
+    form = SQLFORM(db.cal_event)
+    if form.validate(onsuccess=None, dbio=False, onvalidation=None):
+        try:
+            add_event(title=form.vars.title,
+                      details=form.vars.details,
+                      start_date=form.vars.start_date,
+                      end_date=form.vars.end_date,
+                      all_day=form.vars.all_day,
+                      url=form.vars.url,
+                      visibility=form.vars.visibility,
+                      course_id=form.vars.course_id)
+        except Exception, e:
+            session.flash = e
+            response.flash = e
+        redirect(url)
     return dict(form=form)
 
 @auth.requires_login()
 def update():
-    response.title = 'Edit event'
+    response.title = 'Update Event'
     event_id = request.args(0, cast=int) or redirect(URL('calendar', 'index'))
     url = URL('calendar', 'index')
     form = SQLFORM(db.cal_event, event_id)
@@ -61,8 +80,21 @@ def delete():
     # display the events in a grid or a picklist
     # The user can selects an event and clicks a delete button
     # Delete the event that the user selected
-    return dict(grid=SQLFORM.smartgrid(db.cal_event))
-    
+    response.title = 'Delete Event'
+    event_id = request.args(0, cast=int) or redirect(URL('calendar', 'index'))
+    url = URL('calendar', 'index')
+    event = get_event(event_id)
+    form = FORM(INPUT(_type='submit', _value='Delete it'))
+    if form.validate(onsuccess=None, dbio=False, onvalidation=None):
+        session.flash = 'Deleted %s' % event.title
+        try:
+            delete_event(event_id)
+        except Exception, e:
+            session.flash = e
+            response.flash = e
+        redirect(url)
+    return dict(form=form, event=event)
+
 @auth.requires_login()
 def user_calendar():
     # input: a user id
