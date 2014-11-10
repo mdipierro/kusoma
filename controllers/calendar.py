@@ -1,17 +1,10 @@
 # -*- coding: utf-8 -*-
 # This is the controller file for the lms299 event calendar.
-import datetime
+from datetime import datetime
 
 @auth.requires_login()
 def index():
-    # start = first_of_month().strftime('%Y-%m-%d')
-    # end = last_of_month().strftime('%Y-%m-%d')
-    # params = {'start': start, 'end': end}
-    # return dict(form=my_events(start, end), params=params)
-    return dict()
-
-@auth.requires_login()
-def calendar():
+    response.title = 'Calendar'
     return dict()
 
 @auth.requires_login()
@@ -24,13 +17,42 @@ def create():
     # When the event is created in db.cal_event, a record is also created in db.course_event
     # where the course_id is the course that the user selected and the referenced event is the
     # record just created in db.cal_event
-    form = SQLFORM(db.cal_event).process()
-    if form.accepted:
-        response.flash = 'Event created successfully'
-    elif form.errors:
-        response.flash = 'Form has some error, REVIEW please !'
-    else :
-        response.flash = 'Please fill in the form !'
+    response.title = 'Create event'
+    start = _convert_string_to_date(request.args(0), fmt=OUTPUT_DATE_FORMAT) # or datetime.today() #.strftime('%Y-%m-%d')
+    db.cal_event.start_date.default = start
+    end = request.args(1)
+    db.cal_event.end_date.default = _convert_string_to_date(end, fmt=OUTPUT_DATE_FORMAT)
+    form = SQLFORM(db.cal_event).process(next=URL('index'), onsuccess=None)
+    if form.accepts(request, session, dbio=False, onvalidation=None):
+        add_event(title=form.vars.title,
+                  details=form.vars.details,
+                  start_date=form.vars.start_date,
+                  end_date=form.vars.end_date,
+                  all_day=form.vars.all_day,
+                  url=form.vars.url)
+    return dict(form=form)
+
+@auth.requires_login()
+def update():
+    response.title = 'Edit event'
+    event_id = request.args(0, cast=int) or redirect(URL('calendar', 'index'))
+    url = URL('calendar', 'index')
+    form = SQLFORM(db.cal_event, event_id)
+    if form.validate(onsuccess=None, dbio=False, onvalidation=None):
+        try:
+            update_event(event_id=event_id,
+                         title=form.vars.title,
+                         details=form.vars.details,
+                         start_date=form.vars.start_date,
+                         end_date=form.vars.end_date,
+                         all_day=form.vars.all_day,
+                         url=form.vars.url,
+                         visibility=form.vars.visibility,
+                         course_id=form.vars.course_id)
+        except Exception, e:
+            session.flash = e
+            response.flash = e
+        redirect(url)
     return dict(form=form)
 
 @auth.requires_login()
