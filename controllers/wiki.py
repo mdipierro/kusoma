@@ -1,10 +1,5 @@
 # This is the wiki controller for the lms299.
 def wiki():
-     """ this controller returns a dictionary rendered by the view
-         it lists all wiki pages
-     >>> index().has_key('pages')
-     True
-     """
     #  return dict()
      pages = db().select(db.wikipage.id,db.wikipage.title,orderby=db.wikipage.title)
      return dict(pages=pages)
