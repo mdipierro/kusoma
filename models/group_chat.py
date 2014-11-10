@@ -94,6 +94,12 @@ def get_user_group_chat_settings(user_id=request.now):
     """
     return db(db.group_chat_user_settings.user_id == user_id).select()
 
+def get_group_chat_messages():
+    """
+    Retrieves all groups chat messages regardless of user
+    """
+    return db(db.group_chat_message).select()
+
 def get_group_chat_messages_for_session(session_id):
     """
     Retrieve all messages for a chat session.
