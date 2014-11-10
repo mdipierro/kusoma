@@ -3,12 +3,15 @@
 @auth.requires_login()
 def manage_grades():
     section_id=request.args(0, cast=int)
-
-    if not (is_user_teacher(section_id) or auth.user.is_administrator):
-        session.flash = 'Not authorized'
+    
+    if (is_user_teacher(section_id) or auth.user.is_administrator):
+        redirect(URL('teacher',args=section_id))
+    elif (is_user_student(section_id)):
         redirect(URL('student',args=section_id))
+    else:
+        session.flash = 'Not authorized'
+        redirect(URL('default/index', args=section_id))
 
-    redirect(URL('teacher',args=section_id))
     return dict()
 
 @auth.requires_login()
