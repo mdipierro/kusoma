@@ -7,8 +7,8 @@ def index():
     response.title = 'Calendar'
     return dict()
 
-@auth.requires_login()
-#@auth.requires(db.auth_user.is_teacher or db.auth_user.is_administrator)   NOT YET TESTED 
+# @auth.requires_login()
+@auth.requires(CAN_CREATE_EVENTS==True, requires_login=True)
 def create():
     # Display a form the user can use to create a new event.
     #
@@ -62,7 +62,7 @@ def delete():
     # The user can selects an event and clicks a delete button
     # Delete the event that the user selected
     return dict(grid=SQLFORM.smartgrid(db.cal_event))
-    
+
 @auth.requires_login()
 def user_calendar():
     # input: a user id
