@@ -17,7 +17,13 @@ def index():
         is_teacher=True
     else:
         redirect(URL('default','section', args=section_id))
-    return dict(section=section, videos=videos, is_teacher=is_teacher)
+        
+    #Here's a possible way of encoding callback URL and section_id for start_data to hangouts app
+    #to decode in javascript: https://stackoverflow.com/questions/901115/how-can-i-get-query-string-values-in-javascript
+    import urllib
+    start_data=urllib.urlencode(dict(callback=URL('update_recording', scheme=True, host=True), section_id=section_id))
+    
+    return dict(section=section, videos=videos, is_teacher=is_teacher, start_data=start_data)
 
 #@auth.requires_login()   #John disabled for now, see below
 def update_recording():
