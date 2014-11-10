@@ -62,9 +62,12 @@ def teacher():
 
 @auth.requires_login()
 def student():
-    session.flash = "Welcome %s %s" % (auth.user.first_name, auth.user.last_name)
     section_id = request.args(0, cast=int)
     add_section_menu(section_id)
+    if not (is_user_student(section_id)):
+        session.flash = 'Not authorized'
+        redirect(URL('default','index',args=section_id))
+    session.flash = "Welcome %s %s" % (auth.user.first_name, auth.user.last_name)
     section = db.course_section(section_id)
     student_grades = get_grades_student(section_id, auth.user.id)
     grade_record = get_final_grade(section_id, auth.user.id)
