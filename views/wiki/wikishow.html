@@ -1,11 +1,21 @@
 {{extend 'layout.html'}}
-<h1>{{=page.title}}</h1>
-[ {{=A('Edit', _href=URL('wikiedit', args=request.args))}} ]<br />
-{{=MARKMIN(page.body)}}
-<h2>Comments</h2>
+<b><font size =30>{{=page.title}}</font></b>
+[ {{=A('Edit', _href=URL('wikiedit', args=request.args))}} ]<br><br>
+
+<h4>Description</h4><hr>
+{{=MARKMIN(page.body)}}<br>
+
+<h4>Comments</h4><hr>
 {{for post in comments:}}
+<div class="well">
   <p>{{=db.auth_user[post.created_by].first_name}} on {{=post.created_on}}
      says <i>{{=post.body}}</i></p>
-{{pass}}
-<h2>Post a comment</h2>
+</div>
+{{pass}}<br>
+
+<style>
+    form table {width: 100%}
+    textarea {width:100%; max-height: 100px;}
+</style>
+<h4>Post a comment</h4><hr>
 {{=form}}
