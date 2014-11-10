@@ -1,1 +1,7 @@
-{{from gluon.serializers import json}}{{=XML(json(my_events(request.vars.start, request.vars.end, json=True)))}}
+{{
+try:
+    from gluon.serializers import json
+    response.write(XML(json(my_events(request.vars.start, request.vars.end, json=True))))
+except:
+    raise HTTP(405, 'no json')
+}}
