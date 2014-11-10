@@ -17,6 +17,7 @@ def manage_grades():
 @auth.requires_login()
 def teacher():
     section_id = request.args(0, cast=int)
+    add_section_menu(section_id)
     if not (is_user_teacher(section_id)):
         session.flash = 'Not authorized'
         redirect(URL('student',args=section_id))
