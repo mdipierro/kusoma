@@ -30,6 +30,6 @@ db.define_table('note_chat',
                 Field('chat_by', 'reference auth_user', default=auth.user_id),
                 Field('chat_content'))
 
-def get_all_notes(note_id):
-    query = (db.notes_main.note_id == note_id)
+def get_all_notes():
+    query = (db.notes_main)
     return db(query).select()
