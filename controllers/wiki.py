@@ -30,7 +30,7 @@ def wikiedit():
      """edit an existing wiki page"""
      this_page = db.wikipage(request.args(0,cast=int)) or redirect(URL('wiki'))
      form = SQLFORM(db.wikipage, this_page).process(
-         next = URL('show',args=request.args))
+         next = URL('wikishow',args=request.args))
      return dict(form=form)
 
 
