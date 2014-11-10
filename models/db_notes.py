@@ -31,5 +31,4 @@ db.define_table('note_chat',
                 Field('chat_content'))
 
 def get_all_notes():
-    query = (db.notes_main)
-    return db(query).select()
+    return db().select(db.note_main.All)
