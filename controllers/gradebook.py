@@ -37,12 +37,12 @@ def teacher():
     import numpy
     hws = get_homework_section(section_id)
     stat_options = get_statistics(section_id)
-    stat=[]
+    stat_data=[]
 
     for hw in hws:
         s = convert_to_list(get_assignment_by_homework(section_id, hw.id))
         if s:
-            stat.append({
+            stat_data.append({
                 'min':round(numpy.min(s),2),
                 'max':round(numpy.max(s),2),
                 'average':round(numpy.average(s),2),
@@ -54,7 +54,7 @@ def teacher():
                 'std':round(numpy.std(s),2),
                 'hw':hw
             })
-    return dict(section_id=section_id, users=students, names=students.first().hws,stat = stat, stat_options=stat_options)
+    return dict(section_id=section_id, users=students, names=students.first().hws,stat = stat_data, stat_options=stat_options)
 
 @auth.requires_login()
 def student():
@@ -67,11 +67,13 @@ def student():
     import numpy
     hws = get_homework_section(section_id)
 
-    stat=[]
+    stat_options = get_statistics(section_id)
+    stat_data=[]
+
     for hw in hws:
         s = convert_to_list(get_assignment_by_homework(section_id, hw.id))
         if s:
-            stat.append({
+            stat_data.append({
                 'min':round(numpy.min(s),2),
                 'max':round(numpy.max(s),2),
                 'average':round(numpy.average(s),2),
@@ -84,7 +86,7 @@ def student():
                 'hw':hw
             })
 
-    return dict(student_grades=student_grades, section=section, stat=stat, grade_record=grade_record)
+    return dict(student_grades=student_grades, section=section, stat=stat_data, grade_record=grade_record, stat_options=stat_options)
 
 @auth.requires_login()
 def savedata():
@@ -141,7 +143,7 @@ def statistics():
     if(stat == "std"):
         db.section_statistics.update_or_insert(db.section_statistics.section_id==section_id, section_id =section_id,
              std=value)
-    
+
     session.flash = "Statistics Options Changed"
     return str(section_id)  + " " + stat + " " +value
 
