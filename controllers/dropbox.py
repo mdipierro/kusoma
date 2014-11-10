@@ -94,14 +94,13 @@ def feedback():
 
     homework = db(db.homework.id == homework_id).select().first()
 
+    db.feedback.date_added.writable = False
+    db.feedback.date_added.readable = False
+    db.feedback.id_submission.readable = False
+    db.feedback.id_submission.writable = False
     form = SQLFORM(db.feedback, feedback)
-    form.id_submission = submission_id
     if form.process().accepted:
         response.flash = 'form accepted'
         redirect(URL('view_submissions', args=[section_id, homework_id]))
-
-    db.feedback.date_added.writable = True
-    db.feedback.id_submission.readable = False
-
 
     return dict(form=form, homework=homework)

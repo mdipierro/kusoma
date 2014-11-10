@@ -27,6 +27,7 @@ Contains file submissions for students
 """
 db.define_table('submission',
                 Field('file_upload', 'upload', requires=IS_NOT_EMPTY()),
+                Field('file_name'),
                 Field('homework', 'reference homework'),
                 Field('grade', 'double'),
                 Field('id_student', 'reference auth_user', default=auth.user_id))
@@ -66,3 +67,28 @@ def can_submit(homework):
     if (request.now > homework.opening_date):
         return True
     return False
+
+def empty_feedback(feedback_id):
+    count = db(feedback_id == db.feedback.id).count()
+    if count == 0:
+        return True
+    else:
+        return False
+
+def get_grade(homework_id):
+    assignment = (db.assignment_grade.assignment_id == homework_id)
+    user = (auth.user_id == db.assignment_grade.user_id)
+    record = db(assignment & user).select().first()
+    if record is not None:
+        return int(record.grade)
+    else:
+        return None
+
+def get_points(homework_id, section_id):
+    homework = (db.homework.id == homework_id)
+    section = (section_id == db.homework.course_section)
+    record = db(homework & section).select().first()
+    if record is not None:
+        return record.points
+    else:
+        return None
