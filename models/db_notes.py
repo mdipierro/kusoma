@@ -29,3 +29,7 @@ db.define_table('note_chat',
                 Field('create_on', 'datetime', default=request.now),
                 Field('chat_by', 'reference auth_user', default=auth.user_id),
                 Field('chat_content'))
+
+def get_all_notes(note_id):
+    query = ()
+    return db(query).select()
