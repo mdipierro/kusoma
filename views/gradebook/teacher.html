@@ -2,8 +2,8 @@
 
 
 <h1>Welcome to Grade Interface</h1>
-<a class="btn btn-primary" href="{{=URL('index',args=1)}}"> back</a>
-<h4>{{=role}}</h4>
+<a class="btn btn-primary" href="{{=URL('student',args=section_id)}}"> Student</a>
+
 
 
 
@@ -14,32 +14,143 @@
 <div id="example1console"></div>
 
 
+<table class="table">
+    <tr>
+        <th>Homework</th>
+        <th>min</th>
+        <th>max</th>
+        <th>average</th>
+        <th>median</th>
+        <th>mean</th>
+        <th>sum</th>
+        <th>cov</th>
+        <th>var</th>
+        <th>std</th>
+    </tr>
+        <tr>
+        <th>Enable stats for student</th>
+        <td><input data-size="mini" type="checkbox" class="checkbox-switcher" name="" /></td>
+        <td><input data-size="mini" type="checkbox" class="checkbox-switcher" name="" /></td>
+        <td><input data-size="mini" type="checkbox" class="checkbox-switcher" name="" /></td>
+        <td><input data-size="mini" type="checkbox" class="checkbox-switcher" name="" /></td>
+        <td><input data-size="mini" type="checkbox" class="checkbox-switcher" name="" /></td>
+        <td><input data-size="mini" type="checkbox" class="checkbox-switcher" name="" /></td>
+        <td><input data-size="mini" type="checkbox" class="checkbox-switcher" name="" /></td>
+        <td><input data-size="mini" type="checkbox" class="checkbox-switcher" name="" /></td>
+        <td><input data-size="mini" type="checkbox" class="checkbox-switcher" name="" /></td>
+    </tr>
+
+    {{for a in stat:}}
+        <tr>
+            <td>{{=a['hw'].name}}</td>
+            <td>{{=a['min']}}</td>
+            <td>{{=a['max']}}</td>
+            <td>{{=a['average']}}</td>
+            <td>{{=a['median']}}</td>
+            <td>{{=a['mean']}}</td>
+            <td>{{=a['sum']}}</td>
+            <td>{{=a['cov']}}</td>
+            <td>{{=a['var']}}</td>
+            <td>{{=a['std']}}</td>
+
+        </tr>
+
+    {{pass}}
+
+</table>
 
 <script>
+
+    $(".checkbox-switcher").bootstrapSwitch();
+
  var data = [
  {{for row in users:}}
-
      {
        id:  '{{=row.auth_user.id }}',
        name: '{{=row.auth_user.first_name  + " " + row.auth_user.last_name}}',
-       name: '{{=row.auth_user.first_name  + " " + row.auth_user.last_name}}',
-       message:'{{=row.auth_user.student_code }}'
-     },
+       hw: {
+             {{for hw in row.hws:}}
+                 '{{=hw.homework.id}}':{{if hw.assignment_grade.grade > -1:}}
+                                            '{{=hw.assignment_grade.grade}}'
+                                    {{else:}}
+                                            ''
+                                    {{pass}}
+            ,
+            {{pass}}
+        },
+       total:'',
+       final:'{{if row.final:}} {{=row.final.grade }} {{pass}}',
+       comment:'{{if row.final:}} {{=row.final.teacher_comment}} {{pass}}'
+
+      },
   {{pass}}
-
-
-
   ];
+
+var nonnegative_validator_fn = function (value, callback) {
+  setTimeout(function(){
+    if (new String(value).valueOf() != new String("NaN").valueOf() && (!value || parseFloat(value) >= 0) )  {
+      callback(true);
+    }
+    else {
+      callback(false);
+    }
+  }, 300);
+};
 
 
   $('#dataTable').handsontable({
     data: data,
-    colHeaders: ['id', 'name', 'message'],
-    minSpareRows: 1,
+    columnSorting: true,
     contextMenu: true,
     currentRowClassName: 'currentRow',
     currentColClassName: 'currentCol',
-    rowHeaders: true
+    fixedColumnsLeft: 2,
+    cells: function (row, col, prop) {
+        var cellProperties = {}
+//        if(col === 0 ||col === 1  ) {
+//          cellProperties.readOnly = true;
+//        }
+        return cellProperties;
+    },
+    colHeaders: true,
+    columns: [
+      { data: "id",
+        readOnly:true
+      },
+      {
+          data: "name",
+          readOnly:true
+      }
+        {{for hw in names:}}
+       ,{
+             data: "hw.{{=hw.homework.id}}"
+            ,title: "{{=hw.homework.name}}"
+            ,tp: "{{=hw.homework.points}}}"
+            ,type: 'numeric'
+            ,format: '0,0'
+            ,validator: nonnegative_validator_fn
+            ,allowInvalid: false
+        }
+
+        {{pass}}
+      ,{
+            data: "total",
+            title:"computed Grade",
+            readOnly:true,
+            renderer:calGrad
+      },{
+            data: "final",
+            title:"Final Grade",
+            readOnly:false
+            ,validator: nonnegative_validator_fn
+            ,allowInvalid: false
+      }
+      ,{
+            data: "comment",
+            title:"Comment",
+            width:300
+      }
+    ]
   });
 
  var $console = $("#example1console");
@@ -47,14 +158,14 @@
 
     $("button[name='save']").click(function () {
       $.ajax({
-        url: "{{=URL('savedata',args=1)}}",
+        url: "{{=URL('savedata',args=section_id)}}",
         data: JSON.stringify({"data": handsontable.getData()}), //returns all cells' data
         dataType: 'json',
         type: 'POST',
         success: function (res) {
             if(res)
             {
-                $console.text(JSON.stringify(res, undefined, 2));
+              //  $console.text(JSON.stringify(res, undefined, 2));
             }
              else {
                 $console.text('Save error');
@@ -65,5 +176,51 @@
         }
       });
     });
+
+    function calGrad(instance, td, row, col, prop, value, cellProperties)
+    {
+
+        var studentHWs = $('#dataTable').data('handsontable').getDataAtRowProp(row, "hw");
+        var earnedPoints = 0;
+        {{point =0}}
+            {{for hw in row.hws:}}
+                {{point += hw.homework.points}}
+             {{pass}}
+        var totalAvailablePoints = {{=point}};
+
+        for (var key in studentHWs ) {
+          if (studentHWs.hasOwnProperty(key)) {
+
+              if ( studentHWs[key])
+                earnedPoints += parseInt(studentHWs[key]);
+          }
+        }
+
+        value = (earnedPoints/totalAvailablePoints) * 100;
+        value = Math.round(value*100)/100;
+
+
+        if (value)
+        {
+            var color;
+
+            if ( value<70)
+                color = "red";
+            else if (value<80)
+                color = "yellow";
+
+            if ( color)
+            {
+              $(td).css({
+                background: color
+              });
+            }
+        }
+
+        Handsontable.renderers.TextRenderer.apply(this, arguments);
+    }
+
+
+
 
 </script>

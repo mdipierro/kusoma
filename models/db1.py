@@ -7,14 +7,59 @@ STUDENT, TEACHER = 'student','teacher'
 
 NE = IS_NOT_EMPTY()
 
-db.define_table(
-    'course',
-    Field('name',requires=NE),
-    Field('code',requires=NE),
-    Field('prerequisites','list:string'),  # This should be a reference to another course.
-    Field('description','text'),
-    Field('tags','list:string'),
-    format='%(code)s: %(name)s')
+db.define_table('theme',
+                Field('name', requires=NE),
+                Field('URL', requires=NE), 
+                Field('image_URL', requires=NE))
+
+
+if db(db.theme).isempty():
+    db.theme.insert(name="Light Theme", 
+                    URL = 'css/bootstrap-light.min.css',
+                    image_URL = 'images/light.jpg')
+    db.theme.insert(name="Dark Theme",
+                    URL = 'css/bootstrap-dark.min.css', 
+                    image_URL = 'images/dark.jpg')
+    db.theme.insert(name='Bluish',
+                    URL = 'css/bootstrap-bluish.min.css', 
+                    image_URL = 'images/bluish.jpg')
+    db.theme.insert(name='Maverick',
+                    URL = 'css/bootstrap-pinkish.min.css', 
+                    image_URL = 'images/maverick.jpg')
+    db.theme.insert(name='Sky Blue',
+                    URL = 'css/bootsrap-pinkish.min.css', 
+                    image_URL = 'images/skyblue.jpg')
+    db.theme.insert(name='Sunny Hill',
+                    URL = 'css/bootstrap-sunnyhill.min.css', 
+                    image_URL = 'images/sunnyhill.jpg')
+    db.theme.insert(name="Default",
+                    URL = 'css/bootstrap-responsive.min.css', 
+                    image_URL = 'images/default.jpg')
+
+
+# To be used later. Adds foreign key to themes table
+#ADVANCED = True
+ADVANCED = False
+if ADVANCED:    
+    db.define_table(
+        'course',
+        Field('name',requires=NE),
+        Field('code',requires=NE),
+        Field('prerequisites','list:string'),  # This should be a reference to another course.
+        Field('description','text'),
+        Field('tags','list:string'),
+        Field('theme', 'reference theme', default=1),
+        format='%(code)s: %(name)s')
+else:        
+    db.define_table(
+        'course',
+        Field('name',requires=NE),
+        Field('code',requires=NE),
+        Field('prerequisites','list:string'),  # This should be a reference to another course.
+        Field('description','text'),
+        Field('tags','list:string'),
+        format='%(code)s: %(name)s')
+
 
 db.define_table(
     'course_section',
@@ -31,6 +76,8 @@ db.define_table(
     Field('on_line','boolean',default=False,label='Online'),
     Field('inclass','boolean',default=True),
     format='%(name)s')
+
+db.course_section.truncate
 
 
 db.define_table(
@@ -148,8 +195,13 @@ if db(db.auth_user).isempty():
                 signup_deadline=datetime.date(2014,11,10))
             rows = db(db.auth_user).select(limitby=(0,10),orderby='<random>')
             db.membership.insert(course_section=i, auth_user=mdp_id, role=TEACHER)
+
+            for h in range(1,7):
+                db.homework.insert(name='hw'+str(h), course_section=i,points=10, assignment_order=h)
+
             for row in rows:
                 db.membership.insert(course_section=i, auth_user=row.id, role=STUDENT)
+
 
 # add logic to add me and massimo to the admin and teacter groups
 # students = db((db.auth_user.first_name != 'Massimo') | (db.auth_user.first_name != 'Bryan')).select(db.auth_user.id)

@@ -1,16 +1,37 @@
 {{import HTMLParser}}
+{{import cgi}}
+{{from gluon.serializers import json}}
 
 {{extend 'layout.html'}}
+<style>
+#submit-button {
+    margin-bottom: 10px;
+    margin-left: 10px;
+}
+</style>
 
 <script src="../static/js/moment.min.js" ></script>
 <script src="../static/js/fullcalendar.js" ></script>
 <script src="../static/js/lms299calendar.js"></script>
 <script>
 	$(document).ready(function() {
-	    $('#calendar').lmsCalendar({
-	    	height: 500,
-            events: '{{=courseEventsJSON}}'
-	    });
-	});
+        $('#calendar').lmsCalendar({
+            events: {{=XML(json(selectedCourseEvents))}}
+        });
+        {{pass}}
+    });
 </script>
+<form>
+    <label for="selectedCourse">Select a course to view</label>
+    <select name="selectedCourse" id="selectedCourse">
+        {{for course in myCourses:}}
+            <option>{{=course.name}}</option>
+        {{pass}}
+    </select>
+    <input type="submit" id="submit-button"/>
+</form>
+<div id="currentCourse"></div>
 <div id="calendar"></div>
+{{#=myCourses}}
+{{#=rows}}
+{{#=selectedCourseEvents}}
