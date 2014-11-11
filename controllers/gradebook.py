@@ -38,7 +38,6 @@ def teacher():
         st.final = get_final_grade(section_id, st.auth_user.id).first()
 
 
-    import numpy
     hws = get_homework_section(section_id)
     stat_options = get_statistics(section_id)
     stat_data=[]
@@ -46,16 +45,19 @@ def teacher():
     for hw in hws:
         s = convert_to_list(get_assignment_by_homework(section_id, hw.id))
         if s:
-            stat_data.append({
-                'min':round(numpy.min(s),2),
-                'max':round(numpy.max(s),2),
-                'average':round(numpy.average(s),2),
-                'median':round(numpy.median(s),2),
-                'mean':round(numpy.mean(s),2),
-                'sum':round(numpy.sum(s),2),
-                'cov':round(numpy.cov(s),2),
-                'var':round(numpy.var(s),2),
-                'std':round(numpy.std(s),2),
+            
+            mean = sum(s)/len(s)
+            var = sum(x*x for x in s)/len(x) - mean**2
+            stat.append({
+                'min':round(min(s),2),
+                'max':round(max(s),2),
+                'average':round(mean,2),
+                'median':round(sorted(s)[int(len(s)/2)],2),
+                'mean':round(mean,2),
+                'sum':round(sum(s),2),
+                'cov':round(0.0,2), # not well defined
+                'var':round(var,2),
+                'std':round(var**0.5,2),
                 'hw':hw
             })
     return dict(section_id=section_id, users=students, names=students.first().hws,stat = stat_data, stat_options=stat_options)
@@ -71,7 +73,6 @@ def student():
     section = db.course_section(section_id)
     student_grades = get_grades_student(section_id, auth.user.id)
     grade_record = get_final_grade(section_id, auth.user.id)
-    import numpy
     hws = get_homework_section(section_id)
 
     stat_options = get_statistics(section_id)
@@ -80,16 +81,19 @@ def student():
     for hw in hws:
         s = convert_to_list(get_assignment_by_homework(section_id, hw.id))
         if s:
-            stat_data.append({
-                'min':round(numpy.min(s),2),
-                'max':round(numpy.max(s),2),
-                'average':round(numpy.average(s),2),
-                'median':round(numpy.median(s),2),
-                'mean':round(numpy.mean(s),2),
-                'sum':round(numpy.sum(s),2),
-                'cov':round(numpy.cov(s),2),
-                'var':round(numpy.var(s),2),
-                'std':round(numpy.std(s),2),
+             
+            mean = sum(s)/len(s)
+            var = sum(x*x for x in s)/len(x) - mean**2
+            stat.append({
+                'min':round(min(s),2),
+                'max':round(max(s),2),
+                'average':round(mean,2),
+                'median':round(sorted(s)[int(len(s)/2)],2),
+                'mean':round(mean,2),
+                'sum':round(sum(s),2),
+                'cov':round(0.0,2), # not well defined
+                'var':round(var,2),
+                'std':round(var**0.5,2),
                 'hw':hw
             })
 
