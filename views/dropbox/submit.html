@@ -1,14 +1,16 @@
 {{extend 'layout.html'}}
 
 <h1 style="text-align:center">
-	dropbox page
+	Dropbox Page
 </h1>
 
 <h2>Submit Assignment</h2>
 {{=form}}
-<div style="text-align:center">
-    <a href="{{=URL('submit',args=view)}}" class="btn">View</a>
-</div>
+
 
 <h2>Submissions</h2>
 {{=submission}}
+
+<div style="text-align:center">
+    <a href="{{=URL('submit',args=view)}}" class="btn">View</a>
+</div>

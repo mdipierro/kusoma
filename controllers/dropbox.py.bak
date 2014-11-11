@@ -115,4 +115,4 @@ def submit():
        response.flash = 'File submitted'
    elif form.errors:
        response.flash = 'Error file not submitted'
-   return dict(form=form, submission=db(db.submission).select(), view=db(db.submission).count())
+   return dict(form=form, submission=db().select(db.submission.id, db.submission.file_name), view=db(db.submission).count())
