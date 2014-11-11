@@ -9,7 +9,7 @@ def index():
 
     section=db(db.course_section.id == section_id).select().first()
     if not section: redirect(URL('default','index'))
-    
+
     videos = db(db.recording.course_id==section_id).select()
     if is_user_student(section_id):
         is_teacher=False
@@ -25,7 +25,7 @@ def update_recording():
     This is a callback function to register a new recording.
     request.args[0]= The section_id
     request.args[1]= The youtube_id of the new recording
-    
+
     Test example: Adds a recording to course_section 2
     Visit lms299/recordings/add_recording/2/aKdV5FvXLuI
     Then visit lms299/recordings/index/2 to confirm recording was added
@@ -64,9 +64,9 @@ def edit():
 
     form = SQLFORM(db.recording, video, fields=fields)
     if form.process().accepted:
-       response.flash = 'Form accepted'
+        response.flash = 'Form accepted'
     elif form.errors:
-       response.flash = 'Form has errors'
+        response.flash = 'Form has errors'
     return dict(form=form)
 
 @auth.requires_login()
@@ -77,7 +77,7 @@ def create():
     # Test if current user is teacher or student for class
     # if teacher, is_class field can be set to true
     if is_user_teacher(section_id):
-        fields = ['name', 'is_class']
+        fields = ['name', 'is_class', ]
     elif is_user_student(section_id):
         fields = ['name']
     else:
@@ -85,11 +85,74 @@ def create():
 
     start = False
 
+    db.recording.course_id.default = section_id
+
     form = SQLFORM(db.recording, fields=fields)
 
     # If form is accepted we show start a hangout button
     # TODO add condition to verify hangout has not yet been started
     if form.process().accepted:
         start = True
+        redirect(URL('start', args=(form.vars.id)))
+
+    if start:
+        users = users_in_section(section_id, roles=[STUDENT, TEACHER])
+    else:
+        users = dict()
 
     return dict(form=form, start=start)
+
+@auth.requires_login
+def start():
+    video_id = request.args(0,cast=int)
+    video = db(db.recording.id==video_id).select().first()
+
+    users = dict()
+    start = False
+
+    if video:
+        if not video.youtube_id:
+            start = True
+            users = users_in_section(video.course_id, roles=[STUDENT,TEACHER])
+
+
+
+    return dict(video=video, start=start, users=users)
+
+@request.restful()
+def api():
+    if request.env.http_origin:
+        response.headers['Access-Control-Allow-Origin'] = "*"
+        response.headers['Access-Control-Allow-Credentials'] = 'true'
+        response.headers['Access-Control-Allow-Methods'] = 'PUT'
+        response.headers['Access-Control-Allow-Headers'] = request.env.http_access_control_request_headers
+        response.headers['Access-Control-Max-Age'] = 86400
+    def GET(*args,**vars):
+        return dict()
+    def POST(*args,**vars):
+        return dict()
+    def PUT(*args,**vars):
+        if args[0] == 'recording':
+            if args[1]:
+                return db(db.recording.id == args[1]).validate_and_update(**vars)
+        return dict()
+
+    def DELETE(*args,**vars):
+        return dict()
+
+    def OPTIONS(*args,**vars):
+        return dict()
+    return locals()
+
+# def api():
+#     from gluon.contrib.hypermedia import Collection
+#     rules = {
+#         'recording': {
+#             'GET':{'query':None,'fields':['id','name']},
+#             'POST':{},
+#             'PUT':{'query':None,'fields':['name','youtube_id']},
+#             'DELETE':{}
+#         },
+#         #'recording': {'GET':{},'POST':{},'PUT':{},'DELETE':{}}
+#         }
+#     return Collection(db).process(request,response,rules)
