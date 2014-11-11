@@ -86,7 +86,7 @@ def delete():
     event = get_event(event_id)
     form = FORM(INPUT(_type='submit', _value='Delete it'))
     if form.validate(onsuccess=None, dbio=False, onvalidation=None):
-        session.flash = 'Deleted %s' % event.title
+        session.flash = 'Deleted "%s"' % event.title
         try:
             delete_event(event_id)
         except Exception, e:

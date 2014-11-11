@@ -12,16 +12,16 @@
       },
       events: {{=XML('\'' + URL('calendar', 'index.json') + '\'')}},
       dayClick: function(date, jsEvent, view) {
-        window.location.href = "{{=URL('calendar', 'create') + '/'}}" + date.format();
+        if(confirm("Do you want to create a new event on " + date.format() + "?")) {
+          window.location.href = "{{=URL('calendar', 'create') + '/'}}" + date.format();
+        }
       },
       eventClick: function(event, jsEvent, view) {
-        window.location.href = "{{=URL('calendar', 'update') + '/'}}" + event.id;
+        if(confirm("Do you want to edit this event: " + event.title + "?")) {
+          window.location.href = "{{=URL('calendar', 'update') + '/'}}" + event.id;
+        }
       },
-      selectable: true,
-      select: function(start, end, jsevent, view) {
-        window.location.href = "{{=URL('calendar', 'create') + '/'}}" + start.format() +
-          '/' + end.format();
-      }
+      selectable: false
     });
   });
 </script>

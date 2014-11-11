@@ -203,14 +203,14 @@ def _get_events_json(query, fields, groupby=None):
         c = {'id': evt.cal_event.id,
              'title': evt.cal_event.title,
              'details': evt.cal_event.details,
-             'start': evt.cal_event.start_date.strftime(OUTPUT_DATE_FORMAT),
+             'start': evt.cal_event.start_date.isoformat(),
              'allDay': evt.cal_event.all_day,
              'url': evt.cal_event.url,
              'visibility': evt.event_visibility.visibility,
              'vis_code': evt.event_visibility.visibility,
              'course_id': evt.cal_event.course_id}
         if evt.cal_event.end_date:
-            c['end'] = evt.cal_event.end_date.strftime(OUTPUT_DATE_FORMAT)
+            c['end'] = evt.cal_event.end_date.isoformat()
         cal.append(c)
     return cal
 

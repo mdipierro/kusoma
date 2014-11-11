@@ -1,11 +1,14 @@
 ## Create the calendar menu.
-myevents = db(db.cal_event.owner_id == auth.user_id).select(db.cal_event.id, db.cal_event.title)
+myevents = db(db.cal_event.owner_id == auth.user_id).select(db.cal_event.id,
+                                                            db.cal_event.title,
+                                                            db.cal_event.start_date)
 update_events_sub_menu = []
 delete_events_sub_menu = []
 
 for event in myevents:
-    update_events_sub_menu.append((T(event.title), False, URL('calendar', 'update', args=[event.id])))
-    delete_events_sub_menu.append((T(event.title), False, URL('calendar', 'delete', args=[event.id])))
+    menu_item = '%s (%s)' % (event.title, event.start_date.strftime(OUTPUT_DATE_FORMAT))
+    update_events_sub_menu.append((T(menu_item), False, URL('calendar', 'update', args=[event.id])))
+    delete_events_sub_menu.append((T(menu_item), False, URL('calendar', 'delete', args=[event.id])))
 
 if auth.is_logged_in():
     response.menu += [
