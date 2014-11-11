@@ -87,12 +87,8 @@ def edit():
     form.add_button('Back', URL('index', args=courseId))
 
     if form.process().accepted:
-<<<<<<< HEAD
         response.flash = 'Form accepted'
-=======
-		response.flash = 'Form accepted'
-		redirect(URL('index', args=courseId))
->>>>>>> 3947b1a6728bc487fe80c898c3106a99af602ff7
+        redirect(URL('index', args=courseId))
     elif form.errors:
         response.flash = 'Form has errors'
     return dict(form=form)
