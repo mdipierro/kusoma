@@ -48,3 +48,18 @@ def wikidocuments():
      db.wikidocument.page_id.writable = False
      grid = SQLFORM.grid(db.wikidocument.page_id==page.id,args=[page.id])
      return dict(page=page, grid=grid)
+
+
+def user():
+     return dict(form=auth())
+
+def download():
+     """allows downloading of documents"""
+     return response.download(request, db)
+     
+def callback():
+     """an ajax callback that returns a <ul> of links to wiki pages"""
+     query = db.wikipage.title.contains(request.vars.keyword)
+     pages = db(query).select(orderby=db.wikipage.title)
+     links = [A(p.title, _href=URL('wikishow',args=p.id)) for p in pages]
+     return UL(*links)
