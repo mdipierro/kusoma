@@ -2,7 +2,6 @@
 # This is the controller file for the lms299 event calendar.
 from datetime import datetime
 
-@auth.requires_login()
 def index():
     response.title = 'Calendar'
     return dict()

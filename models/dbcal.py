@@ -62,9 +62,14 @@ class DATE_DEFAULT(object):
     start = 0
     end = 1
 
-# class CalEventException(Exception): pass
-
 # We use auth.user_id because it doesn't throw an exception when noone is logged in.
+if auth.is_logged_in():
+    IS_TEACHER = db(db.auth_user.id == auth.user_id).select(db.auth_user.is_teacher).first().is_teacher
+    IS_ADMINISTRATOR = db(db.auth_user.id == auth.user_id).select(db.auth_user.is_administrator).first().is_administrator
+    CAN_MANAGE_EVENTS = IS_TEACHER | IS_ADMINISTRATOR
+else:
+    CAN_MANAGE_EVENTS = False
+
 PERSONAL_EVENTS = (db.cal_event.owner_id == auth.user_id)
 PUBLIC_EVENTS = (db.event_visibility.visibility=='public')
 ALL_MY_EVENTS = (PERSONAL_EVENTS | PUBLIC_EVENTS)
