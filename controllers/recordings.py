@@ -17,9 +17,15 @@ def index():
         is_teacher=True
     else:
         redirect(URL('default','section', args=section_id))
-    return dict(section=section, videos=videos, is_teacher=is_teacher)
+        
+    #Here's a possible way of encoding callback URL and section_id for start_data to hangouts app
+    #to decode in javascript: https://stackoverflow.com/questions/901115/how-can-i-get-query-string-values-in-javascript
+    import urllib
+    start_data=urllib.urlencode(dict(callback=URL('update_recording', scheme=True, host=True), section_id=section_id))
+    
+    return dict(section=section, videos=videos, is_teacher=is_teacher, start_data=start_data)
 
-@auth.requires_login()
+#@auth.requires_login()   #John disabled for now, see below
 def update_recording():
     '''
     This is a callback function to register a new recording.
@@ -30,6 +36,20 @@ def update_recording():
     Visit lms299/recordings/add_recording/2/aKdV5FvXLuI
     Then visit lms299/recordings/index/2 to confirm recording was added
     '''
+    
+    '''
+    The following line is needed so that the Hangouts app is able to access this function.
+    Without it, the hangout javascript console will have an error:
+    
+    XMLHttpRequest cannot load ... No 'Access-Control-Allow-Origin' header is present
+    on the requested resource. Origin ... is therefore not allowed access.
+    
+    Note also, the same error appears when this function requires login because for
+    some reason, the hangout window is not sending the session cookie to the web2py
+    server, even when I am logged into the web2py server.
+    '''
+    response.headers['Access-Control-Allow-Origin'] = '*'
+    
     section_id = request.args(0,cast=int)
     youtube_id = xmlescape(request.args(1))
     section=db(db.course_section.id == section_id).select().first()
@@ -59,12 +79,20 @@ def edit():
 
     if video_id:
         video = db(db.recording.id==video_id).select().first()
+        courseId = video.course_id
         if (not video or not is_user_teacher(video.course_id)):
             redirect(URL('index', args=video.course_id))
 
-    form = SQLFORM(db.recording, video, fields=fields)
+    form = SQLFORM(db.recording, video)
+    form.add_button('Back', URL('index', args=courseId))
+
     if form.process().accepted:
+<<<<<<< HEAD
         response.flash = 'Form accepted'
+=======
+		response.flash = 'Form accepted'
+		redirect(URL('index', args=courseId))
+>>>>>>> 3947b1a6728bc487fe80c898c3106a99af602ff7
     elif form.errors:
         response.flash = 'Form has errors'
     return dict(form=form)

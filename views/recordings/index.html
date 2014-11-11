@@ -3,7 +3,7 @@
 <h2>Recordings for {{=section.name}}</h2>
 
 {{if is_teacher:}}
-    <h2>Make a new recording</h2>
+    <h3>Make a new recording</h3>
     <p>This button will make a new Hangout URL but it is not yet feeding the youtube_id of the new recording back to the database.</p>
     <script src="https://apis.google.com/js/platform.js"></script>
     <div id="placeholder-div3"></div>
@@ -15,8 +15,14 @@
         'widget_size': 175
       });
     </script>
-
 {{pass}}
+
+<h3>Recordings</h3>
+<p>To watch a video, choose one from the table below by clicking on the name of your desired video. The choosen video will then load above the table.</p>
+{{if is_teacher:}}
+    <p>To edit the information associated with a video or to remove the video, click on the "Edit" button to the left of the video information in the table.</p>
+{{pass}}
+
 {{if videos:}}
 	<p><iframe width="560" height="420" src="//www.youtube.com/embed/{{=videos.first().youtube_id}}" frameborder="0" allowfullscreen name="videoFrame"  id="videoFrame"></iframe></p>
 	
