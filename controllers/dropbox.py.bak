@@ -104,15 +104,3 @@ def feedback():
         redirect(URL('view_submissions', args=[section_id, homework_id]))
 
     return dict(form=form, homework=homework)
-
-@auth.requires_login()
-def submit():
-   record = db.submission(request.args(0))
-   form = SQLFORM(db.submission, record, deletable=True, fields = ['file_upload'], upload=URL('download'))
-   if request.vars.file_upload!=None:
-       form.vars.file_name = request.vars.file_upload.filename
-   if form.process().accepted:
-       response.flash = 'File submitted'
-   elif form.errors:
-       response.flash = 'Error file not submitted'
-   return dict(form=form)
