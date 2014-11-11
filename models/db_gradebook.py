@@ -69,6 +69,11 @@ def is_user_teacher(section_id):
                          role='teacher',
                          auth_user=auth.user.id)
 
+def is_user_student(section_id):
+    return db.membership(course_section=section_id,
+                         role='student',
+                         auth_user=auth.user.id)
+
 def convert_to_list(hw):
     my_list=[]
     for d in hw:
