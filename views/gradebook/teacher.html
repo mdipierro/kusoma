@@ -145,9 +145,9 @@ var nonnegative_validator_fn = function (value, callback) {
       },{
             data: "final",
             title:"Final Grade",
+            type: "dropdown",
+            source: ["A", "A-", "B+", "B", "B-", "C+", "C", "C-","D+","D","D-","F"],
             readOnly:false
-            ,validator: nonnegative_validator_fn
-            ,allowInvalid: false
       }
       ,{
             data: "comment",
