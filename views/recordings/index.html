@@ -1,6 +1,6 @@
 {{extend 'layout.html'}}
 
-<h1>Class recordings for section {{=section.name}}</h1>
+<h2>Recordings for {{=section.name}}</h2>
 
 {{if is_teacher:}}
     <h2>Make a new recording</h2>
@@ -18,15 +18,34 @@
 
 {{pass}}
 {{if videos:}}
-    <h2>Recordings</h2>
-    {{for video in videos:}}
-        <p><iframe width="420" height="315" src="//www.youtube.com/embed/{{=video.youtube_id}}" frameborder="0" allowfullscreen></iframe></p>
-    {{pass}}
-
-    <!-- Just keeping an example of how to make a standard link -->
-    <h2>Link to video:</h2>
-    <a href="https://youtu.be/{{=videos.first().youtube_id}}">Lecture 1</a>
-
+	<p><iframe width="560" height="420" src="//www.youtube.com/embed/{{=videos.first().youtube_id}}" frameborder="0" allowfullscreen name="videoFrame"  id="videoFrame"></iframe></p>
+	
+	<table class="table">
+		<tr>
+            <th>Name</th>
+            <th>Date</th>
+            <th>Time</th>
+            <th>Is Class</th>
+        </tr>
+		{{for video in videos:}}
+			<tr>
+				<td><a href="javascript:void(0)" onclick="ScrollToVideo('https://www.youtube.com/embed/{{=video.youtube_id}}')">{{=video.name}}</a></td>
+				<td>{{=video.class_date.date()}}</td>
+				<td>{{=video.class_date.time()}}</td>
+				<td>{{=video.is_class}}</td>
+				{{if is_teacher:}}
+					<td><a class="btn btn-primary" href="{{=URL('edit', args=video.id)}}">Edit</a></td>
+				{{pass}}
+			</tr>
+		{{pass}}
+	</table>
 {{else:}}
     <p>No videos found.</p>
 {{pass}}
+
+<script>
+    function ScrollToVideo(video){
+        videoFrame.location=video;
+        location.hash='videoFrame'
+    }
+</script>
