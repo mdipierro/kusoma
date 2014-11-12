@@ -2,9 +2,6 @@
 
 
 <h1>Welcome to Grade Interface  </h1>
-<a class="btn btn-primary" href="{{=URL('student',args=section_id)}}"> Student</a>
-
-
 
 
 <div id="dataTable" class="handsontable"></div>
@@ -214,20 +211,20 @@
     function save_stat(stat, value)
     {
         $.ajax({
-        url: "{{=URL('statistics', args=section_id)}}",
-        data:{'stat' : stat, 'val' : value},
-        type: 'GET',
-        success: function (res) {
-            if(res)
-            {
+            url: "{{=URL('statistics', args=section_id)}}",
+            data:{'stat' : stat, 'val' : value},
+            type: 'GET',
+            success: function (res) {
+                if(res)
+                {
+                }
+                 else {
+                    $console.text('Save error');
+                }
+            },
+            error: function () {
+              $console.text("Error something didn't work");
             }
-             else {
-                $console.text('Save error');
-            }
-        },
-        error: function () {
-          $console.text("Error something didn't work");
-        }
       });
     }
 
