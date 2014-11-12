@@ -57,7 +57,7 @@ Date: 10/23/14
                         </td>
                         <td style="text-align: center;">
                             {{if has_submitted(user_id, homework.id):}}
-                                <a href="{{=URL('my_submission',args=(homework.id, user_id))}}"
+                                <a href="{{=URL('my_submission',args=(section_id, homework.id))}}"
                                    class="btn btn-primary btn-small">Submission</a>
                             {{else:}}
                                 -
@@ -109,7 +109,7 @@ Date: 10/23/14
                         {{if is_student:}}
                             <td style="text-align: center;">
                             {{if can_submit(homework):}}
-                                <a href="{{=URL('submit',args=(homework.id, user_id))}}"
+                                <a href="{{=URL('submit',args=(section_id, homework.id))}}"
                                    class="btn btn-primary btn-small">Submit</a>
                             {{else:}}
                                 Not open yet
@@ -117,7 +117,7 @@ Date: 10/23/14
                             </td>
                             <td style="text-align: center;">
                             {{if has_submitted(user_id, homework.id):}}
-                                <a href="{{=URL('my_submission',args=(homework.id, user_id))}}"
+                                <a href="{{=URL('my_submission',args=(section_id, homework.id))}}"
                                    class="btn btn-primary btn-small">Submission</a>
                             {{else:}}
                                 -
