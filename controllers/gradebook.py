@@ -52,9 +52,6 @@ def teacher():
                 'max':round(max(s),2),
                 'average':round(mean,2),
                 'median':round(sorted(s)[int(len(s)/2)],2),
-                'mean':round(mean,2),
-                'sum':round(sum(s),2),
-                'cov':round(0.0,2), # not well defined
                 'var':round(var,2),
                 'std':round(var**0.5,2),
                 'hw':hw
@@ -68,6 +65,10 @@ def student():
     if not (is_user_student(section_id)):
         session.flash = 'Not authorized'
         redirect(URL('default','index',args=section_id))
+
+    response.files.insert(0,URL('static','js/jquery.js'))
+    response.files.insert(0,URL('static','js/jquery.canvasjs.min.js'))
+
     session.flash = "Welcome %s %s" % (auth.user.first_name, auth.user.last_name)
     section = db.course_section(section_id)
     student_grades = get_grades_student(section_id, auth.user.id)
@@ -88,9 +89,6 @@ def student():
                 'max':round(max(s),2),
                 'average':round(mean,2),
                 'median':round(sorted(s)[int(len(s)/2)],2),
-                'mean':round(mean,2),
-                'sum':round(sum(s),2),
-                'cov':round(0.0,2), # not well defined
                 'var':round(var,2),
                 'std':round(var**0.5,2),
                 'hw':hw
@@ -138,15 +136,6 @@ def statistics():
     if(stat == "med"):
         db.section_statistics.update_or_insert(db.section_statistics.section_id==section_id, section_id =section_id,
              median_score=value)
-    if(stat == "mea"):
-        db.section_statistics.update_or_insert(db.section_statistics.section_id==section_id, section_id =section_id,
-             mean_score=value)
-    if(stat == "sum"):
-        db.section_statistics.update_or_insert(db.section_statistics.section_id==section_id, section_id =section_id,
-             sum_score=value)
-    if(stat == "cov"):
-        db.section_statistics.update_or_insert(db.section_statistics.section_id==section_id, section_id =section_id,
-             cov=value)
     if(stat == "var"):
         db.section_statistics.update_or_insert(db.section_statistics.section_id==section_id, section_id =section_id,
              var=value)

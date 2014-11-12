@@ -10,9 +10,6 @@
    {{if stat_options:}}{{if stat_options[0].max_score:}}  <th>Max</th> {{pass}}{{pass}}
    {{if stat_options:}}{{if stat_options[0].avg_score:}}  <th>Average</th> {{pass}}{{pass}}
    {{if stat_options:}}{{if stat_options[0].median_score:}}  <th>Median</th> {{pass}}{{pass}}
-   {{if stat_options:}}{{if stat_options[0].mean_score:}}  <th>Mean</th> {{pass}}{{pass}}
-   {{if stat_options:}}{{if stat_options[0].sum_score:}}  <th>Sum</th> {{pass}}{{pass}}
-   {{if stat_options:}}{{if stat_options[0].cov:}}  <th>Covariance</th> {{pass}}{{pass}}
    {{if stat_options:}}{{if stat_options[0].var:}}  <th>Variance</th> {{pass}}{{pass}}
    {{if stat_options:}}{{if stat_options[0].std:}}  <th>Standard Deviation</th> {{pass}}{{pass}}
   </tr>
@@ -32,9 +29,6 @@
             {{if stat_options:}}{{if stat_options[0].max_score:}}  <td>{{=s['max']}}</td> {{pass}}{{pass}}
             {{if stat_options:}}{{if stat_options[0].avg_score:}}  <td>{{=s['average']}}</td> {{pass}}{{pass}}
             {{if stat_options:}}{{if stat_options[0].median_score:}}  <td>{{=s['median']}}</td> {{pass}}{{pass}}
-            {{if stat_options:}}{{if stat_options[0].mean_score:}}  <td>{{=s['mean']}}</td> {{pass}}{{pass}}
-            {{if stat_options:}}{{if stat_options[0].sum_score:}}  <td>{{=s['sum']}}</td> {{pass}}{{pass}}
-            {{if stat_options:}}{{if stat_options[0].cov:}}  <td>{{=s['cov']}}</td> {{pass}}{{pass}}
             {{if stat_options:}}{{if stat_options[0].var:}}  <td>{{=s['var']}}</td> {{pass}}{{pass}}
             {{if stat_options:}}{{if stat_options[0].std:}}  <td>{{=s['std']}}</td> {{pass}}{{pass}}
           {{pass}}
@@ -47,3 +41,143 @@
     <h7>{{=gr.teacher_comment}}</h7>
 {{pass}}
 {{pass}}
+
+
+
+    <div id="chartContainer" style="height: 300px; width: 100%;">
+	</div>
+
+
+
+
+ <script type="text/javascript">
+	window.onload = function () {
+		var chart = new CanvasJS.Chart("chartContainer",
+		{
+			zoomEnabled: false,
+			title:{
+				text: "Statistics"
+			},
+			axisY2:{
+				   
+				interlacedColor: "#F5F5F5",
+				gridColor: "#D7D7D7",
+	 			tickColor: "#D7D7D7"
+			},
+            theme: "theme2",
+            toolTip:{
+                    shared: true
+            },
+			legend:{
+				verticalAlign: "bottom",
+				horizontalAlign: "center",
+				fontSize: 15,
+				fontFamily: "Lucida Sans Unicode"
+			},
+			data: [
+                    {
+                        type: "line",
+                        lineThickness:5,
+                        axisYType:"secondary",
+                        showInLegend: true,
+                        name: "My Grades",
+                        dataPoints: [
+                            {{for g in student_grades:}}
+                                { label: '{{=g.homework.name}}',
+                                  y:  {{if g.assignment_grade.grade:}}
+                                          {{=g.assignment_grade.grade}}
+                                       {{else:}}0{{pass}}
+                                },
+                            {{pass}}
+                        ]
+                    }
+
+                        {{if stat_options:}}
+                            {{if stat_options[0].min_score:}}
+                                ,{
+                                    type: "line",
+                                    lineThickness:2,
+                                    axisYType:"secondary",
+                                    showInLegend: true,
+                                    name: "Minimum",
+                                    dataPoints: [
+                                           {{for s in stat:}}
+                                                { label: '{{=s['hw'].name}}',
+                                                  y:  {{=s['min']}}
+                                                },
+                                            {{pass}}
+                                    ]
+                                }
+                            {{pass}}
+
+                            {{if stat_options[0].max_score:}}
+                                ,{
+                                    type: "line",
+                                    lineThickness:2,
+                                    axisYType:"secondary",
+                                    showInLegend: true,
+                                    name: "Maximum",
+                                    dataPoints: [
+                                           {{for s in stat:}}
+                                                { label: '{{=s['hw'].name}}',
+                                                  y:  {{=s['max']}}
+                                                },
+                                            {{pass}}
+                                    ]
+                                }
+                            {{pass}}
+
+                            {{if stat_options[0].avg_score:}}
+                                ,{
+                                    type: "line",
+                                    lineThickness:2,
+                                    axisYType:"secondary",
+                                    showInLegend: true,
+                                    name: "Average",
+                                    dataPoints: [
+                                           {{for s in stat:}}
+                                                { label: '{{=s['hw'].name}}',
+                                                  y:  {{=s['average']}}
+                                                },
+                                            {{pass}}
+                                    ]
+                                }
+                            {{pass}}
+
+                             {{if stat_options[0].median_score:}}
+                                ,{
+                                    type: "line",
+                                    lineThickness:2,
+                                    axisYType:"secondary",
+                                    showInLegend: true,
+                                    name: "Median",
+                                    dataPoints: [
+                                           {{for s in stat:}}
+                                                { label: '{{=s['hw'].name}}',
+                                                  y:  {{=s['median']}}
+                                                },
+                                            {{pass}}
+                                    ]
+                                }
+                            {{pass}}
+                         {{pass}}
+
+
+			],
+          legend: {
+            cursor:"pointer",
+            itemclick : function(e) {
+              if (typeof(e.dataSeries.visible) === "undefined" || e.dataSeries.visible) {
+                 e.dataSeries.visible = false;
+              }
+              else {
+                e.dataSeries.visible = true;
+              }
+              chart.render();
+            }
+          }
+        });
+
+chart.render();
+}
+</script>
