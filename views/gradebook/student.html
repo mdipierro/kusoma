@@ -1,6 +1,8 @@
 {{extend 'layout.html'}}
 <h1>Student Grade Interface</h1><br><br>
 
+<p>Here you can view your current grades for the selected course. Assignments that have not been graded yet will be listed with a dash (“-“) in place of a grade.  If your teacher chooses to provide any comments, you will be able to see them below your listed grades. Your teacher may also choose to enable statistics for you to view, which will show up to the right of each assignment if they are enabled.</p>
+
 <h4>{{=section.name}} - {{=auth.user.first_name}} {{=auth.user.last_name}}</h4>
 <table class="table">
   <tr>
@@ -40,6 +42,7 @@
 {{pass}}
 {{pass}}
 
+<p>If statistics have been enabled by your teacher, you will be able to view them in graphical form below.  You can choose which stats you would like to see by clicking on the appropriate key located beneath the graph.  For instance, if you would like to view the average grade for all assignments, click “Average”.  In addition, you can hover over a point of the graph with your mouse to show you more stats for that particular assignment.</p>
 
 
     <div id="chartContainer" style="height: 300px; width: 100%;">
