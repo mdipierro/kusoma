@@ -3,7 +3,13 @@
 import time
 
 def index():
-    return dict(message="hello just testing!!")
+    return dict()
+def notelist():
+    return dict()
+def mysubscriptions():
+    return dict()
+def notifications():
+    return dict()
 
 #def get_all_notes():
 #    return db().select(db.note_main.All)
@@ -19,6 +25,7 @@ def get_note_list():
     query = (db.note_main.id == db.note_version.note_id
             )&(db.note_main.id == db.note_user_note_relation.note_id
             )&(db.db.note_version.modify_on == db(db.note_main.id == db.note_version.note_id).select(max(db.note_version.modify_on)))
+
     return db(query).select(db.note_version.title, db.note_main.creat_on, db.note_main.create_by, db.db.note_version.modify_on, db.db.note_version.modify_by, db.note_user_note_relation.user_id)
 
 #include notes both subscribed and participated
