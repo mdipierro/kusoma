@@ -1,0 +1,19 @@
+{{extend 'layout.html'}}
+
+<h1>Chat History</h1>
+<table class="table table-bordered table-hover">
+    <thead>
+        <tr>
+            <th>Message</th>
+            <th>Sent By</th>
+            <th>Time</th>
+        </tr>
+    </thead>
+    {{for group_chat in group_chats:}}
+    <tr>
+        <td>{{=group_chat.chat_message}}</td>
+        <td>{{=group_chat.sender_id}}</td>
+        <td>{{=group_chat.time_sent}}</td>
+    </tr>
+    {{pass}}
+</table>
