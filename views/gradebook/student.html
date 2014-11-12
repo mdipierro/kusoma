@@ -10,7 +10,6 @@
    {{if stat_options:}}{{if stat_options[0].max_score:}}  <th>Max</th> {{pass}}{{pass}}
    {{if stat_options:}}{{if stat_options[0].avg_score:}}  <th>Average</th> {{pass}}{{pass}}
    {{if stat_options:}}{{if stat_options[0].median_score:}}  <th>Median</th> {{pass}}{{pass}}
-   {{if stat_options:}}{{if stat_options[0].var:}}  <th>Variance</th> {{pass}}{{pass}}
    {{if stat_options:}}{{if stat_options[0].std:}}  <th>Standard Deviation</th> {{pass}}{{pass}}
   </tr>
   {{for g in student_grades:}}
@@ -29,7 +28,6 @@
             {{if stat_options:}}{{if stat_options[0].max_score:}}  <td>{{=s['max']}}</td> {{pass}}{{pass}}
             {{if stat_options:}}{{if stat_options[0].avg_score:}}  <td>{{=s['average']}}</td> {{pass}}{{pass}}
             {{if stat_options:}}{{if stat_options[0].median_score:}}  <td>{{=s['median']}}</td> {{pass}}{{pass}}
-            {{if stat_options:}}{{if stat_options[0].var:}}  <td>{{=s['var']}}</td> {{pass}}{{pass}}
             {{if stat_options:}}{{if stat_options[0].std:}}  <td>{{=s['std']}}</td> {{pass}}{{pass}}
           {{pass}}
        {{pass}}

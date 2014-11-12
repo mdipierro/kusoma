@@ -52,7 +52,6 @@ def teacher():
                 'max':round(max(s),2),
                 'average':round(mean,2),
                 'median':round(sorted(s)[int(len(s)/2)],2),
-                'var':round(var,2),
                 'std':round(var**0.5,2),
                 'hw':hw
             })
@@ -89,7 +88,6 @@ def student():
                 'max':round(max(s),2),
                 'average':round(mean,2),
                 'median':round(sorted(s)[int(len(s)/2)],2),
-                'var':round(var,2),
                 'std':round(var**0.5,2),
                 'hw':hw
             })
@@ -136,9 +134,6 @@ def statistics():
     if(stat == "med"):
         db.section_statistics.update_or_insert(db.section_statistics.section_id==section_id, section_id =section_id,
              median_score=value)
-    if(stat == "var"):
-        db.section_statistics.update_or_insert(db.section_statistics.section_id==section_id, section_id =section_id,
-             var=value)
     if(stat == "std"):
         db.section_statistics.update_or_insert(db.section_statistics.section_id==section_id, section_id =section_id,
              std=value)

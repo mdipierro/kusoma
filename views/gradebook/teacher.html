@@ -17,10 +17,6 @@
         <th>max</th>
         <th>average</th>
         <th>median</th>
-        <th>mean</th>
-        <th>sum</th>
-        <th>cov</th>
-        <th>var</th>
         <th>std</th>
     </tr>
         <tr>
@@ -33,14 +29,6 @@
                    {{if stat_options:}}{{if stat_options[0].avg_score:}} checked {{pass}}{{pass}}></td>
         <td><input id = "med" data-size="mini" type="checkbox"   class="checkbox-switcher"
                    {{if stat_options:}}{{if stat_options[0].median_score:}} checked {{pass}}{{pass}}></td>
-        <td><input id = "mea" data-size="mini" type="checkbox"   class="checkbox-switcher"
-                   {{if stat_options:}}{{if stat_options[0].mean_score:}} checked {{pass}}{{pass}}></td>
-        <td><input id = "sum" data-size="mini" type="checkbox"   class="checkbox-switcher"
-                   {{if stat_options:}}{{if stat_options[0].sum_score:}} checked {{pass}}{{pass}}></td>
-        <td><input id = "cov" data-size="mini" type="checkbox"   class="checkbox-switcher"
-                   {{if stat_options:}}{{if stat_options[0].cov:}} checked {{pass}}{{pass}}></td>
-        <td><input id = "var" data-size="mini" type="checkbox"   class="checkbox-switcher"
-                   {{if stat_options:}}{{if stat_options[0].var:}} checked {{pass}}{{pass}}></td>
         <td><input id = "std" data-size="mini" type="checkbox"   class="checkbox-switcher"
                    {{if stat_options:}}{{if stat_options[0].std:}} checked {{pass}}{{pass}}></td>
     </tr>
@@ -52,10 +40,6 @@
             <td><div class='max display'>{{=a['max']}}</div></td>
             <td><div class='avg display'>{{=a['average']}}</div></td>
             <td><div class='med display'>{{=a['median']}}</div></td>
-            <td><div class='mea display'>{{=a['mean']}}</div></td>
-            <td><div class='sum display'>{{=a['sum']}}</div></td>
-            <td><div class='cov display'>{{=a['cov']}}</div></td>
-            <td><div class='var display'>{{=a['var']}}</div></td>
             <td><div class='std display'>{{=a['std']}}</div></td>
 
         </tr>
