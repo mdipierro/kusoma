@@ -1,19 +1,28 @@
 {{extend 'layout.html'}}
 
-{{if start}}
+{{if start:}}
+<script src="https://apis.google.com/js/platform.js"></script>
 <script>
-    gapi.hangout.render('hangouts-button', {
-        'render': 'createhangout',
-        'hangout_type': 'onair',
-        'initial_apps': [{'app_id' : '295744626315', 'start_data' : '{{URL(args=request.args, vars=request.get_vars, host=True)}}', 'app_type' : 'ROOM_APP' }],
-        'widget_size': 175,
-        'invites': [
-            {{for user in users}}
-                { 'id': '{{user.email}}', 'invite_type': 'EMAIL' },
-            {{pass}}
-        ]
-    });
+    (function ($) {
+        $(document).ready(function () {
+            gapi.hangout.render('hangouts-button', {
+                'render': 'createhangout',
+                'hangout_type': 'onair',
+                'initial_apps': [{'app_id' : '295744626315', 'start_data' : '{{URL(args=request.args, vars=request.get_vars, host=True)}}', 'app_type' : 'ROOM_APP' }],
+                'widget_size': 175,
+                'invites': [
+                    {{for user in users:}}
+                        { 'id': '{{=user.email}}', 'invite_type': 'EMAIL' },
+                    {{pass}}
+                ]
+            });
+            $('#hangouts-button').click(function () {
+                $(this).remove();
+            });
+        });
+    })(jQuery)
 </script>
 {{pass}}
+
 
 <div id="hangouts-button"></div>

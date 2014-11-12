@@ -126,7 +126,7 @@ def create():
 
     return dict(form=form, start=start)
 
-@auth.requires_login
+@auth.requires_login()
 def start():
     video_id = request.args(0,cast=int)
     video = db(db.recording.id==video_id).select().first()
@@ -137,8 +137,7 @@ def start():
     if video:
         if not video.youtube_id:
             start = True
-            users = users_in_section(video.course_id, roles=[STUDENT,TEACHER])
-
+            users = users_in_section(9, [STUDENT,TEACHER])
 
 
     return dict(video=video, start=start, users=users)
