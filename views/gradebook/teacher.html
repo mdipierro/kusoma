@@ -53,9 +53,9 @@
             <td>{{=a['hw'].name}}</td>
             <td><div class='min display'>{{=a['min']}}</div></td>
             <td><div class='max display'>{{=a['max']}}</div></td>
-            <td><div class='average display'>{{=a['average']}}</div></td>
-            <td><div class='median display'>{{=a['median']}}</div></td>
-            <td><div class='mean display'>{{=a['mean']}}</div></td>
+            <td><div class='avg display'>{{=a['average']}}</div></td>
+            <td><div class='med display'>{{=a['median']}}</div></td>
+            <td><div class='mea display'>{{=a['mean']}}</div></td>
             <td><div class='sum display'>{{=a['sum']}}</div></td>
             <td><div class='cov display'>{{=a['cov']}}</div></td>
             <td><div class='var display'>{{=a['var']}}</div></td>
@@ -93,16 +93,7 @@
       },
   {{pass}}
   ];
-var nonnegative_validator_fn = function (value, callback) {
-  setTimeout(function(){
-    if (new String(value).valueOf() != new String("NaN").valueOf() && (!value || parseFloat(value) >= 0) )  {
-      callback(true);
-    }
-    else {
-      callback(false);
-    }
-  }, 300);
-};
+
   $('#dataTable').handsontable({
     data: data,
     columnSorting: true,
@@ -112,9 +103,6 @@ var nonnegative_validator_fn = function (value, callback) {
     fixedColumnsLeft: 2,
     cells: function (row, col, prop) {
         var cellProperties = {}
-//        if(col === 0 ||col === 1  ) {
-//          cellProperties.readOnly = true;
-//        }
         return cellProperties;
     },
     colHeaders: true,
@@ -133,7 +121,6 @@ var nonnegative_validator_fn = function (value, callback) {
             ,tp: "{{=hw.homework.points}}}"
             ,type: 'numeric'
             ,format: '0,0'
-            ,validator: nonnegative_validator_fn
             ,allowInvalid: false
         }
         {{pass}}
@@ -214,78 +201,13 @@ var nonnegative_validator_fn = function (value, callback) {
 
 
     $(document).ready(function(){
-        if (!$('#min').is(':checked')){
-            changeColorByState('min display', false)
-        }
-        if (!$('#max').is(':checked')){
-            changeColorByState('max display', false)
-        }
-        if (!$('#avg').is(':checked')){
-            changeColorByState('average display', false)
-        }
-        if (!$('#med').is(':checked')){
-            changeColorByState('median display', false)
-        }
-        if (!$('#mea').is(':checked')){
-            changeColorByState('mean display', false)
-        }
-        if (!$('#sum').is(':checked')){
-            changeColorByState('sum display', false)
-        }
-
-       $('#min').on('switchChange.bootstrapSwitch', function (event, state) {
-           save_stat('min', state)
-           changeColorByState('min display', state)
-       });
-       if (!$('#cov').is(':checked')){
-            changeColorByState('cov display', false)
-       }
-       if (!$('#var').is(':checked')){
-            changeColorByState('var display', false)
-       }
-       if (!$('#std').is(':checked')){
-            changeColorByState('std display', false)
-       }
-
-
-       $('#max').on('switchChange.bootstrapSwitch', function (event, state) {
-           save_stat('max', state)
-           changeColorByState('max display', state)
-       });
-
-       $('#avg').on('switchChange.bootstrapSwitch', function (event, state) {
-           save_stat('avg', state)
-           changeColorByState('average display', state)
-       });
-
-       $('#med').on('switchChange.bootstrapSwitch', function (event, state) {
-           save_stat('med', state)
-           changeColorByState('median display', state)
-       });
-
-       $('#mea').on('switchChange.bootstrapSwitch', function (event, state) {
-           save_stat('mea', state)
-           changeColorByState('mean display', state)
-       });
-
-       $('#sum').on('switchChange.bootstrapSwitch', function (event, state) {
-           save_stat('sum', state)
-           changeColorByState('sum display', state)
-       });
-
-       $('#cov').on('switchChange.bootstrapSwitch', function (event, state) {
-           save_stat('cov', state)
-           changeColorByState('cov display', state)
-       });
-
-       $('#var').on('switchChange.bootstrapSwitch', function (event, state) {
-           save_stat('var', state)
-           changeColorByState('var display', state)
-       });
-
-       $('#std').on('switchChange.bootstrapSwitch', function (event, state) {
-           save_stat('std', state)
-           changeColorByState('std display', state)
+        $(".checkbox-switcher").each(function(a,elm){
+            var state = $(elm).is(":checked")?true:false;
+            changeColorByState(".display."+this.id, state);
+         });
+       $('.checkbox-switcher').on('switchChange.bootstrapSwitch', function (event, state) {
+           save_stat(this.id, state);
+           changeColorByState(".display."+this.id, state);
        });
     });
 
@@ -309,19 +231,15 @@ var nonnegative_validator_fn = function (value, callback) {
       });
     }
 
-function changeColorByState(matchClass, state) {
-    var elems = document.getElementsByTagName('*'), i;
-    for (i in elems) {
-        if((' ' + elems[i].className + ' ').indexOf(' ' + matchClass + ' ')
-                > -1) {
-            if(state){
-                elems[i].style.color = 'Black';
-            }else{
-                elems[i].style.color = 'Gray';
-            }
-        }
+    function changeColorByState (selector, state)
+    {
+        $(selector).each(function(index, elm) {
+           var color = "gray";
+           if (state) {
+               color = "black";
+           }
+           elm.style.color = color;
+       });
     }
-}
-
 
 </script>

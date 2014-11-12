@@ -45,10 +45,9 @@ def teacher():
     for hw in hws:
         s = convert_to_list(get_assignment_by_homework(section_id, hw.id))
         if s:
-            
             mean = sum(s)/len(s)
-            var = sum(x*x for x in s)/len(x) - mean**2
-            stat.append({
+            var = sum(x*x for x in s)/len(s) - mean**2
+            stat_data.append({
                 'min':round(min(s),2),
                 'max':round(max(s),2),
                 'average':round(mean,2),
@@ -81,10 +80,10 @@ def student():
     for hw in hws:
         s = convert_to_list(get_assignment_by_homework(section_id, hw.id))
         if s:
-             
+
             mean = sum(s)/len(s)
-            var = sum(x*x for x in s)/len(x) - mean**2
-            stat.append({
+            var = sum(x*x for x in s)/len(s) - mean**2
+            stat_data.append({
                 'min':round(min(s),2),
                 'max':round(max(s),2),
                 'average':round(mean,2),
