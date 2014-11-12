@@ -15,6 +15,10 @@
         'widget_size': 175
       });
     </script>
+	
+	<h3>Add existing recording</h3>
+	<p>To post a video that is already on Youtube press the button bellow and fill out the form to make it available in the Recordings table.</p>
+	<a class="btn btn-primary" href="{{=URL('add_existing', args=section.id)}}">Add Existing Recording</a>
 {{pass}}
 
 <h3>Recordings</h3>
@@ -46,7 +50,7 @@
 		{{pass}}
 	</table>
 {{else:}}
-    <p>No videos found.</p>
+    <p><b>No videos found.</b></p>
 {{pass}}
 
 <script>
