@@ -10,7 +10,7 @@
 
 
 <div id="example1console"></div>
-
+<div id="refresh">
 <table class="table">
     <tr>
         <th>Homework</th>
@@ -50,7 +50,7 @@
     {{pass}}
 
 </table>
-
+</div>
 <script>
   $(".checkbox-switcher").bootstrapSwitch();
 
@@ -138,7 +138,7 @@
         success: function (res) {
             if(res)
             {
-              //  $console.text(JSON.stringify(res, undefined, 2));
+              $('#refresh').load(document.URL +  ' #refresh');
             }
              else {
                 $console.text('Save error');
