@@ -1,0 +1,28 @@
+<h3>Recordings</h3>
+
+{{if videos:}}
+    <table class="table">
+        <tr>
+            <th>Name</th>
+            <th>Date</th>
+            <th>Time</th>
+            <th>Is Class</th>
+        </tr>
+        {{for video in videos:}}
+            <tr>
+                <td>{{=video.name}}</td>
+                <td>{{=video.class_date.date()}}</td>
+                <td>{{=video.class_date.time()}}</td>
+                <td>{{=video.is_class}}</td>
+            </tr>
+        {{pass}}
+    </table>
+{{else:}}
+    <p><b>No videos found.</b></p>
+{{pass}}
+
+{{if is_teacher:}}
+    <a class="btn btn-primary" href="{{=URL('index', args=section.id, extension=False)}}">View/Edit Recordings</a>
+{{elif is_student:}}
+    <a class="btn btn-primary" href="{{=URL('index', args=section.id, extension=False)}}">View Recordings</a>
+{{pass}}
