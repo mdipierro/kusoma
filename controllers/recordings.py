@@ -75,22 +75,67 @@ def view():
 
 @auth.requires_login()
 def edit():
+	# Get view id if provided
     video_id = request.args(0,cast=int)
 
+	# Test if there is a video, and if user is the teacher
+	# If not then redirect to course page
     if video_id:
         video = db(db.recording.id==video_id).select().first()
         courseId = video.course_id
         if (not video or not is_user_teacher(video.course_id)):
             redirect(URL('index', args=video.course_id))
 
-    form = SQLFORM(db.recording, video)
+	# Create a form based on recording db
+    form = SQLFORM(db.recording, video, deletable = True)
     form.add_button('Back', URL('index', args=courseId))
 
+	# If form is accepted then update recording db and send to course page
     if form.process().accepted:
         response.flash = 'Form accepted'
         redirect(URL('index', args=courseId))
     elif form.errors:
         response.flash = 'Form has errors'
+    return dict(form=form)
+	
+@auth.requires_login()
+def add_existing():
+	# Get section id if provided
+    section_id = request.args(0,cast=int)
+
+	# Test if teacher, if not send to course page
+    if not is_user_teacher(section_id):
+        redirect(URL('index',args=section_id))
+
+	# Create form based on recording db
+	# Additional link field, and a hidden course field so that user can not change it
+    fields = [field for field in db.recording]
+    fields += [Field('youtube_link', label=T('Youtube Link')), Field('course_id', type='hidden')]
+    form = SQLFORM.factory(*fields)
+    form.add_button('Back', URL('index', args=section_id))
+    form.vars.course_id = section_id
+
+	# Test if there is a Youtube Link
+	# If there is then get the Youtube ID to store in db
+    def check_youtube(form):
+        if not form.vars.youtube_link and not form.vars.youtube_id:
+            form.errors.youtube = 'Fill in a Youtube Link or ID'
+        elif form.vars.youtube_link and not form.vars.youtube_id:
+            form.vars.youtube_id = get_youtube_id(form.vars.youtube_link)
+
+	#If form is accepted then write to recording db and send back to course page
+    if form.process(onvalidation=check_youtube).accepted:
+        db.recording.course_id.writable=True
+        db.recording.insert(**db.recording._filter_fields(form.vars))
+        db.recording.course_id.writable=False
+
+        response.flash = 'Form accepted'
+        redirect(URL('index', args=section_id))
+    elif form.errors:
+        if form.errors.youtube:
+            response.flash = form.errors.youtube
+        else:
+            response.flash = 'Form has errors'
     return dict(form=form)
 
 @auth.requires_login()
@@ -179,3 +224,22 @@ def api():
 #         #'recording': {'GET':{},'POST':{},'PUT':{},'DELETE':{}}
 #         }
 #     return Collection(db).process(request,response,rules)
+
+#Use to get the Youtube video title using the video id
+def get_youtube_title(video_id):
+    import urllib
+    import simplejson
+
+    link = 'http://gdata.youtube.com/feeds/api/videos/%s?alt=json&v=2' % video_id
+    json = simplejson.load(urllib.urlopen(link))
+    title = json['entry']['title']['$t']
+    return title
+	
+#Use to get Youtube id using the link
+def get_youtube_id(link):
+	import urlparse
+	
+	url = urlparse.urlparse(link)
+	query = urlparse.parse_qs(url.query)
+	id = query["v"][0]
+	return id
