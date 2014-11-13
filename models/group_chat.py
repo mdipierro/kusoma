@@ -48,7 +48,7 @@ db.define_table(
     Field('user_id', 'reference membership', requires=NE)
 )
 
-def init_group_chat_session(course_section_id, user_id=auth.user_id, title=None):
+def init_group_chat_session(course_section_id, title=None, user_id=auth.user_id):
     """
     Initiates a group chat session. Returns the group chat session id.
     """
@@ -78,7 +78,7 @@ def add_group_chat_message(message, group_chat_session_id, user_id=auth.user_id)
                                  to_session_id=group_chat_session_id)
     db.commit();
 
-def add_user_group_chat_settings(user_id=request.now, use_microphone=False, use_web_camera=False):
+def add_user_group_chat_settings(use_microphone=False, use_web_camera=False, user_id=request.now):
     """
     Sets up passed in user's group chat preferences.
     """
