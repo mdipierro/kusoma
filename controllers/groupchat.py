@@ -21,8 +21,18 @@ def add_message(message, session_id):
 	return dict()
 	
 @auth.requires_login()
+def add_user_settings_default():
+	add_user_group_chat_settings()
+	return dict()
+	
+@auth.requires_login()
 def add_user_settings(use_microphone, use_camera):
 	add_user_group_chat_settings(use_microphone, use_camera)
+	return dict()
+	
+@auth.requires_login()
+def update_user_settings(use_microphone, use_camera):
+	update_user_group_chat_settings(use_microphone, use_camera)
 	return dict()
 	
 @auth.requires_login()

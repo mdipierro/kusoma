@@ -86,6 +86,15 @@ def add_user_group_chat_settings(use_microphone=False, use_web_camera=False, use
                                        use_microphone=use_microphone,
                                        use_web_camera=use_web_camera)
     db.commit();
+	
+def update_user_group_chat_settings(use_microphone=False, use_web_camera=False, user_id=request.now):
+    """
+    Updates passed in user's group chat preferences if they exist, otherwise insert.
+    """
+    db.group_chat_user_settings.update_or_insert(user_id=user_id,
+                                       use_microphone=use_microphone,
+                                       use_web_camera=use_web_camera)
+    db.commit();
 
 
 def get_user_group_chat_settings(user_id=request.now):
