@@ -1,6 +1,6 @@
 @auth.requires_login()
 def history():
-    return dict(group_chats=get_group_chat_messages())
+    return dict(sessions=get_group_chat_sessions_for_user())
 
 @auth.requires_login()
 def history_session(session_id):
@@ -38,7 +38,4 @@ def update_user_settings(use_microphone, use_camera):
 @auth.requires_login()
 def get_user_settings():
 	return dict(settings=get_user_group_chat_settings())
-	
 
-
-	
