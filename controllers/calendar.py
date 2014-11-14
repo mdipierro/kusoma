@@ -14,8 +14,8 @@ def index():
 def calendar():
     return dict()
 
-@auth.requires_login()
-#@auth.requires(db.auth_user.is_teacher or db.auth_user.is_administrator)   NOT YET TESTED 
+#@auth.requires_login()
+@auth.requires(auth.user.is_teacher==True or auth.user.is_administrator==True) 
 def create():
     # Display a form the user can use to create a new event.
     #
@@ -33,8 +33,9 @@ def create():
         response.flash = 'Please fill in the form !'
     return dict(form=form)
 
-@auth.requires_login()
-def delete():
+#@auth.requires_login()
+@auth.requires(auth.user.is_teacher==True or auth.user.is_administrator==True)
+def manage():
     # get a list of events that the current user created
     # display the events in a grid or a picklist
     # The user can selects an event and clicks a delete button
