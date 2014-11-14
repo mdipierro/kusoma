@@ -1,19 +1,31 @@
 {{extend 'layout.html'}}
-
 <h1>Chat History</h1>
-<table class="table table-bordered table-hover">
-    <thead>
-        <tr>
-            <th>Message</th>
-            <th>Sent By</th>
-            <th>Time</th>
-        </tr>
-    </thead>
-    {{for group_chat in group_chats:}}
-    <tr>
-        <td>{{=group_chat.chat_message}}</td>
-        <td>{{=group_chat.sender_id}}</td>
-        <td>{{=group_chat.time_sent}}</td>
-    </tr>
+<div class="panel-group" id="accordion" role="tablist" aria-multiselectable="true">
+    {{for session in sessions:}}
+        <div class="panel panel-default">
+            <div class="panel-heading" role="tab" id="heading-{{=session['session_info'].id}}">
+                <h4 class="panel-title">
+                    <a data-toggle="collapse" data-parent="#accordion" href="#collapse-{{=session['session_info'].id}}" aria-expanded="true" aria-controls="collapseOne">
+                        {{=session['session_info'].title}} : {{=session['session_info'].start_time}}
+                        ({{for member in session['members']:}}
+                            {{=member.user_id.auth_user.first_name}} {{=member.user_id.auth_user.last_name}},
+                         {{pass}}
+                        )
+                    </a>
+                </h4>
+            </div>
+            <div id="collapse-{{=session['session_info'].id}}" class="panel-collapse collapse in" role="tabpanel" aria-labelledby="heading-{{=session['session_info'].id}}">
+                <div class="panel-body">
+                    <table class="table">
+                        {{for message in session['messages']:}}
+                            <tr>
+                                <td><strong>{{=message.sender_id.auth_user.first_name}} {{=message.sender_id.auth_user.last_name}}:</strong> {{=message.chat_message}}</td>
+                                <td><small>@ {{=message.time_sent}}</small></td>
+                            </tr>
+                        {{pass}}
+                    </table>
+                </div>
+            </div>
+        </div>
     {{pass}}
-</table>
+</div>
