@@ -32,3 +32,17 @@ def preview():
 
     session.preview_theme = subfolder + '/' + filename
     return dict()
+
+'''
+user can set a course's theme here 
+
+TODO: modify smartgrid to only show certain fields, 
+join to themes table to show theme names
+'''
+@auth.requires(auth.user and auth.user.is_administrator)
+def course_themes():
+    grid=SQLFORM.smartgrid(db.course, linked_tables=['theme'])
+
+    return dict(grid=grid)
+
+
