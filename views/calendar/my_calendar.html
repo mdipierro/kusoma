@@ -8,6 +8,10 @@
     margin-bottom: 10px;
     margin-left: 10px;
 }
+#view-all-events-button {
+    margin-bottom: 10px;
+    margin-left: 10px;
+}
 </style>
 
 <script src="../static/js/moment.min.js" ></script>
@@ -16,10 +20,9 @@
 <script>
     $(document).ready(function() {
         $('#calendar').lmsCalendar({
-            events: {{=XML(json(selectedCourseEvents))}}
+          events: {{=XML(json(selectedCourseEvents))}}
         });
-        {{pass}}
-    });
+      });
 </script>
 <form>
     <label for="selectedCourse">Select a course to view</label>
@@ -29,9 +32,7 @@
         {{pass}}
     </select>
     <input type="submit" id="submit-button"/>
+    <input type="button" id="view-all-events-button" value="View All My Events" onclick="window.location='/lms299/calendar/my_calendar';"></input>
 </form>
 <div id="currentCourse"></div>
 <div id="calendar"></div>
-{{=myCourses}}
-{{=rows}}
-{{=selectedCourseEvents}}
