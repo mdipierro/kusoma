@@ -1,3 +1,7 @@
+{{import HTMLParser}}
+{{import cgi}}
+{{from gluon.serializers import json}}
+
 {{extend 'layout.html'}}
 {{block head}}
 <script src="{{=URL('static', 'js/moment.min.js')}}" ></script>
@@ -7,18 +11,17 @@
 <script src="http://ajax.googleapis.com/ajax/libs/jqueryui/1.10.3/jquery-ui.min.js" type="text/javascript"></script>
 <script>
 	$(document).ready(function() {
-	    $('#calendar').lmsCalendar({
-	            height: 500,
-                header: {
-                   left:   'today prevYear,prev,next,nextYear',
-                   center: 'title',
-                   right:  'month,agendaWeek,agendaDay'
-                },
-	        events: {{=XML('\'' + URL('calendar', 'index.json') + '\'')}}
-	    });
-	});
+        var eventsJSON = '{{=XML(json(selectedCourseEvents))}}';
+             eventsJSON = eventsJSON.replace(/start_date/g, 'start').replace(/end_date/g, 'end');
+        $('#calendar').lmsCalendar({
+            events: eventsJSON
+        });
+        {{pass}}
+    });
 </script>
 {{end}}
 
 <h3>Calendar</h3>
 <div id="calendar"></div>
+{{=selectedCourseEvents}}
+{{=XML(json(selectedCourseEvents))}}

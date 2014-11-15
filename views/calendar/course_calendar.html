@@ -14,7 +14,7 @@
 <script src="../static/js/fullcalendar.js" ></script>
 <script src="../static/js/lms299calendar.js"></script>
 <script>
-	$(document).ready(function() {
+    $(document).ready(function() {
         $('#calendar').lmsCalendar({
             events: {{=XML(json(selectedCourseEvents))}}
         });
@@ -32,6 +32,6 @@
 </form>
 <div id="currentCourse"></div>
 <div id="calendar"></div>
-{{#=myCourses}}
-{{#=rows}}
-{{#=selectedCourseEvents}}
+{{=myCourses}}
+{{=rows}}
+{{=selectedCourseEvents}}
