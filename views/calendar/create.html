@@ -1,6 +1,89 @@
 {{extend 'layout.html'}}
 <h1>
-    Create a new event
+    Create a new event </br>
 </h1>
-{{form=form}}
-{{=BEAUTIFY(response._vars)}}
+<h5>
+    for staff, Class, or students.</br></br></br>
+</h5>
+
+{{=form.custom.begin}}
+<table>
+    <tr>
+        <td>
+            <strong style="color:red;"> * </strong> {{=form.custom.label.title}} 
+        </td>
+        <td title="EVENT TITLE">
+            {{=form.custom.widget.title}}
+        </td>
+    </tr>
+    <tr>
+        <td>
+            <strong style="color:white;"> * </strong> {{=form.custom.label.details}}
+        </td>
+        <td title="EVENT DESCRIPTION">
+            {{=form.custom.widget.details}}
+        </td>
+    </tr>
+    <tr>
+        <td>
+            <strong style="color:red;"> * </strong> {{=form.custom.label.start_date}}
+        </td>
+        <td title="EVENT START DATE">
+            {{=form.custom.widget.start_date}}
+        </td>
+    </tr>
+    <tr>
+        <td>
+            <strong style="color:white;"> * </strong> {{=form.custom.label.end_date}}
+        </td>
+        <td title="EVENT END DATE">
+            {{=form.custom.widget.end_date}}
+        </td>
+    </tr>
+    <tr>
+        <td>
+            <strong style="color:white;"> * </strong> {{=form.custom.label.all_day}}
+        </td>
+        <td>
+            {{=form.custom.widget.all_day}} <i> &#x2713; yes &ensp; &#x2717; no  </i> </br> </br>
+        </td>
+    </tr>
+    <tr>
+        <td>
+            <strong style="color:white;"> * </strong> {{=form.custom.label.url}}
+        </td>
+        <td title="EVENT URL">
+            {{=form.custom.widget.url}}
+        </td>
+    </tr>
+    <tr>
+        <td>
+            <strong style="color:red;"> * </strong> {{=form.custom.label.visibility}}
+        </td>
+        <td title="EVENT VISIBILITY">
+            {{=form.custom.widget.visibility}}
+        </td>
+    </tr>
+    <tr>
+        <td>
+            <strong style="color:white;"> * </strong> {{=form.custom.label.course_id}}
+        </td>
+        <td title="EVENT COURSE REFERENCE">
+            {{=form.custom.widget.course_id}}
+        </td>
+    </tr>
+    <tr>
+        <td>
+            <h6>
+                <b> Make sure you filled out all the <strong style="color:red;"> * </strong>  required fields. </b>
+            </h6>
+        </td>
+    </tr>
+    <tr>
+        <td>
+            <input type="submit"/>
+        </td>
+    </tr>
+</table>
+
+{{=form.custom.end}}
