@@ -8,11 +8,10 @@ def index():
     arg1 - the section_id
     """
     section_id = request.args(0,cast=int)
-
-    add_section_menu(section_id)
-
     section=db(db.course_section.id == section_id).select().first()
     if not section: redirect(URL('default','index'))
+
+    add_section_menu(section_id)
 
     videos = db(db.recording.course_id==section_id).select()
     if is_user_student(section_id):
@@ -72,6 +71,8 @@ def update_recording():
 def view():
     video_id = request.args(0,cast=int)
     video = db(db.recording.id==video_id).select().first()
+    if not video: redirect(URL('default','index'))
+        
     section_id = video.course_id
     if not is_user_student(section_id) and not is_user_teacher(section_id):
         redirect(URL('default','section', args=section_id))
@@ -84,15 +85,13 @@ def edit():
     arg1 - the recording id
     """
     
-	# Get view id if provided
+	# Get video id if provided
     video_id = request.args(0,cast=int)
+    video = db(db.recording.id==video_id).select().first()
+    if not video: redirect(URL('default','index'))
 
-	# Test if there is a video, and if user is the teacher
+	# Test if user is the teacher
 	# If not then redirect to course page
-    if video_id:
-        video = db(db.recording.id==video_id).select().first()
-    if not video:
-        redirect(URL('default','index'))
     if not is_user_teacher(video.course_id):
         redirect(URL('index', args=video.course_id))
 
@@ -107,61 +106,23 @@ def edit():
     elif form.errors:
         response.flash = 'Form has errors'
     return dict(form=form)
-	
-@auth.requires_login()
-def add_existing():
-    """
-    Display a form to add an already existing youtube video to the recording database.
-    arg1 - the section_id of the section for which the recording should be added
-    """
-	# Get section id if provided
-    section_id = request.args(0,cast=int)
-
-	# Test if teacher, if not send to course page
-    if not is_user_teacher(section_id):
-        redirect(URL('index',args=section_id))
-
-	# Create form based on recording db
-	# Additional link field, and a hidden course field so that user can not change it
-    fields = [field for field in db.recording]
-    fields += [Field('youtube_link', label=T('Youtube Link')), Field('course_id', type='hidden')]
-    form = SQLFORM.factory(*fields)
-    form.add_button('Back', URL('index', args=section_id))
-    form.vars.course_id = section_id
-
-	# Test if there is a Youtube Link
-	# If there is then get the Youtube ID to store in db
-    def check_youtube(form):
-        if not form.vars.youtube_link and not form.vars.youtube_id:
-            form.errors.youtube = 'Fill in a Youtube Link or ID'
-        elif form.vars.youtube_link and not form.vars.youtube_id:
-            form.vars.youtube_id = get_youtube_id(form.vars.youtube_link)
-
-	#If form is accepted then write to recording db and send back to course page
-    if form.process(onvalidation=check_youtube).accepted:
-        db.recording.course_id.writable=True
-        db.recording.insert(**db.recording._filter_fields(form.vars))
-        db.recording.course_id.writable=False
-
-        response.flash = 'Form accepted'
-        redirect(URL('index', args=section_id))
-    elif form.errors:
-        if form.errors.youtube:
-            response.flash = form.errors.youtube
-        else:
-            response.flash = 'Form has errors'
-    return dict(form=form)
 
 @auth.requires_login()
 def create():
     """
-    Display a form to create a new hangout on air and add it to the database of
-    recordings for section.
+    Display two forms: one to create a new hangout on air and another to add an already
+    existing youtube video to the database of recordings for the section.
     arg1 - the section_id of the section for which the recording should be added
     """
     # Get section id if provided
     section_id = request.args(0,cast=int)
+    section=db(db.course_section.id == section_id).select().first()
+    if not section: redirect(URL('default','index'))
 
+    ###################################
+    # Build form for new recording
+    ###################################
+    
     # Test if current user is teacher or student for class
     # if teacher, is_class field can be set to true
     if is_user_teacher(section_id):
@@ -175,20 +136,62 @@ def create():
 
     db.recording.course_id.default = section_id
 
-    form = SQLFORM(db.recording, fields=fields)
+    form_new = SQLFORM(db.recording, fields=fields)
 
     # If form is accepted we show start a hangout button
     # TODO add condition to verify hangout has not yet been started
-    if form.process().accepted:
+    if form_new.process().accepted:
         start = True
-        redirect(URL('start', args=(form.vars.id)))
+        redirect(URL('start', args=(form_new.vars.id)))
 
     if start:
         users = users_in_section(section_id, roles=[STUDENT, TEACHER])
     else:
         users = dict()
 
-    return dict(form=form, start=start)
+        
+    ###################################
+    # Build form for existing recording
+    ###################################
+    
+    ##TODO - Don't redirect here - just don't show is_class checkbox if not a teacher
+    # Test if teacher, if not send to course page
+    if not is_user_teacher(section_id):
+        redirect(URL('index',args=section_id))
+
+	# Create form based on recording db
+	# Additional link field, and a hidden course field so that user can not change it
+    #TODO - Change field order to put youtube id and link next to each other
+    #TODO - Make Recorder and date fields not readable, not writable - default to current user and time
+    fields = [field for field in db.recording]
+    fields += [Field('youtube_link', label=T('Youtube Link')), Field('course_id', type='hidden')]
+    form_existing = SQLFORM.factory(*fields)
+    form_existing.add_button('Back', URL('index', args=section_id))
+    form_existing.vars.course_id = section_id
+
+	# Test if there is a Youtube Link
+	# If there is then get the Youtube ID to store in db
+    def check_youtube(form):
+        if not form_existing.vars.youtube_link and not form_existing.vars.youtube_id:
+            form_existing.errors.youtube = 'Fill in a Youtube Link or ID'
+        elif form_existing.vars.youtube_link and not form_existing.vars.youtube_id:
+            form_existing.vars.youtube_id = get_youtube_id(form_existing.vars.youtube_link)
+
+	#If form is accepted then write to recording db and send back to course page
+    if form_existing.process(onvalidation=check_youtube).accepted:
+        db.recording.course_id.writable=True
+        db.recording.insert(**db.recording._filter_fields(form_existing.vars))
+        db.recording.course_id.writable=False
+
+        response.flash = 'Form accepted'
+        redirect(URL('index', args=section_id))
+    elif form_existing.errors:
+        if form_existing.errors.youtube:
+            response.flash = form_existing.errors.youtube
+        else:
+            response.flash = 'Form has errors'
+
+    return dict(form_new=form_new, form_existing=form_existing, section=section)
 
 #Jeremy would like this to be integrated with create() such that the start-a-hangout button will only appear
 #when the form has been filled out.
@@ -196,14 +199,14 @@ def create():
 def start():
     video_id = request.args(0,cast=int)
     video = db(db.recording.id==video_id).select().first()
+    if not video: redirect(URL('default','index'))
 
     users = dict()
     start = False
 
-    if video:
-        if not video.youtube_id:
-            start = True
-            users = users_in_section(9, [STUDENT,TEACHER])
+    if not video.youtube_id:
+        start = True
+        users = users_in_section(9, [STUDENT,TEACHER])
 
     return dict(video=video, start=start, users=users)
 

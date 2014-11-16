@@ -1,3 +1,12 @@
 {{extend 'layout.html'}}
 
-{{=form}}
+<h2>Add a Recording for Section {{=section.name}}</h2>
+    
+<h3>Create a New Recording</h3>
+<p>This will start a new Google Hangout on Air. Provide a name for the recording and whether this is an official class recording or not.</p>
+{{=form_new}}
+
+<h3>Add an Existing Recording</h3>
+<p>Modify the form below and click the "Submit" button to add the new recording information.</p>
+<p>Fill in either the Youtube ID or Youtube Link (you do not need to fill in both).</p>
+{{=form_existing}}
