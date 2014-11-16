@@ -3,12 +3,11 @@
 
 {{if rejected is None:}}
 
-<h2>Homework Management Interface</h2>
-{{=homeworks}}
+<h2>Folder Management Interface</h2>
+{{=folders}}
 <br/>
-{{if is_user_teacher(section_id):}}
-    <h3><a href="{{=URL('manage_folders',args=(section_id))}}">Folder Management Interface</a></h3>
-{{pass}}
+<h3><a href="{{=URL('manage_homeworks',args=(section_id))}}">Homework Management Interface</a></h3>
+
 {{else:}}
     <h3>{{=rejected}}</h3>
     <h4><a href="{{=URL('../../default/section',args=(section_id))}}">View this section</a></h4>
