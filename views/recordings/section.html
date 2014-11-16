@@ -2,29 +2,9 @@
 
 <h2>Recordings for {{=section.name}}</h2>
 
+<p>To watch a video, choose one from the table below by clicking on the name of your desired video. The chosen video will then load above the table.</p>
 {{if is_teacher:}}
-    <h3>Make a new recording</h3>
-    <p>This button will make a new Hangout URL but it is not yet feeding the youtube_id of the new recording back to the database.</p>
-    <script src="https://apis.google.com/js/platform.js"></script>
-    <div id="placeholder-div3"></div>
-    <script>
-      gapi.hangout.render('placeholder-div3', {
-        'render': 'createhangout',
-        'hangout_type': 'onair',
-        //'initial_apps': [{'app_id' : '184219133185', 'start_data' : 'dQw4w9WgXcQ', 'app_type' : 'ROOM_APP' }],
-        'widget_size': 175
-      });
-    </script>
-	
-	<h3>Add existing recording</h3>
-	<p>To post a video that is already on Youtube press the button bellow and fill out the form to make it available in the Recordings table.</p>
-	<a class="btn btn-primary" href="{{=URL('add_existing', args=section.id)}}">Add Existing Recording</a>
-{{pass}}
-
-<h3>Recordings</h3>
-<p>To watch a video, choose one from the table below by clicking on the name of your desired video. The choosen video will then load above the table.</p>
-{{if is_teacher:}}
-    <p>To edit the information associated with a video or to remove the video, click on the "Edit" button to the left of the video information in the table.</p>
+    <p>To edit the information associated with a video or to remove the video, click on the "Edit" button to the right of the video information in the table.</p>
 {{pass}}
 
 {{if videos:}}
@@ -52,6 +32,8 @@
 {{else:}}
     <p><b>No videos found.</b></p>
 {{pass}}
+
+<a class="btn btn-primary" href="{{=URL('create', args=section.id)}}">Create or Add a Recording</a>
 
 <script>
     function ScrollToVideo(video){
