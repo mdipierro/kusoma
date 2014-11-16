@@ -1,6 +1,6 @@
 
 @auth.requires_login()
-def google_hangout():
+def google_hangouts():
     return dict(sessions=get_group_chat_sessions_for_user())
 
 @auth.requires_login()
