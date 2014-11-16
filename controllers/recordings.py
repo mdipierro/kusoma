@@ -76,6 +76,9 @@ def view():
     section_id = video.course_id
     if not is_user_student(section_id) and not is_user_teacher(section_id):
         redirect(URL('default','section', args=section_id))
+
+    add_section_menu(section_id)
+    
     return dict(video=video)
 
 @auth.requires_login()
@@ -89,6 +92,9 @@ def edit():
     video_id = request.args(0,cast=int)
     video = db(db.recording.id==video_id).select().first()
     if not video: redirect(URL('default','index'))
+
+    section_id = video.course_id
+    add_section_menu(section_id)
 
 	# Test if user is the teacher
 	# If not then redirect to course page
@@ -118,6 +124,8 @@ def create():
     section_id = request.args(0,cast=int)
     section=db(db.course_section.id == section_id).select().first()
     if not section: redirect(URL('default','index'))
+        
+    add_section_menu(section_id)
 
     ###################################
     # Build form for new recording
@@ -200,6 +208,9 @@ def start():
     video_id = request.args(0,cast=int)
     video = db(db.recording.id==video_id).select().first()
     if not video: redirect(URL('default','index'))
+
+    section_id = video.course_id
+    add_section_menu(section_id)
 
     users = dict()
     start = False
