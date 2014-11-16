@@ -1,3 +1,5 @@
+<!--Need an Html file where we would launch our hangout-->
+
 {{extend 'layout.html'}}
 <h1>Hangout</h1>
 <div class="panel-group" id="accordion" role="tablist" aria-multiselectable="true">
@@ -28,4 +30,17 @@
             </div>
         </div>
     {{pass}}
+</div>
+
+<div class="panel-group" id="hangout" role="tablist" aria-multiselectable="true">
+
+<form action="https://plus.google.com/hangouts/_" method="GET">
+    <input type="hidden" name="gid" value="--"/>
+    <select name="gd">
+        <option>Hangouts</option>
+        <option>Google+ API</option>
+        <option>+1 Button</option>
+    </select>
+    <input type="submit"/>
+</form>
 </div>
