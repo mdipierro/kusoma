@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 # This is the controller file for the lms299 event calendar.
-import datetime
+from datetime import datetime
 
 #@auth.requires_login()
 @auth.requires(auth.user.is_teacher==True or auth.user.is_administrator==True)
@@ -33,7 +33,6 @@ def my_calendar():
     # input: a course ID passed in through the session object
     # use course picker list to select a course
     # With the given course ID, query all of the events related to that course
-    #
     # The view will use the object as a datasource for fullcalendar and display the events
     rows = ''
     selectedCourse = request.vars.selectedCourse
