@@ -51,32 +51,33 @@
 
 <hr>
 
-<script src="https://code.jquery.com/jquery-1.11.1.min.js"></script>
-  <script>
+<script src="//code.jquery.com/jquery-1.11.1.min.js"></script>
+    <script>
       function init() {
-        if (gapi && gapi.hangout) {
+          if (gapi && gapi.hangout) {
 
-          var initHangout = function(apiInitEvent) {
-            if (apiInitEvent.isApiReady) {
+              var initHangout = function(apiInitEvent) {
+                  if (apiInitEvent.isApiReady) {
 
-              url = startData = gapi.hangout.getStartData();
-              console.log(url);
-             // gapi.onYouTubeLiveIdReady.add(function () {
-               // $.ajax(
-                 //   type: "PUT",
-                   // url: url,
-                   // data: {
-                    //    youtube_id: gapi.hangout.onair.getYouTubeLiveId()
-                    // }
-                // );
-              // });
+                      url = gapi.hangout.getStartData();
+                      console.log(url);
+                      gapi.hangout.onair.onYouTubeLiveIdReady.add(function () {
+                          console.log(gapi.hangout.onair.getYouTubeLiveId());
+                          $.ajax({
+                              type: "PUT",
+                              dataType: 'json',
+                              url: url,
+                              data: {
+                                  youtube_id: gapi.hangout.onair.getYouTubeLiveId()
+                              }
+                          });
 
-              gapi.hangout.onApiReady.remove(initHangout);
-            }
-          };
-
-          gapi.hangout.onApiReady.add(initHangout);
-        }
+                          gapi.hangout.onApiReady.remove(initHangout);
+                      });
+                  }
+              }
+              gapi.hangout.onApiReady.add(initHangout);
+          }
       }
       gadgets.util.registerOnLoadHandler(init);
   </script>
