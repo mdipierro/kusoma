@@ -1,0 +1,50 @@
+<!--
+	# Ideas for future enhancements:
+	#   Save the view state in a session object whenever we leaeve the calendar page.
+	#   That way we can restore the proper view state when we return
+	#   the user to the calendar.
+	#   Use the beforeunload event to save the state.
+	#   Use a different one (ready?) to read the state.
+	    $(window).bind('beforeunload', function() {
+-->
+<script src="{{=URL('static', 'js/moment.min.js')}}"></script>
+<script src="{{=URL('static', 'js/fullcalendar.js')}}"></script>
+<script src="{{=URL('static', 'js/lms299calendar.js')}}"></script>
+<script>
+  $(document).ready(function() {
+    $('#calendar').lmsCalendar({
+      height: 500,
+      header: {
+        left:   'today prevYear,prev,next,nextYear',
+        center: 'title',
+        right:  'month,agendaWeek,agendaDay'
+      },
+      events: {{=XML(json(selectedCourseEvents))}},
+      {{if auth.is_logged_in():
+      if (CAN_MANAGE_EVENTS):}}
+        dayClick: function(date, jsEvent, view) {
+          if(confirm("Do you want to create a new event on " + date.format() + "?")) {
+            window.location.href = "{{=URL('calendar', 'create') + '/'}}" + date.format();
+          }
+        },
+        eventClick: function(event, jsEvent, view) {
+          if(confirm("Do you want to edit this event: " + event.title + "?")) {
+            window.location.href = "{{=URL('calendar', 'manage')}}";
+          }
+        },
+      {{pass}}
+      {{pass}}
+      selectable: false
+    });
+  });
+</script>
+<style>
+#submit-button {
+    margin-bottom: 10px;
+    margin-left: 10px;
+}
+#view-all-events-button {
+    margin-bottom: 10px;
+    margin-left: 10px;
+}
+</style>

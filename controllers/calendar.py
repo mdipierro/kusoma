@@ -1,9 +1,16 @@
 # -*- coding: utf-8 -*-
 # This is the controller file for the lms299 event calendar.
+#
+# Ideas for future enhancements:
+#   Have FullCalendar send the view state as a json object,
+#   (as a var value?) which is then stored in a session variable.
+#   That way we can restore the proper view state when we return
+#   the user to the calendar.
+#
 import datetime
 
 #@auth.requires_login()
-@auth.requires(auth.user.is_teacher==True or auth.user.is_administrator==True) 
+@auth.requires(auth.user.is_teacher==True or auth.user.is_administrator==True)
 def create():
     # Display a form the user can use to create a new event.
     #
@@ -12,9 +19,26 @@ def create():
     # When the event is created in db.cal_event, a record is also created in db.course_event
     # where the course_id is the course that the user selected and the referenced event is the
     # record just created in db.cal_event
+    if request.args:
+        if request.args(0):
+            start = _convert_string_to_date(request.args(0), fmt=OUTPUT_DATE_FORMAT)
+        else:
+            start = datetime.datetime.today()
+        if request.args(1):
+            end = _convert_string_to_date(request.args(1), fmt=OUTPUT_DATE_FORMAT)
+        else:
+            end = None
+    else:
+        start = datetime.datetime.today()
+    start = datetime.datetime(start.year, start.month, start.day)
+    end = datetime.datetime(start.year, start.month, start.day + 1)
+    db.cal_event.start_date.default = start
+    db.cal_event.end_date.default = end
+    url = URL('calendar', 'my_calendar')
     form = SQLFORM(db.cal_event).process()
     if form.accepted:
-        response.flash = 'Event created successfully'
+        session.flash = 'Event created successfully'
+        redirect(url)
     elif form.errors:
         response.flash = 'There are errors on the form, please review.'
     return dict(form=form)
@@ -33,7 +57,6 @@ def my_calendar():
     # input: a course ID passed in through the session object
     # use course picker list to select a course
     # With the given course ID, query all of the events related to that course
-    #
     # The view will use the object as a datasource for fullcalendar and display the events
     rows = ''
     selectedCourse = request.vars.selectedCourse
