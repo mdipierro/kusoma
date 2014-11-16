@@ -20,7 +20,7 @@
 {{pass}}
 
 {{if is_teacher:}}
-    <a class="btn btn-primary" href="{{=URL('index', args=section.id, extension=False)}}">View/Edit Recordings</a>
+    <a class="btn btn-primary" href="{{=URL('section', args=section.id, extension=False)}}">View/Edit Recordings</a>
 {{else:}}
-    <a class="btn btn-primary" href="{{=URL('index', args=section.id, extension=False)}}">View Recordings</a>
+    <a class="btn btn-primary" href="{{=URL('section', args=section.id, extension=False)}}">View Recordings</a>
 {{pass}}
