@@ -1,3 +1,12 @@
+<!--
+	# Ideas for future enhancements:
+	#   Save the view state in a session object whenever we leaeve the calendar page.
+	#   That way we can restore the proper view state when we return
+	#   the user to the calendar.
+	#   Use the beforeunload event to save the state.
+	#   Use a different one (ready?) to read the state.
+	    $(window).bind('beforeunload', function() {
+-->
 <script src="{{=URL('static', 'js/moment.min.js')}}"></script>
 <script src="{{=URL('static', 'js/fullcalendar.js')}}"></script>
 <script src="{{=URL('static', 'js/lms299calendar.js')}}"></script>
@@ -10,24 +19,32 @@
         center: 'title',
         right:  'month,agendaWeek,agendaDay'
       },
-      events: {{=XML('\'' + URL('calendar', 'index.json') + '\'')}},
+      events: {{=XML(json(selectedCourseEvents))}},
       {{if auth.is_logged_in():
-          #is_teacher = db(db.auth_user.id == auth.user_id).select(db.auth_user.is_teacher).first().is_teacher
-          #is_administrator = db(db.auth_user.id == auth.user_id).select(db.auth_user.is_administrator).first().is_administrator
-          if (CAN_MANAGE_EVENTS):}}
-            dayClick: function(date, jsEvent, view) {
-              if(confirm("Do you want to create a new event on " + date.format() + "?")) {
-                window.location.href = "{{=URL('calendar', 'create') + '/'}}" + date.format();
-              }
-            },
-            eventClick: function(event, jsEvent, view) {
-              if(confirm("Do you want to edit this event: " + event.title + "?")) {
-                window.location.href = "{{=URL('calendar', 'update') + '/'}}" + event.id;
-              }
-            },
-          {{pass}}
+      if (CAN_MANAGE_EVENTS):}}
+        dayClick: function(date, jsEvent, view) {
+          if(confirm("Do you want to create a new event on " + date.format() + "?")) {
+            window.location.href = "{{=URL('calendar', 'create') + '/'}}" + date.format();
+          }
+        },
+        eventClick: function(event, jsEvent, view) {
+          if(confirm("Do you want to edit this event: " + event.title + "?")) {
+            window.location.href = "{{=URL('calendar', 'manage')}}";
+          }
+        },
+      {{pass}}
       {{pass}}
       selectable: false
     });
   });
 </script>
+<style>
+#submit-button {
+    margin-bottom: 10px;
+    margin-left: 10px;
+}
+#view-all-events-button {
+    margin-bottom: 10px;
+    margin-left: 10px;
+}
+</style>
