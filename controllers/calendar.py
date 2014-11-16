@@ -3,7 +3,7 @@
 import datetime
 
 #@auth.requires_login()
-@auth.requires(auth.user.is_teacher==True or auth.user.is_administrator==True) 
+@auth.requires(auth.user.is_teacher==True or auth.user.is_administrator==True)
 def create():
     # Display a form the user can use to create a new event.
     #
