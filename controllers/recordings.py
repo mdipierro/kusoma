@@ -167,28 +167,33 @@ def create():
     if not is_user_teacher(section_id):
         redirect(URL('index',args=section_id))
 
-	# Create form based on recording db
-	# Additional link field, and a hidden course field so that user can not change it
-    #TODO - Change field order to put youtube id and link next to each other
-    #TODO - Make Recorder and date fields not readable, not writable - default to current user and time
-    fields = [field for field in db.recording]
-    fields += [Field('youtube_link', label=T('Youtube Link')), Field('course_id', type='hidden')]
-    form_existing = SQLFORM.factory(*fields)
-    form_existing.add_button('Back', URL('index', args=section_id))
-    form_existing.vars.course_id = section_id
+    form_existing = SQLFORM.factory(
+        Field('youtube_link', label=T('Youtube URL')),
+        Field('is_class', 'boolean', label=T('This is an official class recording'), default=True))
 
-	# Test if there is a Youtube Link
-	# If there is then get the Youtube ID to store in db
     def check_youtube(form):
-        if not form_existing.vars.youtube_link and not form_existing.vars.youtube_id:
-            form_existing.errors.youtube = 'Fill in a Youtube Link or ID'
-        elif form_existing.vars.youtube_link and not form_existing.vars.youtube_id:
-            form_existing.vars.youtube_id = get_youtube_id(form_existing.vars.youtube_link)
+        """
+        Parse the given form.vars.youtube_link to extract the youtube ID, then
+        check that Youtube ID is valid.
+        If valid, then form_existing.vars.youtube_id will contain the youtube ID
+        and form_existing.vars.youtube_title will contain the Youtube title.
+        If invalid, form.errors.youtube will contain an error message.
+        """
+        from simplejson import JSONDecodeError
+        try:
+            form.vars.youtube_id = get_youtube_id(form.vars.youtube_link)
+            form.vars.youtube_title = get_youtube_title(form.vars.youtube_id)
+        except:
+            form.errors.youtube = 'Invalid Youtube URL'
 
 	#If form is accepted then write to recording db and send back to course page
     if form_existing.process(onvalidation=check_youtube).accepted:
         db.recording.course_id.writable=True
-        db.recording.insert(**db.recording._filter_fields(form_existing.vars))
+        db.recording.insert(
+            name=form_existing.vars.youtube_title,
+            youtube_id=form_existing.vars.youtube_id,
+            course_id=section_id,
+            is_class=form_existing.vars.is_class)
         db.recording.course_id.writable=False
 
         response.flash = 'Form accepted'
@@ -270,8 +275,22 @@ def api():
 #         }
 #     return Collection(db).process(request,response,rules)
 
-#Use to get the Youtube video title using the video id
+
+def get_youtube_title_test():
+    from simplejson import JSONDecodeError
+    
+    try:
+        title = get_youtube_title(request.args[0])
+    except JSONDecodeError:
+        raise HTTP(400,"Invalid Youtube ID")
+    return title
+
 def get_youtube_title(video_id):
+    """
+    Use to get the Youtube video title using the video id
+    raises JSONDecodeError if video_id is not a valid Youtube ID
+    To check for this error, you must "from simplejson import JSONDecodeError"
+    """
     import urllib
     import simplejson
 
@@ -280,11 +299,13 @@ def get_youtube_title(video_id):
     title = json['entry']['title']['$t']
     return title
 	
-#Use to get Youtube id using the link
 def get_youtube_id(link):
-	import urlparse
-	
-	url = urlparse.urlparse(link)
-	query = urlparse.parse_qs(url.query)
-	id = query["v"][0]
-	return id
+    """
+    Use to get Youtube id using the link
+    """
+    #TODO - this should also parse URL's of the form http://youtu.be/dQw4w9WgXcQ, and other patterns, too?
+    import urlparse
+    url = urlparse.urlparse(link)
+    query = urlparse.parse_qs(url.query)
+    id = query["v"][0]
+    return id
