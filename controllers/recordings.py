@@ -3,6 +3,10 @@
 
 @auth.requires_login()
 def index():
+    """
+    Show the list of recordings for a section
+    arg1 - the section_id
+    """
     section_id = request.args(0,cast=int)
 
     add_section_menu(section_id)
@@ -75,6 +79,11 @@ def view():
 
 @auth.requires_login()
 def edit():
+    """
+    Edit an entry in the recording database.
+    arg1 - the recording id
+    """
+    
 	# Get view id if provided
     video_id = request.args(0,cast=int)
 
@@ -82,13 +91,14 @@ def edit():
 	# If not then redirect to course page
     if video_id:
         video = db(db.recording.id==video_id).select().first()
-        courseId = video.course_id
-        if (not video or not is_user_teacher(video.course_id)):
-            redirect(URL('index', args=video.course_id))
+    if not video:
+        redirect(URL('default','index'))
+    if not is_user_teacher(video.course_id):
+        redirect(URL('index', args=video.course_id))
 
 	# Create a form based on recording db
     form = SQLFORM(db.recording, video, deletable = True)
-    form.add_button('Back', URL('index', args=courseId))
+    form.add_button('Back', URL('index', args=video.course_id))
 
 	# If form is accepted then update recording db and send to course page
     if form.process().accepted:
@@ -100,6 +110,10 @@ def edit():
 	
 @auth.requires_login()
 def add_existing():
+    """
+    Display a form to add an already existing youtube video to the recording database.
+    arg1 - the section_id of the section for which the recording should be added
+    """
 	# Get section id if provided
     section_id = request.args(0,cast=int)
 
@@ -140,6 +154,11 @@ def add_existing():
 
 @auth.requires_login()
 def create():
+    """
+    Display a form to create a new hangout on air and add it to the database of
+    recordings for section.
+    arg1 - the section_id of the section for which the recording should be added
+    """
     # Get section id if provided
     section_id = request.args(0,cast=int)
 
@@ -171,6 +190,8 @@ def create():
 
     return dict(form=form, start=start)
 
+#Jeremy would like this to be integrated with create() such that the start-a-hangout button will only appear
+#when the form has been filled out.
 @auth.requires_login()
 def start():
     video_id = request.args(0,cast=int)
@@ -184,11 +205,21 @@ def start():
             start = True
             users = users_in_section(9, [STUDENT,TEACHER])
 
-
     return dict(video=video, start=start, users=users)
 
 @request.restful()
 def api():
+    """
+    API for posting a new recording from the Hangouts app.
+    It is assumed that an entry was already initialized in the database with all the fields populated
+    except the youtube_id. The URL to this API should be pass to the hangouts app as its start data.
+    The URL should have:
+        args[0] = 'recording'
+        args[1] = the recording id that should be updated.
+    When the hangouts app starts and obtains its youtube_id, it should callback to this function with
+    the youtube_id as a variable. The vars for the request will be used to update the database entry
+    for the recording id.
+    """
     if request.env.http_origin:
         response.headers['Access-Control-Allow-Origin'] = "*"
         response.headers['Access-Control-Allow-Credentials'] = 'true'
