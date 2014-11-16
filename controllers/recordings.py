@@ -7,6 +7,16 @@ def index():
     Show the list of recordings for a section
     arg1 - the section_id
     """
+    sections = my_sections()
+
+    return dict(sections=sections)
+
+@auth.requires_login()
+def section():
+    """
+    Show the list of recordings for a section
+    arg1 - the section_id
+    """
     section_id = request.args(0,cast=int)
     section=db(db.course_section.id == section_id).select().first()
     if not section: redirect(URL('default','index'))
@@ -27,45 +37,6 @@ def index():
     start_data=urllib.urlencode(dict(callback=URL('update_recording', scheme=True, host=True), section_id=section_id))
     
     return dict(section=section, videos=videos, is_teacher=is_teacher, start_data=start_data)
-
-#@auth.requires_login()   #John disabled for now, see below
-def update_recording():
-    '''
-    This is a callback function to register a new recording.
-    request.args[0]= The section_id
-    request.args[1]= The youtube_id of the new recording
-
-    Test example: Adds a recording to course_section 2
-    Visit lms299/recordings/add_recording/2/aKdV5FvXLuI
-    Then visit lms299/recordings/index/2 to confirm recording was added
-    '''
-    
-    '''
-    The following line is needed so that the Hangouts app is able to access this function.
-    Without it, the hangout javascript console will have an error:
-    
-    XMLHttpRequest cannot load ... No 'Access-Control-Allow-Origin' header is present
-    on the requested resource. Origin ... is therefore not allowed access.
-    
-    Note also, the same error appears when this function requires login because for
-    some reason, the hangout window is not sending the session cookie to the web2py
-    server, even when I am logged into the web2py server.
-    '''
-    response.headers['Access-Control-Allow-Origin'] = '*'
-    
-    section_id = request.args(0,cast=int)
-    youtube_id = xmlescape(request.args(1))
-    section=db(db.course_section.id == section_id).select().first()
-    if not section:
-        raise HTTP(400,"Bad Request")
-    #Some way to verify that the youtube_id is valid?
-    #Yes- see https://groups.google.com/forum/#!topic/youtube-api-gdata/maM-h-zKPZc
-    if (db((db.recording.youtube_id == youtube_id) & (db.recording.course_id == section_id)).isempty()):
-        db.recording.insert(youtube_id=youtube_id,course_id=section_id)
-        return 'added'
-    else:
-        #already have that recording for this section
-        return 'already present'
 
 @auth.requires_login()
 def view():

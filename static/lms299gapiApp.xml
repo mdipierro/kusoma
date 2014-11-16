@@ -50,19 +50,22 @@
 <div id="participantsDiv"></div>
 
 <hr>
-
+<!-- bring in jQuery to use ajax -->
 <script src="//code.jquery.com/jquery-1.11.1.min.js"></script>
     <script>
+      // function to run on load of the gadget.xml
       function init() {
+          // if we have the gapi
           if (gapi && gapi.hangout) {
-
+              // function to run on load of the Google API
               var initHangout = function(apiInitEvent) {
                   if (apiInitEvent.isApiReady) {
-
+                      // retrieve url for PUT request from LMS299
                       url = gapi.hangout.getStartData();
-                      console.log(url);
+
+                      // function to run once youtube id is ready
                       gapi.hangout.onair.onYouTubeLiveIdReady.add(function () {
-                          console.log(gapi.hangout.onair.getYouTubeLiveId());
+                          // ajax PUT request to update the recording using the retrieved URL
                           $.ajax({
                               type: "PUT",
                               dataType: 'json',

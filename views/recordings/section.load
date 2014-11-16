@@ -1,5 +1,3 @@
-<h3>Recordings</h3>
-
 {{if videos:}}
     <table class="table">
         <tr>
@@ -23,6 +21,6 @@
 
 {{if is_teacher:}}
     <a class="btn btn-primary" href="{{=URL('index', args=section.id, extension=False)}}">View/Edit Recordings</a>
-{{elif is_student:}}
+{{else:}}
     <a class="btn btn-primary" href="{{=URL('index', args=section.id, extension=False)}}">View Recordings</a>
 {{pass}}
