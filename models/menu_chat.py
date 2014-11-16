@@ -6,9 +6,12 @@
 
 
 response.menu += [
-    (T('Chat'), False, None, [
-        (T('History'),      False, URL('groupchat', 'history'),         [])
+    (T('Chat'), False, '', [
+        (T('History'),      False, URL('groupchat', 'history'),         []),
         ('Google Hangouts', False, URL('groupchat', 'google_hangouts'), [])
     ])
 ]
+
+
+
 
