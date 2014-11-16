@@ -21,10 +21,6 @@ db.define_table(
     Field('max_score','boolean'),
     Field('avg_score','boolean'),
     Field('median_score','boolean'),
-    Field('mean_score','boolean'),
-    Field('sum_score','boolean'),
-    Field('cov','boolean'),
-    Field('var','boolean'),
     Field('std','boolean'),
 )
 

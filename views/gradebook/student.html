@@ -57,7 +57,6 @@
 				text: "Statistics"
 			},
 			axisY2:{
-				   
 				interlacedColor: "#F5F5F5",
 				gridColor: "#D7D7D7",
 	 			tickColor: "#D7D7D7"
@@ -89,76 +88,72 @@
                             {{pass}}
                         ]
                     }
-
-                        {{if stat_options:}}
-                            {{if stat_options[0].min_score:}}
-                                ,{
-                                    type: "line",
-                                    lineThickness:2,
-                                    axisYType:"secondary",
-                                    showInLegend: true,
-                                    name: "Minimum",
-                                    dataPoints: [
-                                           {{for s in stat:}}
-                                                { label: '{{=s['hw'].name}}',
-                                                  y:  {{=s['min']}}
-                                                },
-                                            {{pass}}
-                                    ]
-                                }
-                            {{pass}}
-
-                            {{if stat_options[0].max_score:}}
-                                ,{
-                                    type: "line",
-                                    lineThickness:2,
-                                    axisYType:"secondary",
-                                    showInLegend: true,
-                                    name: "Maximum",
-                                    dataPoints: [
-                                           {{for s in stat:}}
-                                                { label: '{{=s['hw'].name}}',
-                                                  y:  {{=s['max']}}
-                                                },
-                                            {{pass}}
-                                    ]
-                                }
-                            {{pass}}
-
-                            {{if stat_options[0].avg_score:}}
-                                ,{
-                                    type: "line",
-                                    lineThickness:2,
-                                    axisYType:"secondary",
-                                    showInLegend: true,
-                                    name: "Average",
-                                    dataPoints: [
-                                           {{for s in stat:}}
-                                                { label: '{{=s['hw'].name}}',
-                                                  y:  {{=s['average']}}
-                                                },
-                                            {{pass}}
-                                    ]
-                                }
-                            {{pass}}
-
-                             {{if stat_options[0].median_score:}}
-                                ,{
-                                    type: "line",
-                                    lineThickness:2,
-                                    axisYType:"secondary",
-                                    showInLegend: true,
-                                    name: "Median",
-                                    dataPoints: [
-                                           {{for s in stat:}}
-                                                { label: '{{=s['hw'].name}}',
-                                                  y:  {{=s['median']}}
-                                                },
-                                            {{pass}}
-                                    ]
-                                }
-                            {{pass}}
-                         {{pass}}
+                    {{if stat_options:}}
+                        {{if stat_options[0].min_score:}}
+                            ,{
+                                type: "line",
+                                lineThickness:2,
+                                axisYType:"secondary",
+                                showInLegend: true,
+                                name: "Minimum",
+                                dataPoints: [
+                                       {{for s in stat:}}
+                                            { label: '{{=s['hw'].name}}',
+                                              y:  {{=s['min']}}
+                                            },
+                                        {{pass}}
+                                ]
+                            }
+                        {{pass}}
+                        {{if stat_options[0].max_score:}}
+                            ,{
+                                type: "line",
+                                lineThickness:2,
+                                axisYType:"secondary",
+                                showInLegend: true,
+                                name: "Maximum",
+                                dataPoints: [
+                                       {{for s in stat:}}
+                                            { label: '{{=s['hw'].name}}',
+                                              y:  {{=s['max']}}
+                                            },
+                                        {{pass}}
+                                ]
+                            }
+                        {{pass}}
+                        {{if stat_options[0].avg_score:}}
+                            ,{
+                                type: "line",
+                                lineThickness:2,
+                                axisYType:"secondary",
+                                showInLegend: true,
+                                name: "Average",
+                                dataPoints: [
+                                       {{for s in stat:}}
+                                            { label: '{{=s['hw'].name}}',
+                                              y:  {{=s['average']}}
+                                            },
+                                        {{pass}}
+                                ]
+                            }
+                        {{pass}}
+                        {{if stat_options[0].median_score:}}
+                            ,{
+                                type: "line",
+                                lineThickness:2,
+                                axisYType:"secondary",
+                                showInLegend: true,
+                                name: "Median",
+                                dataPoints: [
+                                       {{for s in stat:}}
+                                            { label: '{{=s['hw'].name}}',
+                                              y:  {{=s['median']}}
+                                            },
+                                        {{pass}}
+                                ]
+                            }
+                        {{pass}}
+                     {{pass}}
 
 
 			],
