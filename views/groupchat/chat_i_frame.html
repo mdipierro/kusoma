@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html>
+<head lang="en">
+    <meta charset="UTF-8">
+
+    <!--Loading the hangout talkgadget scripts -->
+    <script type="text/javascript" src="//hangoutsapi.talkgadget.google.com/talkgadget/apps/gadgets/js/rpc.js">
+    </script>
+    <script type="text/javascript" src="//hangoutsapi.talkgadget.google.com/hangouts/api/hangouts.js?v=1.4">
+    </script>
+
+    <!-- Loading  JQuery        -->
+    <script type="text/javascript" src="//www.google.com/jsapi"></script>
+    <script type="text/javascript">google.load("jquery", "2.1.0");</script>
+
+    <!-- Loading the JavaScript -->
+    <link rel='stylesheet' href='chat_i_frame.css'/>
+    <script type="text/javascript" src="chat_i_frame.js"></script>
+</head>
+<body>
+    <!-- message to be displayed -->
+    <div id="msg"></div>
+    <!-- Loading the google api Javascript
+    call the onClientReading method in the JavaScript file
+    -->
+    <script type="text/javascript" src="https://apis.google.com/js/client.js?onload=onClientReady"></script>
+
+</body>
+</html>
