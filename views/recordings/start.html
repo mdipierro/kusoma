@@ -8,18 +8,18 @@
             gapi.hangout.render('hangouts-button', {
                 'render': 'createhangout',
                 'hangout_type': 'onair',
-                'initial_apps': [{'app_id' : '367306223556', 'start_data' : "{{=URL(args=[ 'api', 'recording', request.args)), vars=request.get_vars, host=True]}}", 'app_type' : 'ROOM_APP' }],
+                'initial_apps': [{'app_id' : '367306223556', 'start_data' : "{{=URL(args=[ 'api', 'recording', request.args[0]], vars=request.get_vars, host=True)}}", 'app_type' : 'ROOM_APP' }],
                 'widget_size': 175,
                 'invites': [
                     {{for user in users:}}
-                        { 'id': '{{=user.email}}', 'invite_type': 'EMAIL' },
-                    {{pass}}
-                ]
-            });
-            $('#hangouts-button').click(function () {
-                $(this).remove();
-            });
-        });
+    { 'id': '{{=user.email}}', 'invite_type': 'EMAIL' },
+    {{pass}}
+    ]
+    });
+    $('#hangouts-button').click(function () {
+        $(this).remove();
+    });
+    });
     })(jQuery)
 </script>
 {{pass}}
