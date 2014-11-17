@@ -14,6 +14,8 @@ getParameters = function(){
         return ret;
     };
 
+
+//
 //gets called once everything on the page has been loaded
 //then makes a call to the onApiReady event handlers
 onClientReady = function(){
