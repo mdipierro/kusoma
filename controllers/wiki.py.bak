@@ -82,4 +82,4 @@ def news():
                created_on = row.created_on
                ) for row in pages], 
         pages=pages,
-        feedCreated_on=request.now)
+        feedCreated_on=created_on)
