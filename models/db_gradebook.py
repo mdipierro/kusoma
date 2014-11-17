@@ -14,6 +14,19 @@ db.define_table(
     Field('grade'),
     Field('teacher_comment', 'text'))
 
+db.define_table(
+    'section_statistics',
+    Field('section_id', 'reference course_section'),
+    Field('min_score', 'boolean'),
+    Field('max_score','boolean'),
+    Field('avg_score','boolean'),
+    Field('median_score','boolean'),
+    Field('std','boolean'),
+)
+
+def get_statistics(section_id):
+    query = (db.section_statistics.section_id==section_id)
+    return db(query).select()
 
 def get_all_students(section_id):
     query = (db.membership.course_section==section_id)&(db.membership.auth_user==db.auth_user.id)&(db.membership.role!='teacher')
@@ -50,6 +63,11 @@ def get_assignment_by_homework(section_id, homework_id):
 def is_user_teacher(section_id):
     return db.membership(course_section=section_id,
                          role='teacher',
+                         auth_user=auth.user.id)
+
+def is_user_student(section_id):
+    return db.membership(course_section=section_id,
+                         role='student',
                          auth_user=auth.user.id)
 
 def convert_to_list(hw):
