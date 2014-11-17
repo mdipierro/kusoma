@@ -71,29 +71,44 @@ def mark_message_read(self, message_id):
 def add_messages(self, version_id):
     pass
 
+
 #----------------------------------------------------------#
 #interface about discussion and post
 #----------------------------------------------------------#
-def get_discussions(self, note_id):
+def get_discussions(note_id):
     pass
 
-def get_posts(self, discussion_id):
+
+def get_posts(discussion_id):
     pass
 
-def get_discussion_posts(self, note_id):
+
+def get_discussion_posts(note_id):
     pass
 
-def add_post(self, discussion_id, content):
-    pass
+
+def add_post(discussion_id, content):
+    db.note_discussion_post.insert(discussion_id=discussion_id, create_on=request.now, create_by=auth.user_id, post_content=content)
+    db.commit()
+
 
 #----------------------------------------------------------#
 #interface about subscription
 #----------------------------------------------------------#
-def get_subscribed_notes(self, user_id):
-    pass
+def get_subscribed_notes(user_id):
+    rows_from = db(db.note_user_note_relation).select()
+    notes_list = []
+    for row in rows_from:
+        if row.user_id == user_id and row.relation is True:
+            notes_list.append(row.note_id)
+    return notes_list
 
-def subscribe_note(self, note_id, user_id):
-    pass
 
-def unsubscribe_note(self, note_id, user_id):
-    pass
+def subscribe_note(note_id, user_id):
+    db.note_user_not_relation.update_or_insert(note_id=note_id, users_id=user_id, relation=True)
+    db.commit()
+
+
+def unsubscribe_note(note_id, user_id):
+    db.note_user_not_relation.update_or_insert(note_id=note_id, users_id=user_id, relation=False)
+    db.commit()
