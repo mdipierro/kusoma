@@ -60,18 +60,18 @@ def edit():
         able_to_delete = True
     elif video.recorder==auth.user_id:
         fields = ['name']
-        able_to_delete = False
+        able_to_delete = True
     else:
-        redirect(URL('section', args=video.course_id))
+        redirect(URL('section', args=section_id))
 
 	# Create a form based on recording db
 	form = SQLFORM(db.recording, video, fields=fields, deletable=able_to_delete)
-    form.add_button('Back', URL('section', args=video.course_id))
+    form.add_button('Back', URL('section', args=section_id))
 
 	# If form is accepted then update recording db and send to course page
     if form.process().accepted:
         response.flash = 'Form accepted'
-        redirect(URL('section', args=courseId))
+        redirect(URL('section', args=section_id))
     elif form.errors:
         response.flash = 'Form has errors'
     return dict(form=form)
@@ -124,15 +124,10 @@ def create():
     ###################################
     # Build form for existing recording
     ###################################
-    
-    ##TODO - Don't redirect here - just don't show is_class checkbox if not a teacher
-    # Test if teacher, if not send to course page
-    if not is_user_teacher(section_id):
-        redirect(URL('index',args=section_id))
 
-    form_existing = SQLFORM.factory(
-        Field('youtube_link', label=T('Youtube URL')),
-        Field('is_class', 'boolean', label=T('This is an official class recording'), default=True))
+	form_existing = SQLFORM.factory(Field('youtube_link', label=T('Youtube URL')))
+	if is_user_teacher(section_id):
+		form_existing.append(Field('is_class', 'boolean', label=T('This is an official class recording'), default=True))
 
     def check_youtube(form):
         """
@@ -151,12 +146,17 @@ def create():
 
 	#If form is accepted then write to recording db and send back to course page
     if form_existing.process(onvalidation=check_youtube).accepted:
+        if is_user_teacher(section_id):
+            set_is_class = form_existing.vars.is_class
+        else:
+            set_is_class = False
+
         db.recording.course_id.writable=True
         db.recording.insert(
             name=form_existing.vars.youtube_title,
             youtube_id=form_existing.vars.youtube_id,
             course_id=section_id,
-            is_class=form_existing.vars.is_class)
+            is_class=set_is_class)
         db.recording.course_id.writable=False
 
         response.flash = 'Form accepted'
