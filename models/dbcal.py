@@ -55,7 +55,6 @@ db.define_table(
     Field('start_date', 'datetime', requires=NE),                        ## FC Event field
     Field('end_date', 'datetime'),                                       ## FC Event field
     Field('all_day', 'boolean', default=False),                          ## FC Event field
-    Field('url', requires=IS_EMPTY_OR(IS_URL())),                        ## FC Event field
     Field('visibility', 'reference event_visibility'),
     Field('course_id', 'reference course', required=False, requires=IS_EMPTY_OR(IS_IN_DB(db, 'course.id', '%(name)s - %(code)s'))),
     auth.signature,
@@ -122,7 +121,6 @@ EVENT_FIELDS = [db.cal_event.id,
                 db.cal_event.start_date,
                 db.cal_event.end_date,
                 db.cal_event.all_day,
-                db.cal_event.url,
                 db.event_visibility.visibility,
                 db.cal_event.visibility,
                 db.cal_event.course_id]
@@ -132,8 +130,11 @@ EVENT_FIELDS = [db.cal_event.id,
 #########################
 
 def add_event(title, visibility, owner=auth.user_id, details='',
-              start_date=date.today(), end_date=None, all_day=False, url=None, course_id=None):
+              start_date=date.today(), end_date=None, all_day=False, course_id=None):
     """Add a new event to the table."""
+    usr = db(db.auth_user.id == auth.user_id).select().first()
+    if not (usr.is_teacher or usr.is_administrator):
+        raise Exception('You are not authorized to create events.')
     from datetime import datetime
     start = _convert_string_to_date(start_date, default=DATE_DEFAULT.start)
     end = _convert_string_to_date(end_date, default=DATE_DEFAULT.end)
@@ -143,12 +144,11 @@ def add_event(title, visibility, owner=auth.user_id, details='',
                                     start_date=start,
                                     end_date=end,
                                     all_day=all_day,     ## Fix this to insert False when we get a None
-                                    url=url,
                                     visibility=visibility,
                                     course_id=course_id)
     return new_event
 
-def update_event(event_id, title, details, start_date, end_date, all_day, url, visibility, course_id):
+def update_event(event_id, title, details, start_date, end_date, all_day, visibility, course_id):
     """Update the given event."""
     event = db(db.cal_event.id == event_id).select(db.cal_event.id, db.cal_event.owner_id, db.cal_event.title).first()
     if event:
@@ -162,7 +162,6 @@ def update_event(event_id, title, details, start_date, end_date, all_day, url, v
                                                start_date=start,
                                                end_date=end,
                                                all_day=all_day,
-                                               url=url,
                                                visibility=visibility,
                                                course_id=course_id)
     else:
@@ -212,8 +211,6 @@ def get_event(event_id):
     evt = db(db.cal_event.id == event_id).select().first()
     if evt.owner_id != auth.user_id:
         raise Exception('You don\'t own this event.')
-    # else:
-    #     raise Exception('Event Deleted.')
     return evt
 
 def _get_events(query, fields, groupby=None):
@@ -244,7 +241,6 @@ def _get_events_json(query, fields, groupby=None):
              'details': evt.cal_event.details,
              'start': evt.cal_event.start_date.isoformat(),
              'allDay': evt.cal_event.all_day,
-             'url': evt.cal_event.url,
              'visibility': evt.event_visibility.visibility,
              'vis_code': evt.event_visibility.visibility,
              'course_id': evt.cal_event.course_id}
