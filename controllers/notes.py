@@ -57,16 +57,20 @@ def add_note_version(note_id, content):
 def add_tag(note_id, tag):
     db.note_tag.update_or_insert(note_id = note_id, tag = tag)
     db.commit()
+
+
 #----------------------------------------------------------#
 #interface about message
 #----------------------------------------------------------#
 def get_messages(user_id):
     query = (db.note_message.id == user_id) & (db.note_message.version_id == db.note_version.id)
     return db(query).select(db.note_version.note_id, db.note_version.title, db.note_version.modify_by, db.note_version.modify_on, db.note_message.has_read)
-    
+
+
 def mark_message_read(message_id):
     db(db.note_message.id == message_id).update(has_read = True)
     db.commit()
+
 
 def add_messages(user_id, version_id):
     db.note_message.insert(user_id = user_id, version_id = version_id, create_on = time.time(), has_read = False)
@@ -77,15 +81,36 @@ def add_messages(user_id, version_id):
 #interface about discussion and post
 #----------------------------------------------------------#
 def get_discussions(note_id):
-    pass
+    rows_from = db(db.note_discussion).select()
+    discussions = []
+    for row in rows_from:
+        if row.note_id == note_id:
+            discussion = {'discussion_id': row.id, 'title': row.title, 'create_on': row.create_on, 'content': row.post_content}
+            discussions.append(discussion)
+    return discussions
 
 
 def get_posts(discussion_id):
-    pass
+    rows_from = db(db.note_discussion_post).select()
+    posts = []
+    for row in rows_from:
+        if row.discussion_id == discussion_id:
+            post = {'id': row.id, 'content': row.post_content, 'create_on': row.create_on}
+            posts.append(post)
+    return posts
 
 
 def get_discussion_posts(note_id):
-    pass
+    discussions = get_discussions(note_id)
+    discussion_map = {}
+    for discussion in discussions:
+        discussion_map[discussion.id] = get_posts(discussion.id)
+    return discussion_map
+
+
+def add_discussion(note_id, title, content):
+    db.note_discussion.insert(note_id=note_id, create_on=request.now, create_by=auth.user_id, title=title, post_content=content)
+    db.commit()
 
 
 def add_post(discussion_id, content):
