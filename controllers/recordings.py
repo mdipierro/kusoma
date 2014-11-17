@@ -53,19 +53,25 @@ def edit():
     section_id = video.course_id
     add_section_menu(section_id)
 
-	# Test if user is the teacher
+	# Test if user is the teacher or video recorder
 	# If not then redirect to course page
-    if not is_user_teacher(video.course_id):
-        redirect(URL('index', args=video.course_id))
+    if is_user_teacher(section_id):
+        fields = ['name', 'is_class', ]
+        able_to_delete = True
+    elif video.recorder==auth.user_id:
+        fields = ['name']
+        able_to_delete = False
+    else:
+        redirect(URL('section', args=video.course_id))
 
 	# Create a form based on recording db
-    form = SQLFORM(db.recording, video, deletable = True)
-    form.add_button('Back', URL('index', args=video.course_id))
+	form = SQLFORM(db.recording, video, fields=fields, deletable=able_to_delete)
+    form.add_button('Back', URL('section', args=video.course_id))
 
 	# If form is accepted then update recording db and send to course page
     if form.process().accepted:
         response.flash = 'Form accepted'
-        redirect(URL('index', args=courseId))
+        redirect(URL('section', args=courseId))
     elif form.errors:
         response.flash = 'Form has errors'
     return dict(form=form)

@@ -23,7 +23,7 @@
 				<td>{{=video.class_date.date()}}</td>
 				<td>{{=video.class_date.time()}}</td>
 				<td>{{=video.is_class}}</td>
-				{{if is_teacher:}}
+				{{if is_teacher or (video.recorder==auth.user_id):}}
 					<td><a class="btn btn-primary" href="{{=URL('edit', args=video.id)}}">Edit</a></td>
 				{{pass}}
 			</tr>
