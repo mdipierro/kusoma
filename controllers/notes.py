@@ -35,9 +35,14 @@ def get_all_history_versions(note_id):
 
 #return notes ids that have at least one tag the same as designated
 def get_relevant_list(note_id):
-    #to discuss
-    pass
-
+    query_note_id = db(db.note_tag.tag.upper().strip() == (db(db.note_tag.note_id == note_id).select(db.note_tag.tag)).upper().strip())
+    
+    query_relevant_note = (db.note_main.id == db.note_version.note_id
+            )&(db.note_main.id in (db(query_note_id).select(db.note_tag.note_id))
+            )&(db.db.note_version.modify_on == db(db.note_main.id == db.note_version.note_id).select(max(db.note_version.modify_on)))
+            
+    return db(query_relevant_note).select(db.note_version.title)
+      
 def get_note_content(note_id):
     query = (db.note_main.id == db.note_version.note_id
             )&(db.note_main.id == note_id
