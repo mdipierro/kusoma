@@ -23,14 +23,8 @@ db.define_table('note_version',
                 Field('note_content'))
 
 db.define_table('note_discussion',
+                Field('pid', default=0),
                 Field('note_id', 'reference note_main', notnull=True),
-                Field('create_on', 'datetime', default=request.now),
-                Field('create_by', 'reference auth_user', default=auth.user_id),
-                Field('title'),
-                Field('post_content'))
-
-db.define_table('note_discussion_post',
-                Field('discussion_id', 'reference note_discussion', notnull=True),
                 Field('create_on', 'datetime', default=request.now),
                 Field('create_by', 'reference auth_user', default=auth.user_id),
                 Field('post_content'))

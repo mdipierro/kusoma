@@ -85,36 +85,13 @@ def get_discussions(note_id):
     discussions = []
     for row in rows_from:
         if row.note_id == note_id:
-            discussion = {'discussion_id': row.id, 'title': row.title, 'create_on': row.create_on, 'content': row.post_content}
+            discussion = {'id': row.id, 'pid': row.pid, 'create_on': row.create_on, 'user': row.user_id, 'content': row.post_content}
             discussions.append(discussion)
     return discussions
 
 
-def get_posts(discussion_id):
-    rows_from = db(db.note_discussion_post).select()
-    posts = []
-    for row in rows_from:
-        if row.discussion_id == discussion_id:
-            post = {'id': row.id, 'content': row.post_content, 'create_on': row.create_on}
-            posts.append(post)
-    return posts
-
-
-def get_discussion_posts(note_id):
-    discussions = get_discussions(note_id)
-    discussion_map = {}
-    for discussion in discussions:
-        discussion_map[discussion.id] = get_posts(discussion.id)
-    return discussion_map
-
-
-def add_discussion(note_id, title, content):
-    db.note_discussion.insert(note_id=note_id, create_on=request.now, create_by=auth.user_id, title=title, post_content=content)
-    db.commit()
-
-
-def add_post(discussion_id, content):
-    db.note_discussion_post.insert(discussion_id=discussion_id, create_on=request.now, create_by=auth.user_id, post_content=content)
+def add_discussion(note_id, pid, content):
+    db.note_discussion.update_or_insert(note_id=note_id, pid=pid, create_on=request.now, create_by=auth.user_id, post_content=content)
     db.commit()
 
 
