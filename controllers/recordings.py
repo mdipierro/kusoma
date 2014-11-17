@@ -129,6 +129,8 @@ def create():
 	if is_user_teacher(section_id):
 		fields_existing.append(Field('is_class', 'boolean', label=T('This is an official class recording'), default=True))
 
+	form_existing = SQLFORM.factory(*fields_existing)
+
     def check_youtube(form):
         """
         Parse the given form.vars.youtube_link to extract the youtube ID, then
