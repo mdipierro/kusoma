@@ -1,7 +1,0 @@
-
-
-
-
-        getParameters = function(){
-                var ret {};
-                }
