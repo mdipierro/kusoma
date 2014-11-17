@@ -184,6 +184,7 @@ def start():
     return dict(video=video, start=start, users=users)
 
 @request.restful()
+@auth.requires_signature()  #JCL - remove this line to make things work in the short term
 def api():
     """
     API for posting a new recording from the Hangouts app.
@@ -209,7 +210,7 @@ def api():
     def PUT(*args,**vars):
         if args[0] == 'recording':
             if args[1]:
-                return db(db.recording.id == args[1]).validate_and_update(**vars)
+                return db(db.recording.id == args[1]).validate_and_update(youtube_id=vars['youtube_id'])
         return dict()
 
     def DELETE(*args,**vars):

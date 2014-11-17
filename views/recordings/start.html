@@ -8,7 +8,7 @@
             gapi.hangout.render('hangouts-button', {
                 'render': 'createhangout',
                 'hangout_type': 'onair',
-                'initial_apps': [{'app_id' : '367306223556', 'start_data' : "{{=URL('recordings', 'api', args=[ 'recording', video.id], vars=request.get_vars, host=True)}}", 'app_type' : 'ROOM_APP' }],
+                'initial_apps': [{'app_id' : '367306223556', 'start_data' : "{{=URL('recordings', 'api', args=[ 'recording', video.id], vars=request.get_vars, host=True, user_signature=True)}}", 'app_type' : 'ROOM_APP' }],
                 'widget_size': 175,
                 'invites': [
                     {{for user in users:}}
@@ -19,6 +19,7 @@
             $('#hangouts-button').click(function () {
                 $(this).remove();
             });
+            
         });
     })(jQuery)
 </script>
@@ -26,3 +27,20 @@
 
 
 <div id="hangouts-button"></div>
+
+<!-- JCL Testing user_signature=True with @auth.requires_signature for PUT API within our domain -->
+<script>
+    $(document).ready(function () {
+        $("#local_vid_post").click(function () {
+            $.ajax({
+              type: "PUT",
+              dataType: 'json',
+              url: "{{=URL('recordings', 'api', args=[ 'recording', video.id], vars=request.get_vars, host=True, user_signature=True)}}",
+              data: {
+                  youtube_id: "yPYZpwSpKmA"
+              }
+            });
+        });
+    });
+</script>
+<br/><button id="local_vid_post">TEST - Local fixed id submission</button>
