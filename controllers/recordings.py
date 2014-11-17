@@ -66,15 +66,15 @@ def edit():
 
 	# Create a form based on recording db
 	form = SQLFORM(db.recording, video, fields=fields, deletable=able_to_delete)
-    form.add_button('Back', URL('section', args=section_id))
+	form.add_button('Back', URL('section', args=section_id))
 
 	# If form is accepted then update recording db and send to course page
-    if form.process().accepted:
-        response.flash = 'Form accepted'
-        redirect(URL('section', args=section_id))
-    elif form.errors:
-        response.flash = 'Form has errors'
-    return dict(form=form)
+	if form.process().accepted:
+		response.flash = 'Form accepted'
+		redirect(URL('section', args=section_id))
+	elif form.errors:
+		response.flash = 'Form has errors'
+	return dict(form=form)
 
 @auth.requires_login()
 def create():
@@ -125,9 +125,9 @@ def create():
     # Build form for existing recording
     ###################################
 
-	form_existing = SQLFORM.factory(Field('youtube_link', label=T('Youtube URL')))
+	fields_existing = [Field('youtube_link', label=T('Youtube URL'))]
 	if is_user_teacher(section_id):
-		form_existing.append(Field('is_class', 'boolean', label=T('This is an official class recording'), default=True))
+		fields_existing.append(Field('is_class', 'boolean', label=T('This is an official class recording'), default=True))
 
     def check_youtube(form):
         """
@@ -216,7 +216,7 @@ def api():
     def PUT(*args,**vars):
         if args[0] == 'recording':
             if args[1]:
-                return db(db.recording.id == args[1]).validate_and_update(youtube_id=vars['youtube_id'])
+                return db(db.recording.id == args[1]).validate_and_update(youtube_id=vars['youtube_id'], name=get_youtube_title(vars['youtube_id']))
         return dict()
 
     def DELETE(*args,**vars):
