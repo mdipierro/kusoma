@@ -43,12 +43,12 @@ def noteeditor():
 #----------------------------------------------------------#
 #interface about notes
 #----------------------------------------------------------#
-def get_note_list():
-    query = (db.note_main.id == db.note_version.note_id
-            )&(db.note_main.id == db.note_user_note_relation.note_id
-            )&(db.db.note_version.modify_on == db(db.note_main.id == db.note_version.note_id).select(max(db.note_version.modify_on)))
-    rows = db(query).select(db.note_version.note_id, db.note_version.title, db.note_main.creat_on, db.note_main.create_by, db.note_version.modify_on, db.note_version.modify_by, db.note_user_note_relation.user_id)
-    return dict(rows=rows)
+#def get_note_list():
+#    query = (db.note_main.id == db.note_version.note_id
+#            )&(db.note_main.id == db.note_user_note_relation.note_id
+#            )&(db.db.note_version.modify_on == db(db.note_main.id == db.note_version.note_id).select(max(db.note_version.modify_on)))
+#    rows = db(query).select(db.note_version.note_id, db.note_version.title, db.note_main.creat_on, db.note_main.create_by, db.note_version.modify_on, db.note_version.modify_by, db.note_user_note_relation.user_id)
+#    return dict(rows=rows)
 
 #include notes both subscribed and participated
 def get_my_note_list(user_id):
@@ -57,6 +57,15 @@ def get_my_note_list(user_id):
             )&(db.note_main.id == db.note_user_note_relation.note_id
             )&(db.db.note_version.modify_on == db(db.note_main.id == db.note_version.note_id).select(max(db.note_version.modify_on)))
     rows = db(query).select(db.note_version.title, db.note_main.creat_on, db.note_main.create_by, db.db.note_version.modify_on, db.db.note_version.modify_by, db.note_user_note_relation.user_id)
+    return dict(rows=rows)
+
+def get_note_list(search_content):
+    search_content = "%" + search_content.upper().strip() + "%"
+    query = (db.note_main.id == db.note_version.note_id
+            )&(db.note_main.id == db.note_user_note_relation.note_id
+            )&(db.note_version.note_content.upper().like(search_content)
+            )&(db.db.note_version.modify_on == db(db.note_main.id == db.note_version.note_id).select(max(db.note_version.modify_on)))
+    rows = db(query).select(db.note_version.note_id, db.note_version.title, db.note_main.creat_on, db.note_main.create_by, db.note_version.modify_on, db.note_version.modify_by, db.note_user_note_relation.user_id)
     return dict(rows=rows)
 
 def get_all_history_versions(note_id):
