@@ -123,7 +123,7 @@ def add_tag(note_id, tag):
 #interface about message
 #----------------------------------------------------------#
 def get_messages(user_id):
-    query = (db.note_message.id == user_id) & (db.note_message.version_id == db.note_version.id)
+    query = (db.note_message.user_id == user_id) & (db.note_message.version_id == db.note_version.id)
     rows = db(query).select(db.note_version.note_id, db.note_version.title, db.note_version.modify_by, db.note_version.modify_on, db.note_message.has_read)
     return dict(rows=rows)
 
