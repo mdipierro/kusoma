@@ -27,20 +27,3 @@
 
 
 <div id="hangouts-button"></div>
-
-<!-- JCL Testing user_signature=True with @auth.requires_signature for PUT API within our domain -->
-<script>
-    $(document).ready(function () {
-        $("#local_vid_post").click(function () {
-            $.ajax({
-              type: "PUT",
-              dataType: 'json',
-              url: "{{=URL('recordings', 'api', args=[ 'recording', video.id], vars=request.get_vars, host=True, user_signature=True)}}",
-              data: {
-                  youtube_id: "yPYZpwSpKmA"
-              }
-            });
-        });
-    });
-</script>
-<br/><button id="local_vid_post">TEST - Local fixed id submission</button>
