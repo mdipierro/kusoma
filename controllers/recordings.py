@@ -196,6 +196,13 @@ def start():
 
     return dict(video=video, start=start, users=users, callback_url=callback_url)
 
+@auth.requires_login()
+def new_recording():
+    section_id = request.args(0,cast=int)
+
+    id = db.recording.insert(course_id=section_id)
+    return LOAD('recordings', 'start.load', args=id, ajax=True)
+
 @request.restful()
 def api():
     """
