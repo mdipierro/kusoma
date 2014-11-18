@@ -68,7 +68,7 @@ def get_note_list(search_content):
     for row in rows:
         create_by = db(db.auth_user.id == row.note_main.create_by).select(db.auth_user.first_name) + ' ' + db(db.auth_user.id == row.note_main.create_by).select(db.auth_user.last_name)
         modify_by = db(db.auth_user.id == row.note_version.modify_by).select(db.auth_user.first_name) + ' ' + db(db.auth_user.id == row.note_version.modify_by).select(db.auth_user.last_name)
-        note_list = {'NoteId': row.note_main.id, 'Title': row.note_version.title, 'Create By': create_by, 'Create On': row.note_main.create_on, 'Modify By': modify_by, 'Modify On': row.note_version.midify_on}
+        note_list = {'NoteId': row.note_main.id, 'VersionId': row.note_main.version_id, 'Title': row.note_version.title, 'Create By': create_by, 'Create On': row.note_main.create_on, 'Modify By': modify_by, 'Modify On': row.note_version.midify_on}
         note_lists.append(note_list)
         
     return dict(notes=note_lists)     
