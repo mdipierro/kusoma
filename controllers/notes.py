@@ -55,24 +55,24 @@ def get_my_note_list(user_id):
     query = (db.note_main.id == db.note_version.note_id
             )&(db.note_user_note_relation.note_id == user_id
             )&(db.note_main.id == db.note_user_note_relation.note_id
-            )&(db.note_version.modify_on == db(db.note_main.id == db.note_version.note_id).select(max(db.note_version.modify_on)))
+            )&(db.note_version.modify_on == db(db.note_main.id == db.note_version.note_id).select(db.note_version.modify_on.max()))
     rows = db(query).select(db.note_version.title, db.note_main.create_on, db.note_main.create_by, db.note_version.modify_on, db.note_version.modify_by, db.note_user_note_relation.user_id)
     return dict(rows=rows)
 
 def get_note_list_beta(search_content):
-    search_content = "%" + search_content.upper().strip() + "%"
+    #search_content = "%" + search_content.upper().strip() + "%"
     query = (db.note_main.id == db.note_version.note_id
             )&(db.note_main.id == db.note_user_note_relation.note_id
-            )&(db.note_version.note_content.upper().like(search_content)
-            )&(db.note_version.modify_on == db(db.note_main.id == db.note_version.note_id).select(max(db.note_version.modify_on)))
+            )&(db.note_version.note_content.upper().contains(search_content.upper().strip())
+            )&(db.note_version.modify_on == db(db.note_main.id == db.note_version.note_id).select(db.note_version.modify_on.max()))
     rows = db(query).select(db.note_version.note_id, db.note_version.title, db.note_main.create_on, db.note_main.create_by, db.note_version.modify_on, db.note_version.modify_by, db.note_user_note_relation.user_id)
     return dict(rows=rows)
     
 def get_note_list(search_content):
-    search_content = "%" + search_content.upper().strip() + "%"
+    #search_content = "%" + search_content.upper().strip() + "%"
     query = (db.note_main.id == db.note_version.note_id
             )&(db.note_main.id == db.note_user_note_relation.note_id
-            )&(db.note_version.note_content.upper().like(search_content))
+            )&(db.note_version.note_content.upper().contains(search_content.upper().strip())
     rows = db(query).select(db.note_version.note_id, db.note_version.title, db.note_main.create_on, db.note_main.create_by, db.note_version.modify_on, db.note_version.modify_by, db.note_user_note_relation.user_id)
     return dict(rows=rows)
 
@@ -86,8 +86,8 @@ def get_relevant_list(note_id):
     query_note_id = db(db.note_tag.tag.upper().strip() == (db(db.note_tag.note_id == note_id).select(db.note_tag.tag)).upper().strip())
     
     query_relevant_note = (db.note_main.id == db.note_version.note_id
-            )&(db.note_main.id in (db(query_note_id).select(db.note_tag.note_id))
-            )&(db.note_version.modify_on == db(db.note_main.id == db.note_version.note_id).select(max(db.note_version.modify_on)))
+            )&(db.note_main.id in (db(query_note_id).select(db.note_tag.note_id)) #todo with in
+            )&(db.note_version.modify_on == db(db.note_main.id == db.note_version.note_id).select(db.note_version.modify_on.max()))
             
     rows = db(query_relevant_note).select(db.note_version.title)
     return dict(rows=rows)
@@ -95,7 +95,7 @@ def get_relevant_list(note_id):
 def get_note_content(note_id):
     query = (db.note_main.id == db.note_version.note_id
             )&(db.note_main.id == note_id
-            )&(db.note_version.modify_on == db(db.note_main.id == db.note_version.note_id).select(max(db.note_version.modify_on)))
+            )&(db.note_version.modify_on == db(db.note_main.id == db.note_version.note_id).select(db.note_version.modify_on.max()))
     rows = db(query).select(db.note_version.note_content)
     return dict(rows=rows)
 
