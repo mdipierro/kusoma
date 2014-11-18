@@ -49,7 +49,7 @@ Date: 10/23/14
                     {{if is_student:}}
                         <td style="text-align: center;">
                             {{if can_submit(homework):}}
-                            <a href="{{=URL('../..', 'homeworks', args=(section_id, homework.id))}}"
+                            <a href="{{=URL('submit', args=(section_id, homework.id))}}"
                                class="btn btn-primary btn-small">Submit</a>
                             {{else:}}
                                 Not yet open
@@ -74,11 +74,13 @@ Date: 10/23/14
             {{pass}}
         </table>
     {{pass}}
+        </div>
     {{for homework in homeworks:}}
         {{if homework.folder is None:}}
             {{other_homeworks.append(homework)}}
         {{pass}}
     {{pass}}
+    <div style="border-style: solid; border-width: 1px; border-color: grey grey; border-radius: 10px;">
     {{if other_homeworks:}}
             <h4 style="text-indent: 15px;">No Category</h4>
             <table class="table">
@@ -94,7 +96,7 @@ Date: 10/23/14
                 {{for homework in other_homeworks:}}
                     <tr>
                         <td>
-                            <a href="{{=URL('../..', 'homeworks', args=(section_id, homework.id))}}">{{=homework.name}}</a>
+                            <a href="{{=URL('../../homeworks', args=(section_id))}}">{{=homework.name}}</a>
                         </td>
                         {{if homework.opening_date is not None:}}
                         <td>{{=homework.opening_date.strftime("%b %d, %Y %I:%S%p")}}</td>
