@@ -37,11 +37,11 @@
   for(var i in jsonData)
   {
   var o = jsonData[i];
-  if(o.note_main)
+  if(o.note_id)
   {console.log(1);
 //  if(o.note_version.note_id)
   {
-  var n = new Note(o.note_version.note_id, o.note_version.id, o.note_version.title, o.note_main.create_on, o.note_main.create_by, o.note_version.modify_on, o.note_version.modify_by, o.note_user_note_relation.user_id);
+  var n = new Note(o.note_id, o.version_id, o.title, o.create_on, o.create_by, o.modify_on, o.modify_by, 1);
   noteList.push(n);
   
   }
@@ -108,7 +108,8 @@
                     title: 'User',
                     align: 'center',
                     valign: 'middle',
-                    sortable:true
+  sortable:true,
+  visible:false
   },
   
   ]
