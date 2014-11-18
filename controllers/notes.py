@@ -7,11 +7,18 @@ import json
 def index():
     return get_note_list('')
 
+#@auth.requires_login()
 def mysubscriptions():
-    return dict()
+    return get_note_list('')
+    rows = []
+    notes = get_subscribed_notes(auth.user_id)
+    for note_id in notes:
+        rows.append(get_note_by_id(note))
+    return dict(rows=rows)
 
+@auth.requires_login()
 def notifications():
-    return dict()
+    return get_messages(auth.user_id)
 
 def notepage():
     return dict()
