@@ -2,8 +2,7 @@
 
 <h2>Your Recordings</h2>
 
-<p>To watch a video, choose one from the table below by clicking on the name of your desired video. The chosen video will then load above the table.</p>
-
+<p>To watch or edit a course recording press the "View Recordings" button below the table.</p>
 
 {{if sections:}}
 	{{for section in sections:}}
@@ -13,10 +12,3 @@
 {{else:}}
     <p><b>No sections found.</b></p>
 {{pass}}
-
-<script>
-    function ScrollToVideo(video){
-        videoFrame.location=video;
-        location.hash='videoFrame'
-    }
-</script>
