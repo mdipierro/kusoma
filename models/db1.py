@@ -10,7 +10,8 @@ NE = IS_NOT_EMPTY()
 db.define_table('theme',
                 Field('name', requires=NE),
                 Field('URL', requires=NE), 
-                Field('image_URL', requires=NE))
+                Field('image_URL', requires=NE),
+                Field('use_count', default=0))
 
 
 if db(db.theme).isempty():

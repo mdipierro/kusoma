@@ -21,6 +21,23 @@ def theme_picked():
     css_pathname = static_subfolder + '/'  + css_filename
     session.current_theme = URL('static', css_pathname)
 
+	# Get the rows for this css, can just reuse URL as identifier
+    picked = db(db.theme.URL == css_pathname).select()
+    
+    # Get the first use_count for the first row (there should only be one...)
+    uses = picked[0].use_count
+
+	# This update syntax works
+    db(db.theme.URL == css_pathname).update(use_count=(int(uses)+1))
+
+	'''
+	# Uncomment to see table printed out, use_counts will increment. 
+	
+    all_rows = db(db.theme).select()
+    print all_rows
+
+	'''
+
     redirect(URL('themes', 'index'))    
 
     return dict()
@@ -44,5 +61,4 @@ def course_themes():
     grid=SQLFORM.smartgrid(db.course, linked_tables=['theme'])
 
     return dict(grid=grid)
-
 
