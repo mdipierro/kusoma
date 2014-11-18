@@ -29,13 +29,10 @@ def theme_picked():
 
 	# This update syntax works
     db(db.theme.URL == css_pathname).update(use_count=uses)
-
-	
 	
 	# See table printed out, use_counts will increment. 
     all_rows = db(db.theme).select()
     print all_rows
-
 
     redirect(URL('themes', 'index'))    
 
