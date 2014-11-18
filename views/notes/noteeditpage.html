@@ -1,0 +1,7 @@
+{{extend 'layout.html'}}
+<div class='NoteHeader'>
+  {{include 'notes/note_header.html'}}
+</div>
+<div>
+  <iframe src='{{=URL("noteeditor")}}' style='width:100%;height:1024px;border:0;'></iframe>
+  </div>

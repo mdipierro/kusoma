@@ -5,6 +5,25 @@ import time
 def index():
     return dict(message="hello just testing!!")
 
+def notelist():
+    return dict()
+
+def mysubscriptions():
+    return dict()
+
+def notifications():
+    return dict()
+
+def notepage():
+    return dict()
+
+def noteeditpage():
+    return dict()
+
+def noteeditor():
+    return dict()
+
+
 #def get_all_notes():
 #    return db().select(db.note_main.All)
 
