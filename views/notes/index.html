@@ -5,3 +5,16 @@
 <h1>Welcome to Class Notes Interface</h1>
 
 <div id="dataTable" class="handsontable"></div>
+
+{{for row in rows:}}
+<div>
+    {{=A(row.note_version.title,
+    ' ', row.note_main.creat_on,
+    ' ', row.note_main.create_by,
+    ' ', row.note_version.modify_on,
+    ' ', row.note_version.modify_by,
+    ' ', row.note_user_note_relation.user_id,
+    _href=URL('get_note_content', args=row.note_version.note_id))}}
+</div>
+{{pass}}
+

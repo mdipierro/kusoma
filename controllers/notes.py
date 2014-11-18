@@ -3,7 +3,17 @@
 import time
 
 def index():
-    return dict(message="hello just testing!!")
+    return get_note_list()
+
+def notelist():
+    return dict()
+
+def mysubscriptions():
+    return dict()
+
+def notifications():
+    return dict()
+
 
 #def get_all_notes():
 #    return db().select(db.note_main.All)
@@ -19,7 +29,8 @@ def get_note_list():
     query = (db.note_main.id == db.note_version.note_id
             )&(db.note_main.id == db.note_user_note_relation.note_id
             )&(db.db.note_version.modify_on == db(db.note_main.id == db.note_version.note_id).select(max(db.note_version.modify_on)))
-    return db(query).select(db.note_version.title, db.note_main.creat_on, db.note_main.create_by, db.db.note_version.modify_on, db.db.note_version.modify_by, db.note_user_note_relation.user_id)
+    rows = db(query).select(db.note_version.note_id, db.note_version.title, db.note_main.creat_on, db.note_main.create_by, db.note_version.modify_on, db.note_version.modify_by, db.note_user_note_relation.user_id)
+    return dict(rows=rows)
 
 #include notes both subscribed and participated
 def get_my_note_list(user_id):
@@ -27,11 +38,13 @@ def get_my_note_list(user_id):
             )&(db.note_user_note_relation.note_id == user_id
             )&(db.note_main.id == db.note_user_note_relation.note_id
             )&(db.db.note_version.modify_on == db(db.note_main.id == db.note_version.note_id).select(max(db.note_version.modify_on)))
-    return db(query).select(db.note_version.title, db.note_main.creat_on, db.note_main.create_by, db.db.note_version.modify_on, db.db.note_version.modify_by, db.note_user_note_relation.user_id)
+    rows = db(query).select(db.note_version.title, db.note_main.creat_on, db.note_main.create_by, db.db.note_version.modify_on, db.db.note_version.modify_by, db.note_user_note_relation.user_id)
+    return dict(rows=rows)
 
 def get_all_history_versions(note_id):
     query = (db.note_version.note_id == note_id)
-    return db(query).select(db.note_version.title, db.note_version.modify_by, db.note_version.modify_on)
+    rows = db(query).select(db.note_version.title, db.note_version.modify_by, db.note_version.modify_on)
+    return dict(rows=rows)
 
 #return notes ids that have at least one tag the same as designated
 def get_relevant_list(note_id):
@@ -41,13 +54,15 @@ def get_relevant_list(note_id):
             )&(db.note_main.id in (db(query_note_id).select(db.note_tag.note_id))
             )&(db.db.note_version.modify_on == db(db.note_main.id == db.note_version.note_id).select(max(db.note_version.modify_on)))
             
-    return db(query_relevant_note).select(db.note_version.title)
-      
+    rows = db(query_relevant_note).select(db.note_version.title)
+    return dict(rows=rows)
+
 def get_note_content(note_id):
     query = (db.note_main.id == db.note_version.note_id
             )&(db.note_main.id == note_id
             )&(db.db.note_version.modify_on == db(db.note_main.id == db.note_version.note_id).select(max(db.note_version.modify_on)))
-    return db(query).select(db.note_version.note_content)
+    rows = db(query).select(db.note_version.note_content)
+    return dict(rows=rows)
 
 def add_new_note(course_id, user_id):
     #get course_id user_id from request?
@@ -69,8 +84,8 @@ def add_tag(note_id, tag):
 #----------------------------------------------------------#
 def get_messages(user_id):
     query = (db.note_message.id == user_id) & (db.note_message.version_id == db.note_version.id)
-    return db(query).select(db.note_version.note_id, db.note_version.title, db.note_version.modify_by, db.note_version.modify_on, db.note_message.has_read)
-
+    rows = db(query).select(db.note_version.note_id, db.note_version.title, db.note_version.modify_by, db.note_version.modify_on, db.note_message.has_read)
+    return dict(rows=rows)
 
 def mark_message_read(message_id):
     db(db.note_message.id == message_id).update(has_read = True)
@@ -92,7 +107,7 @@ def get_discussions(note_id):
         if row.note_id == note_id:
             discussion = {'id': row.id, 'pid': row.pid, 'create_on': row.create_on, 'user': row.user_id, 'content': row.post_content}
             discussions.append(discussion)
-    return discussions
+    return dict(rows=discussions)
 
 
 def add_discussion(note_id, pid, content):
@@ -109,7 +124,7 @@ def get_subscribed_notes(user_id):
     for row in rows_from:
         if row.user_id == user_id and row.relation is True:
             notes_list.append(row.note_id)
-    return notes_list
+    return dict(rows=notes_list)
 
 
 def subscribe_note(note_id, user_id):
