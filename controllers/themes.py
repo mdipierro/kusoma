@@ -25,18 +25,17 @@ def theme_picked():
     picked = db(db.theme.URL == css_pathname).select()
     
     # Get the first use_count for the first row (there should only be one...)
-    uses = picked[0].use_count
+    uses = int(picked[0].use_count) + 1
 
 	# This update syntax works
-    db(db.theme.URL == css_pathname).update(use_count=(int(uses)+1))
+    db(db.theme.URL == css_pathname).update(use_count=uses)
 
-	'''
-	# Uncomment to see table printed out, use_counts will increment. 
 	
+	
+	# See table printed out, use_counts will increment. 
     all_rows = db(db.theme).select()
     print all_rows
 
-	'''
 
     redirect(URL('themes', 'index'))    
 
