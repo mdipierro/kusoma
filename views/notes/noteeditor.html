@@ -9,6 +9,9 @@
 	<link href="http://netdna.bootstrapcdn.com/font-awesome/4.0.3/css/font-awesome.min.css" rel="stylesheet">
 	<link href="../static/css/note_editor.css" type="text/css" rel="stylesheet"/>
 	<link rel="stylesheet" href="../static/css/jquery.tag-editor.css">
+	<style>
+	  #txtTitle {padding:15px;width:400px;}
+	  </style>
 	
 	<script type="text/javascript">
 	  $(document).ready( function() {
@@ -23,6 +26,14 @@
 		<div class="container">
 		  <div class="row">
 			<div class="col-lg-12 nopadding" style="height:800px;">
+			  <table>
+				<tr>
+				  <td align="center">
+         			  <input type="text" id='txtTitle' placeholder="Note Title" />			  		
+					</td>
+				  </tr>
+				</table>
+
 			<div style="margin:0 0 1.2em"><textarea id="tags"></textarea></div>			  
     		  <textarea id="txtEditor"></textarea> 
 			</div>
@@ -38,6 +49,18 @@
                 forceLowercase: false,
                 placeholder: 'Note Tags...'
             });
+        });
+
+		$("#txtTitle").each(
+            function(){
+                $(this).data('holder',$(this).attr('placeholder'));
+                $(this).focusin(function(){
+                    $(this).attr('placeholder','');
+                });
+                $(this).focusout(function(){
+                    $(this).attr('placeholder',$(this).data('holder'));
+                });
+                
         });
     </script>
   </body>

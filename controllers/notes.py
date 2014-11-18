@@ -1,21 +1,11 @@
 # -*- coding: utf-8 -*-
 # try something like
 import time
+import json
+
 
 def index():
-    return get_note_list()
-
-def notelist():
-    return dict()
-
-def mysubscriptions():
-    return dict()
-
-def notifications():
-    return dict()
-
-def notelist():
-    return dict()
+    return get_note_list('')
 
 def mysubscriptions():
     return dict()
@@ -32,6 +22,8 @@ def noteeditpage():
 def noteeditor():
     return dict()
 
+def date_handler(obj):
+    return obj.isoformat() if hasattr(obj, 'isoformat') else obj
 
 #def get_all_notes():
 #    return db().select(db.note_main.All)
@@ -72,9 +64,11 @@ def get_note_list(search_content):
     #search_content = "%" + search_content.upper().strip() + "%"
     query = (db.note_main.id == db.note_version.note_id
             )&(db.note_main.id == db.note_user_note_relation.note_id
-            )&(db.note_version.note_content.upper().contains(search_content.upper().strip())
-    rows = db(query).select(db.note_version.note_id, db.note_version.title, db.note_main.create_on, db.note_main.create_by, db.note_version.modify_on, db.note_version.modify_by, db.note_user_note_relation.user_id)
-    return dict(rows=rows)
+            )&(db.note_version.note_content.upper().contains(search_content.upper().strip()))
+    rows = db(query).select(db.note_version.note_id, db.note_version.title, db.note_version.id, db.note_main.create_on, db.note_main.create_by, db.note_version.modify_on, db.note_version.modify_by, db.note_user_note_relation.user_id)
+    return dict(notes=rows)
+#return dict(jsonStr=json.dumps([[row.note_version.note_id,row.note_version.title,row.note_main.create_on,row.note_main.create_by,row.note_version.modify_on,row.note_version.modify_by,row.note_user_note_relation.user_id] for row in rows], default=date_handler))
+#return dict(notes=rows)
 
 def get_all_history_versions(note_id):
     query = (db.note_version.note_id == note_id)
