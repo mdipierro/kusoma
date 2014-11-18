@@ -81,6 +81,19 @@ def get_note_list(search_content):
 #return dict(jsonStr=json.dumps([[row.note_version.note_id,row.note_version.title,row.note_main.create_on,row.note_main.create_by,row.note_version.modify_on,row.note_version.modify_by,row.note_user_note_relation.user_id] for row in rows], default=date_handler))
 #return dict(notes=rows)
 
+def get_note_by_id(note_id, search_content):
+    query = (db.note_main.id == note_id)&(db.note_main.id == db.note_version.note_id)&(db.note_version.note_content.upper().contains(search_content.upper().strip()))&(db.note_main.version_id == db.note_version.id)
+    rows = db(query).select()
+    
+    note_lists = []
+    for row in rows:
+        create_by = (db(db.auth_user.id == row.note_main.create_by).select().first()).first_name + ' ' + (db(db.auth_user.id == row.note_main.create_by).select().first()).last_name
+        modify_by = (db(db.auth_user.id == row.note_version.modify_by).select().first()).first_name + ' ' + (db(db.auth_user.id == row.note_version.modify_by).select().first()).last_name
+        note_list = {'note_id': row.note_main.id, 'version_id': row.note_main.version_id, 'title': row.note_version.title, 'create_by': create_by, 'create_on': row.note_main.create_on, 'modify_by': modify_by, 'modify_on': row.note_version.modify_on}
+        note_lists.append(note_list)
+        
+    return dict(notes=note_lists) 
+
 def get_all_history_versions(note_id):
     query = (db.note_version.note_id == note_id)
     rows = db(query).select(db.note_version.title, db.note_version.modify_by, db.note_version.modify_on)
