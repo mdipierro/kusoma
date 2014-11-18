@@ -1,0 +1,46 @@
+{{extend 'layout.html'}}
+<div class='NoteHeader'>
+    {{include 'notes/note_header.html'}}
+</div>
+
+<script src="../static/js/jquery.min.js"></script>
+<script src='http://cdn.ractivejs.org/latest/ractive.min.js'></script>
+
+
+<h1>Subscribed Notes</h1>
+<hr>
+
+<table class="rows">
+    <thead>
+        <tr>
+            <th>note_id</th>
+            <th>subscribed</th>
+        </tr>
+    </thead>
+    
+    {{i=0}}
+    {{for row in rows:}}
+        {{i=i+1}}
+    <tr>
+        <td>{{=A(row.note_id,_href=URL('', args=''))}}</td>
+
+        <td>
+        <div id='container{{=i}}'></div>
+        <script id='template' type='text/ractive'>
+        <input type="checkbox" on-click="switch-subscribed" checked="[[subscribed]]"/> [[subscribed]]
+        </script>
+
+        <script>
+        var main = new Ractive({
+        el: 'container{{=i}}',
+        template: '#template',
+        data: {subscribed:true},
+        delimiters: ['[[', ']]']
+        });
+        main.on('switch-subscribed', function(event){;})
+        </script>
+        </td>
+        
+    </tr>
+    {{pass}}
+</table>
