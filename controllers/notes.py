@@ -80,7 +80,7 @@ def get_relevant_list(note_id):
     query_note_id = db(db.note_tag.tag.upper().strip() == (db(db.note_tag.note_id == note_id).select(db.note_tag.tag)).upper().strip())
     
     query_relevant_note = (db.note_main.id == db.note_version.note_id
-            )&(db.note_main.id in (db(query_note_id).select(db.note_tag.note_id)) #todo with in
+            )&((db(query_note_id).select(db.note_tag.note_id)).contains(db.note_main.id)
             )&(db.note_version.modify_on == db(db.note_main.id == db.note_version.note_id).select(db.note_version.modify_on.max()))
             
     rows = db(query_relevant_note).select(db.note_version.title)
