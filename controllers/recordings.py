@@ -1,6 +1,9 @@
 # coding: utf8
 #This is the controller for the class recordings module of LMS299
 
+#HMAC key to use for signing the hangouts app callback URL
+API_SIGN_KEY = '46bhvw1ymnV2178GXYOrbqKfkfyYfM7RrDoqffq9v+N5'
+
 @auth.requires_login()
 def index():
     """
@@ -30,12 +33,12 @@ def section():
         is_teacher=True
     else:
         redirect(URL('default','section', args=section_id))
-        
+
     #Here's a possible way of encoding callback URL and section_id for start_data to hangouts app
     #to decode in javascript: https://stackoverflow.com/questions/901115/how-can-i-get-query-string-values-in-javascript
     import urllib
     start_data=urllib.urlencode(dict(callback=URL('update_recording', scheme=True, host=True), section_id=section_id))
-    
+
     return dict(section=section, videos=videos, is_teacher=is_teacher, start_data=start_data)
 
 @auth.requires_login()
@@ -44,7 +47,7 @@ def edit():
     Edit an entry in the recording database.
     arg1 - the recording id
     """
-    
+
 	# Get video id if provided
     video_id = request.args(0,cast=int)
     video = db(db.recording.id==video_id).select().first()
@@ -87,13 +90,13 @@ def create():
     section_id = request.args(0,cast=int)
     section=db(db.course_section.id == section_id).select().first()
     if not section: redirect(URL('default','index'))
-        
+
     add_section_menu(section_id)
 
     ###################################
     # Build form for new recording
     ###################################
-    
+
     # Test if current user is teacher or student for class
     # if teacher, is_class field can be set to true
     if is_user_teacher(section_id):
@@ -120,7 +123,7 @@ def create():
     else:
         users = dict()
 
-        
+
     ###################################
     # Build form for existing recording
     ###################################
@@ -189,10 +192,11 @@ def start():
         start = True
         users = users_in_section(9, [STUDENT,TEACHER])
 
-    return dict(video=video, start=start, users=users)
+    callback_url=URL('recordings', 'api', args=['recording', video.id], vars=request.get_vars, host=True, hmac_key=API_SIGN_KEY)
+
+    return dict(video=video, start=start, users=users, callback_url=callback_url)
 
 @request.restful()
-@auth.requires_signature()  #JCL - remove this line to make things work in the short term
 def api():
     """
     API for posting a new recording from the Hangouts app.
@@ -205,6 +209,10 @@ def api():
     the youtube_id as a variable. The vars for the request will be used to update the database entry
     for the recording id.
     """
+    
+    #Verify URL signature using HMAC key
+    if not URL.verify(request, hmac_key=API_SIGN_KEY): raise HTTP (403)
+    
     if request.env.http_origin:
         response.headers['Access-Control-Allow-Origin'] = "*"
         response.headers['Access-Control-Allow-Credentials'] = 'true'
@@ -244,7 +252,7 @@ def api():
 
 def get_youtube_title_test():
     from simplejson import JSONDecodeError
-    
+
     try:
         title = get_youtube_title(request.args[0])
     except JSONDecodeError:
@@ -264,7 +272,7 @@ def get_youtube_title(video_id):
     json = simplejson.load(urllib.urlopen(link))
     title = json['entry']['title']['$t']
     return title
-	
+
 def get_youtube_id(link):
     """
     Use to get Youtube id using the link
