@@ -61,12 +61,23 @@ def get_note_list_beta(search_content):
     return dict(rows=rows)
     
 def get_note_list(search_content):
+    query = (db.note_main.id == db.note_version.note_id)&(db.note_version.note_content.upper().contains(search_content.upper().strip()))&(db.note_main.version_id == db.note_version.id)
+    rows = db(query).select()
+    
+    note_lists = []
+    for row in rows:
+        create_by = db(db.auth_user.id == row.note_main.create_by).select(db.auth_user.first_name) + ' ' + db(db.auth_user.id == row.note_main.create_by).select(db.auth_user.last_name)
+        modify_by = db(db.auth_user.id == row.note_version.modify_by).select(db.auth_user.first_name) + ' ' + db(db.auth_user.id == row.note_version.modify_by).select(db.auth_user.last_name)
+        note_list = {'NoteId': row.note_main.id, 'Title': row.note_version.title, 'Create By': create_by, 'Create On': row.note_main.create_on, 'Modify By': modify_by, 'Modify On': row.note_version.midify_on}
+        note_lists.append(note_list)
+        
+    return dict(notes=note_lists)     
     #search_content = "%" + search_content.upper().strip() + "%"
-    query = (db.note_main.id == db.note_version.note_id
-            )&(db.note_main.id == db.note_user_note_relation.note_id
-            )&(db.note_version.note_content.upper().contains(search_content.upper().strip()))
-    rows = db(query).select(db.note_version.note_id, db.note_version.title, db.note_version.id, db.note_main.create_on, db.note_main.create_by, db.note_version.modify_on, db.note_version.modify_by, db.note_user_note_relation.user_id)
-    return dict(notes=rows)
+    #query = (db.note_main.id == db.note_version.note_id
+    #        )&(db.note_main.id == db.note_user_note_relation.note_id
+    #        )&(db.note_version.note_content.upper().contains(search_content.upper().strip()))
+    #rows = db(query).select(db.note_version.note_id, db.note_version.title, db.note_version.id, db.note_main.create_on, db.note_main.create_by, db.note_version.modify_on, db.note_version.modify_by, db.note_user_note_relation.user_id)
+    #return dict(notes=rows)
 #return dict(jsonStr=json.dumps([[row.note_version.note_id,row.note_version.title,row.note_main.create_on,row.note_main.create_by,row.note_version.modify_on,row.note_version.modify_by,row.note_user_note_relation.user_id] for row in rows], default=date_handler))
 #return dict(notes=rows)
 
