@@ -1,64 +1,71 @@
-{{left_sidebar_enabled,right_sidebar_enabled=False,('message' in globals())}}
 {{extend 'layout.html'}}
 
-{{if 'message' in globals():}}
-<h2>
-{{=message}}
-    
+<h1>
+	Dropbox
+</h1>
+
+{{if not courses:}}
+
+<br>
+
+<h2 class='well'>
+	No courses available
 </h2>
-<form action="">
-    <form action="">
-<select name="file">
-{{for item in courseList:}}
-    <option value = {{=item}}> {{=item['name']}}</option>{{pass}}
-</select>
-</form>
-<h2>
-    {{=message2}}
-    </h2>
-<select name="file">
-{{for item2 in hwList:}}
-    <option value = {{=item2}}> {{=item2['title']}}</option>{{pass}}
 
-</select>
-</form>
-<form action="{{=URL(f = 'uploading')}}">
-    <input name="button"/>
-    <input type = "submit"/>
-    
-</form>
-<h5>
-   
-   <ul>
-       {{for item3 in feedbackList:}}
-       <li>Comments: {{=item3['comments']}}</li>
-       <li>Date Added: {{=item3['date_added']}}</li>
-       <li>Id Submission {{=item3['id_submission']}}</li>{{pass}}
-    </ul>
-</h5>
+{{elif courses:}}	
 
-   <ul>
-       {{for item4 in attachmentList:}}
-       <li>File: {{=item4['file_upload']}}</li>
-       <li>Date Added: {{=item4['id_assignments']}}</li>{{pass}}
-    </ul>
-</h5>
-<h5>
-    "{{=URL(f = 'download')}}"
-</h5>
-{{elif 'content' in globals():}}
-{{=content}}
-{{else:}}
-{{=BEAUTIFY(response._vars)}}
-{{pass}}
+<h3>
+	Select a course to view assignments
+</h3>
+	
+<table class="table table-hover">
 
-{{block right_sidebar}}
-{{=A(T("Administrative Interface"), _href=URL('admin','default','index', scheme='https'), _class='btn',
-     _style='margin-top: 1em;')}}
-<h6>{{=T("Don't know what to do?")}}</h6>
-<ul>
-  <li>{{=A(T("Online examples"), _href=URL('examples','default','index'))}}</li>
-  <li><a href="http://web2py.com">web2py.com</a></li>
-  <li><a href="http://web2py.com/book">{{=T('Documentation')}}</a></li>
-</ul>
-{{end}}
+	<tr>
+		<th>
+			Course
+		</th>
+		<th>
+			Description
+		</th>
+		<th>
+			Meeting Time
+		</th>
+		<th>
+			Meeting Place
+		</th>
+		<th>
+			Start Date
+		</th>
+		<th>
+			End Date
+		</th>
+	</tr>	
+
+	{{for row in courses:}}
+	<tr>
+		<td>
+			<a href="{{=URL('manage_uploads',args=row.id)}}">
+				{{=row.name}}: {{=row.course.code}}
+			</a>
+		</td>
+		<td>
+			{{=row.course.description}}
+		</td>
+		<td>
+			{{=row.meeting_time}}
+		</td>
+		<td>
+			{{=row.meeting_place}}
+		</td>
+		<td>
+			{{=row.start_date}}
+		</td>
+		<td>
+			{{=row.stop_date}}
+		</td>
+	</tr>
+	{{pass}}
+
+</table>
+
+{{pass}}	
