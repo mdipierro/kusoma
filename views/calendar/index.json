@@ -1,1 +1,0 @@
-{{from gluon.serializers import json}}{{=XML(json(my_events(request.vars.start, request.vars.end, json=True)))}}
