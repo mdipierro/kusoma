@@ -48,7 +48,7 @@ def edit():
     arg1 - the recording id
     """
 
-	# Get video id if provided
+    # Get video id if provided
     video_id = request.args(0,cast=int)
     video = db(db.recording.id==video_id).select().first()
     if not video: redirect(URL('default','index'))
@@ -56,8 +56,8 @@ def edit():
     section_id = video.course_id
     add_section_menu(section_id)
 
-	# Test if user is the teacher or video recorder
-	# If not then redirect to course page
+    # Test if user is the teacher or video recorder
+    # If not then redirect to course page
     if is_user_teacher(section_id):
         fields = ['name', 'is_class', ]
         able_to_delete = True
@@ -67,17 +67,17 @@ def edit():
     else:
         redirect(URL('section', args=section_id))
 
-	# Create a form based on recording db
-	form = SQLFORM(db.recording, video, fields=fields, deletable=able_to_delete)
-	form.add_button('Back', URL('section', args=section_id))
+    # Create a form based on recording db
+    form = SQLFORM(db.recording, video, fields=fields, deletable=able_to_delete)
+    form.add_button('Back', URL('section', args=section_id))
 
-	# If form is accepted then update recording db and send to course page
-	if form.process().accepted:
-		response.flash = 'Form accepted'
-		redirect(URL('section', args=section_id))
-	elif form.errors:
-		response.flash = 'Form has errors'
-	return dict(form=form)
+    # If form is accepted then update recording db and send to course page
+    if form.process().accepted:
+        response.flash = 'Form accepted'
+        redirect(URL('section', args=section_id))
+    elif form.errors:
+        response.flash = 'Form has errors'
+    return dict(form=form)
 
 @auth.requires_login()
 def create():
@@ -128,11 +128,11 @@ def create():
     # Build form for existing recording
     ###################################
 
-	fields_existing = [Field('youtube_link', label=T('Youtube URL'))]
-	if is_user_teacher(section_id):
-		fields_existing.append(Field('is_class', 'boolean', label=T('This is an official class recording'), default=True))
+    fields_existing = [Field('youtube_link', label=T('Youtube URL'))]
+    if is_user_teacher(section_id):
+        fields_existing.append(Field('is_class', 'boolean', label=T('This is an official class recording'), default=True))
 
-	form_existing = SQLFORM.factory(*fields_existing)
+    form_existing = SQLFORM.factory(*fields_existing)
 
     def check_youtube(form):
         """
@@ -149,7 +149,7 @@ def create():
         except:
             form.errors.youtube = 'Invalid Youtube URL'
 
-	#If form is accepted then write to recording db and send back to course page
+    #If form is accepted then write to recording db and send back to course page
     if form_existing.process(onvalidation=check_youtube).accepted:
         if is_user_teacher(section_id):
             set_is_class = form_existing.vars.is_class
