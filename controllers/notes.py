@@ -66,8 +66,8 @@ def get_note_list(search_content):
     
     note_lists = []
     for row in rows:
-        create_by = db(db.auth_user.id == row.note_main.create_by).select(db.auth_user.first_name).first_name + ' ' + db(db.auth_user.id == row.note_main.create_by).select(db.auth_user.last_name).last_name
-        modify_by = db(db.auth_user.id == row.note_version.modify_by).select(db.auth_user.first_name).first_name + ' ' + db(db.auth_user.id == row.note_version.modify_by).select(db.auth_user.last_name).lase_name
+        create_by = db(db.auth_user.id == row.note_main.create_by).select(db.auth_user.first_name).auth_user.first_name + ' ' + db(db.auth_user.id == row.note_main.create_by).select(db.auth_user.last_name).auth_user.last_name
+        modify_by = db(db.auth_user.id == row.note_version.modify_by).select(db.auth_user.first_name).auth_user.first_name + ' ' + db(db.auth_user.id == row.note_version.modify_by).select(db.auth_user.last_name).auth_user.lase_name
         note_list = {'note_id': row.note_main.id, 'version_id': row.note_main.version_id, 'title': row.note_version.title, 'create_by': create_by, 'create_on': row.note_main.create_on, 'modify_by': modify_by, 'modify_on': row.note_version.midify_on}
         note_lists.append(note_list)
         
