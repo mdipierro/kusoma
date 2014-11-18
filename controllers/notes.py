@@ -102,7 +102,7 @@ def get_note_content(note_id):
 
 def add_new_note(course_id, user_id):
     #get course_id user_id from request?
-    db.notes_version.insert(course_id = course_id, create_by = user_id, create_on = time.time())
+    db.note_main.insert(course_id = course_id, create_by = user_id, create_on = time.time())
     db.commit()
     
 def add_note_version(note_id, content):
