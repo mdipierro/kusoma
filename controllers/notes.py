@@ -14,7 +14,6 @@ def mysubscriptions():
 def notifications():
     return dict()
 
-
 def notelist():
     return dict()
 
