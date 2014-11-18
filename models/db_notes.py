@@ -8,7 +8,8 @@ db.define_table('note_main',
                 #Field('note_id', unique=True, notnull=True),
                 Field('course_id', 'reference course_section', required=IS_IN_DB(db, db.course_section.id, '%(name)s')),
                 Field('create_on', 'datetime', default=request.now),
-                Field('create_by', 'reference auth_user', default=auth.user_id))
+                Field('create_by', 'reference auth_user', default=auth.user_id),
+                Field('version_id'))
 
 db.define_table('note_tag',
                 Field('note_id', 'reference note_main', notnull=True),
