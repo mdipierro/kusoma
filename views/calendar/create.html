@@ -1,10 +1,18 @@
 {{extend 'layout.html'}}
+<style>
+#checkbox-message {
+    vertical-align: middle;
+    margin-left: 10px;
+}
+</style>
 <h1>
-    Create a new event </br>
+    New Event </br>
 </h1>
 <h5>
-    for staff, Class, or students.</br></br></br>
+    Use this form to create a new event.<br>
+    Make sure to fill out all <strong style="color:red;"> * </strong>  required fields.
 </h5>
+</br>
 
 {{=form.custom.begin}}
 <table>
@@ -45,7 +53,11 @@
             <strong style="color:white;"> * </strong> {{=form.custom.label.all_day}}
         </td>
         <td>
-            {{=form.custom.widget.all_day}} <i> &#x2713; yes &ensp; &#x2717; no  </i> </br> </br>
+            {{=form.custom.widget.all_day}} 
+            <span id="checkbox-message">
+                <i>Check the box if this is an all day event</i>
+            <span> 
+            </br> </br>
         </td>
     </tr>
     <tr>
@@ -75,7 +87,7 @@
     <tr>
         <td>
             <h6>
-                <b> Make sure you filled out all the <strong style="color:red;"> * </strong>  required fields. </b>
+                
             </h6>
         </td>
     </tr>
