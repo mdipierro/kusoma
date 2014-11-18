@@ -1,0 +1,29 @@
+{{extend 'layout.html'}}
+<div class='NoteHeader'>
+  {{include 'notes/note_header.html'}}
+</div>
+
+<script src="../static/js/jquery.min.js"></script>
+
+<h1>Note History</h1>
+<hr>
+
+<table class="rows">
+    <thead>
+        <tr>
+            <th>Title</th>
+            <th>modify_by</th>
+            <th>modify_on</th>
+        </tr>
+    </thead>
+    {{for row in rows:}}
+    <tr>
+        <td>{{=A(row.title,_href=URL('noteeditor', args=row.note_id))}}</td>
+        <td>{{=row.modify_by}}</td>
+        <td>{{row.modify_on}}</td>
+    </tr>
+    {{pass}}
+</table>
+
+
+

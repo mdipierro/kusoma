@@ -1,0 +1,23 @@
+{{extend 'layout.html'}}
+<div class='NoteHeader'>
+  {{include 'notes/note_header.html'}}
+</div>
+
+<script src="../static/js/jquery.min.js"></script>
+
+<h1>Notifications</h1>
+<hr>
+
+{{for row in rows:}}
+  {{if row.note_message.has_read != True:}}
+    <div>
+    {{=LI(A(row.note_version.note_id,
+    ' ', note_version.title,
+    ' ', row.note_version.modify_by,
+    ' ', row.note_version.modify_on,
+    _href=URL('', args='')))}}
+    </div>
+   {{pass}}
+{{pass}}
+
+
