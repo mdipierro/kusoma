@@ -6,10 +6,12 @@
     <script src="../static/js/jquery.tag-editor.min.js"></script>
 	<script src="../static/js/note_editor.js"></script>
 	<script src="../static/js/jquery.editable.js"></script>
+	<script src="../static/js/bootstrap-select.js"></script>
 	<link href="http://netdna.bootstrapcdn.com/bootstrap/3.1.1/css/bootstrap.min.css" rel="stylesheet">
 	<link href="http://netdna.bootstrapcdn.com/font-awesome/4.0.3/css/font-awesome.min.css" rel="stylesheet">
 	<link href="../static/css/note_editor.css" type="text/css" rel="stylesheet"/>
 	<link rel="stylesheet" href="../static/css/jquery.tag-editor.css">
+	<link rel="stylesheet" href="../static/css/bootstrap.select.css">
 	<style>
 	  #txtTitle {padding:15px;width:400px;}
 	  .centerDv {
@@ -27,47 +29,58 @@
 	</script>
   </head>
   <body>
-	<div class="container-fluid">
-	  <div class="row">
-		<div class="container">
-		  <div class="row">
-			<div class="col-lg-12 nopadding" style="height:800px;">
-              <div class="centerDv">
-				<h3>Note Title</h3>
-              </div>
-			  <div style="margin:0 0 1.2em">
-				<table>
-				  <tr>
-					<td style="width:100%">
-					  <textarea id="tags"></textarea>
-					</td>
-					<td style="width:100px;>
-					  
+	<form enctype="multipart/form-data" action="{{URL()}}" method="post">
+	  <div class="container-fluid">
+		<div class="row">
+		  <div class="container">
+			<div class="row">
+			  <div class="col-lg-12 nopadding" style="height:800px;">
+				<div class="centerDv">
+				  <h3>Note Title</h3>
+				</div>
+				<div style="margin:0 0 1.2em">
+				  <table>
+					<tr>
+					  <td colspan="2">
+						<b>Course:</b><select name='dlCourse' class="selectpicker">
+						  <option value="">Select course</option>
+						  {{for course in courseList:}}
+						  <option value="{{=course.id}}">
+							{{=course.code}}
+						  </option>
+						  {{pass}}
+						</select>
 					  </td>
-					<td>
-					  <a href="#" class="btn btn-primary btn-default"><span class="glyphicon glyphicon-floppy-disk"></span> Save</a>
+					</tr>
+					<tr>
+					  <td style="width:100%">
+						<textarea id="tags"></textarea>
 					  </td>
-				  </tr>
-					  </table></div>			  
-    		<textarea id="txtEditor"></textarea>
-			
-			</div>
-		  </div>  
+					  <td>
+						<a href="#" class="btn btn-primary btn-default" style="border:0"><span class="glyphicon glyphicon-floppy-disk"></span> Save</a>
+					  </td>
+					</tr>
+				</table></div>			  
+				<textarea id="txtEditor"></textarea>
+				
+			  </div>
+			</div>  
+		  </div>
 		</div>
 	  </div>
-	</div>
-
-	<script>
-        $(function() {
-            $('#tags').tagEditor({
-                autocomplete: { delay: 0, position: { collision: 'flip' }, source: [] },
-                forceLowercase: false,
-                placeholder: 'Note Tags...'
-        });
-
+	  
+	  <script>
+		$(function() {
+		$('#tags').tagEditor({
+		autocomplete: { delay: 0, position: { collision: 'flip' }, source: [] },
+		forceLowercase: false,
+		placeholder: 'Note Tags...'
+		});
+		
 		$('.centerDv h3').editable('mouseover');
-        });
-
-    </script>
+		});
+		
+	  </script>
+	</form>
   </body>
 </html>

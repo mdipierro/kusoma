@@ -38,6 +38,10 @@ def mark_message_read_request():
         mark_message_read(message_id)
     redirect(URL('notepage', args=[''], vars=dict(vid=vid)))
 
+@auth.requires_login()
+def mynotes():
+    return get_my_note_list(auth.user_id)
+
 def notepage():
     return dict()
 
@@ -45,7 +49,8 @@ def noteeditpage():
     return dict()
 
 def noteeditor():
-    return dict()
+    course_info = db().select(db.course.id, db.course.code)
+    return dict(courseList=course_info)
 
 def date_handler(obj):
     return obj.isoformat() if hasattr(obj, 'isoformat') else obj
@@ -72,7 +77,7 @@ def get_my_note_list(user_id):
     query = (db.note_main.id == db.note_version.note_id
             )&(db.note_user_note_relation.user_id == user_id
             )&(db.note_main.version_id == db.note_version.id
-            )&(db.notenote_user_note_relation.relation == True
+            )&(db.note_user_note_relation.relation == True
             )&(db.note_main.id == db.note_user_note_relation.note_id)
     rows = db(query).select()
     

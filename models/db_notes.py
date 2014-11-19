@@ -11,11 +11,6 @@ db.define_table('note_main',
                 Field('create_by', 'reference auth_user', default=auth.user_id),
                 Field('version_id'))
 
-db.define_table('note_tag',
-                Field('note_id', 'reference note_main', notnull=True),
-                Field('version_id', 'reference note_version', notnull=True),
-                Field('tag'))
-
 db.define_table('note_version',
                 #Field('version_id', unique=True, notnull=True),
                 Field('note_id', 'reference note_main', notnull=True),
@@ -23,6 +18,11 @@ db.define_table('note_version',
                 Field('modify_on', 'datetime', default=request.now),
                 Field('title'),
                 Field('note_content'))
+
+db.define_table('note_tag',
+                Field('note_id', 'reference note_main', notnull=True),
+                Field('version_id', 'reference note_version', notnull=True),
+                Field('tag'))
 
 db.define_table('note_discussion',
                 Field('pid', default=0),
