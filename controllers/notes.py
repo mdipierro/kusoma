@@ -3,10 +3,12 @@
 import time
 import json
 
-
 def index():
     return get_note_list('')
 
+#----------------------------------------------------------#
+# View related functions
+#----------------------------------------------------------#
 @auth.requires_login()
 def mysubscriptions():
     rows = db(db.note_user_note_relation.user_id == auth.user_id and db.note_user_note_relation.relation == True).select()
@@ -37,6 +39,10 @@ def mark_message_read_request():
     if message_id:
         mark_message_read(message_id)
     redirect(URL('notepage', args=[''], vars=dict(vid=vid)))
+
+def get_all_history_versions_request():
+    note_id = request.vars["note_id"]
+    return dict(rows=get_all_history_versions(note_id)["rows"], note_id=note_id)
 
 @auth.requires_login()
 def mynotes():
@@ -126,7 +132,7 @@ def get_note_by_id(note_id):
 
 def get_all_history_versions(note_id):
     query = (db.note_version.note_id == note_id)
-    rows = db(query).select(db.note_version.title, db.note_version.modify_by, db.note_version.modify_on)
+    rows = db(query).select(db.note_version.note_id, db.note_version.id, db.note_version.title, db.note_version.modify_by, db.note_version.modify_on)
     return dict(rows=rows)
 
 #return notes ids that have at least one tag the same as designated
