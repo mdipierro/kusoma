@@ -61,9 +61,11 @@ auth.define_tables(username=False, signature=False)
 
 ## configure email
 mail = auth.settings.mailer
-mail.settings.server = 'logging' or 'smtp.gmail.com:587'
-mail.settings.sender = 'you@gmail.com'
-mail.settings.login = 'username:password'
+mail.settings.server = 'logging'
+mail.settings.sender = 'massimo.dipierro@gmail.com'
+mail.settings.login = None
+
+# mail.send(to="mdipierro@cs.depaul.edu",subject="test",message="hello")
 
 ## configure auth policy
 auth.settings.registration_requires_verification = False
@@ -72,8 +74,8 @@ auth.settings.reset_password_requires_verification = True
 
 ## if you need to use OpenID, Facebook, MySpace, Twitter, Linkedin, etc.
 ## register with janrain.com, write your domain:api_key in private/janrain.key
-from gluon.contrib.login_methods.rpx_account import use_janrain
-use_janrain(auth, filename='private/janrain.key')
+# from gluon.contrib.login_methods.rpx_account import use_janrain
+# use_janrain(auth, filename='private/janrain.key')
 
 #########################################################################
 ## Define your tables below (or better in another model file) for example
@@ -94,3 +96,7 @@ use_janrain(auth, filename='private/janrain.key')
 
 ## after defining tables, uncomment below to enable auditing
 # auth.enable_record_versioning(db)
+
+def exception(message):
+    session.flash = message
+    redirect(URL('default','error'))

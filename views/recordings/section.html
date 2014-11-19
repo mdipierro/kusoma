@@ -1,0 +1,46 @@
+{{extend 'layout.html'}}
+
+<h2>Recordings for {{=section.name}}</h2>
+
+<p>To watch a video, choose one from the table below by clicking on the name of your desired video. The chosen video will then load above the table.</p>
+{{if is_teacher:}}
+    <p>To edit the information associated with a video or to remove the video, click on the "Edit" button to the right of the video information in the table.</p>
+{{else:}}
+	<p>If you have posted a video, you can edit the information associated with the video or remove it by clicking on the "Edit" button to the right of the video information in the table.</p>
+{{pass}}
+<p>To post a new video, or to add an existing video, press on the "Create or Add a Recording" button at the bottom of the page.</p>
+
+{{if videos:}}
+	<p><iframe width="560" height="420" src="//www.youtube.com/embed/{{=videos.first().youtube_id}}" frameborder="0" allowfullscreen name="videoFrame"  id="videoFrame"></iframe></p>
+	
+	<table class="table">
+		<tr>
+            <th>Name</th>
+            <th>Date</th>
+            <th>Time</th>
+            <th>Is Class</th>
+        </tr>
+		{{for video in videos:}}
+			<tr>
+				<td><a href="javascript:void(0)" onclick="ScrollToVideo('https://www.youtube.com/embed/{{=video.youtube_id}}')">{{=video.name}}</a></td>
+				<td>{{=video.class_date.date()}}</td>
+				<td>{{=video.class_date.time()}}</td>
+				<td>{{=video.is_class}}</td>
+				{{if is_teacher or (video.recorder==auth.user_id):}}
+					<td><a class="btn btn-primary" href="{{=URL('edit', args=video.id)}}">Edit</a></td>
+				{{pass}}
+			</tr>
+		{{pass}}
+	</table>
+{{else:}}
+    <p><b>No videos found.</b></p>
+{{pass}}
+
+<a class="btn btn-primary" href="{{=URL('create', args=section.id)}}">Create or Add a Recording</a>
+
+<script>
+    function ScrollToVideo(video){
+        videoFrame.location=video;
+        location.hash='videoFrame'
+    }
+</script>

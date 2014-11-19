@@ -34,12 +34,15 @@ LMS299 Calendar Control
             created: false,
             disabled: false,
             events: {},
-            headerCenter: 'month,basicWeek',
-            headerLeft: 'title',
-            headerRight: 'today prev,next',
+            dayClick: true,
+            eventClick: true,
+            selectable: true,
+            select: true,
+            headerCenter: 'title',
+            headerLeft: 'today prev,next',
+            headerRight: 'month,basicWeek,basicDay',
             height: 'auto',
             view: 'month',
-            userQuery: true,
             width: ''
         },
         _create: function (options) {
@@ -51,9 +54,6 @@ LMS299 Calendar Control
                     self._createCalendar();
                 }
             self.options.created = true;
-            if (self.options.userQuery === true) {
-                //append search toolbar
-            }
         },
         _createCalendar: function () {
             var self = this, jsonEvents;
@@ -66,6 +66,10 @@ LMS299 Calendar Control
                     right:  self.options.headerRight
                 },
                 events: self.options.events,
+                dayClick: self.options.dayClick,
+                eventClick: self.options.eventClick,
+                selectable: self.options.selectable,
+                select: self.options.select,
                 height: self.options.height
             });
             if (self.options.width !== '') {

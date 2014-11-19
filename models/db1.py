@@ -40,26 +40,20 @@ if db(db.theme).isempty():
 # To be used later. Adds foreign key to themes table
 #ADVANCED = True
 ADVANCED = False
+course_fields = [
+    Field('name',requires=NE),
+    Field('code',requires=NE),
+    # This should be a reference to another course.
+    Field('prerequisites','list:string'),  
+    Field('description','text'),
+    Field('tags','list:string')]
 if ADVANCED:    
-    db.define_table(
-        'course',
-        Field('name',requires=NE),
-        Field('code',requires=NE),
-        Field('prerequisites','list:string'),  # This should be a reference to another course.
-        Field('description','text'),
-        Field('tags','list:string'),
-        Field('theme', 'reference theme', default=1),
-        format='%(code)s: %(name)s')
-else:        
-    db.define_table(
-        'course',
-        Field('name',requires=NE),
-        Field('code',requires=NE),
-        Field('prerequisites','list:string'),  # This should be a reference to another course.
-        Field('description','text'),
-        Field('tags','list:string'),
-        format='%(code)s: %(name)s')
-
+    course_fields.append(Field('theme', 'reference theme', default=1))
+    
+db.define_table(
+    'course',
+    *course_fields,
+    **dict(format='%(code)s: %(name)s'))
 
 db.define_table(
     'course_section',
@@ -76,9 +70,6 @@ db.define_table(
     Field('on_line','boolean',default=False,label='Online'),
     Field('inclass','boolean',default=True),
     format='%(name)s')
-
-db.course_section.truncate
-
 
 db.define_table(
     'membership',

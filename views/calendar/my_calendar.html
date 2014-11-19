@@ -1,0 +1,20 @@
+{{import HTMLParser}}
+{{import cgi}}
+{{from gluon.serializers import json}}
+
+{{extend 'layout.html'}}
+{{block head}}
+{{include 'calendar/calendar_jquery.html'}}
+{{end}}
+<form>
+    <label for="selectedCourse">Select a course to view</label>
+    <select name="selectedCourse" id="selectedCourse">
+        {{for course in myCourses:}}
+            <option>{{=course.name}}</option>
+        {{pass}}
+    </select>
+    <input type="submit" id="submit-button"/>
+    <input type="button" id="view-all-events-button" value="View All My Events" onclick="window.location='/lms299/calendar/my_calendar';"></input>
+</form>
+<div id="currentCourse"></div>
+<div id="calendar"></div>
