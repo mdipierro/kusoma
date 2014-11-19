@@ -126,16 +126,24 @@ def get_note_content(note_id):
 
 def add_new_note(course_id, user_id):
     #get course_id user_id from request?
-    db.note_main.insert(course_id = course_id, create_by = user_id, create_on = time.time())
+    id = db.note_main.insert(course_id = course_id, create_by = user_id, create_on = time.time())
     db.commit()
-    
-def add_note_version(note_id, content):
+    return id
+
+def add_note_version(note_id, user_id, content):
     #get user_id from request?
-    db.notes_version.insert(note_id = note_id, modify_by = user_id, modify_on = time.time(), title = title, note_content = content)
+    id = db.notes_version.insert(note_id = note_id, modify_by = user_id, modify_on = time.time(), title = title, note_content = content)
+    db(db.note_main.note_id == note_id).update(version_id = id)
+    db.commit()
+    return id
+    
+def add_tag(version_id, tag):
+    note_id = db(db.note_version.id == version_id).select().first().note_id
+    db.note_tag.update_or_insert(note_id = note_id, version_id = version_id, tag = tag)
     db.commit()
     
-def add_tag(note_id, tag):
-    db.note_tag.update_or_insert(note_id = note_id, tag = tag)
+def delete_tag(version_id, tag):
+    db(db.note_tag.version_id == version_id).delete()
     db.commit()
 
 
