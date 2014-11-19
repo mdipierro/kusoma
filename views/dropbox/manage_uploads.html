@@ -5,7 +5,6 @@ Date: 10/23/14
 {{from datetime import datetime}}
 
 {{extend 'layout.html'}}
-
 {{if rejected is None:}}
     <h2>{{=section.name}} Dropbox</h2>
     {{is_student = is_user_student(section.id)}}
