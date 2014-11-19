@@ -13,6 +13,7 @@ db.define_table('note_main',
 
 db.define_table('note_tag',
                 Field('note_id', 'reference note_main', notnull=True),
+                Field('version_id', 'reference note_version', notnull=True),
                 Field('tag'))
 
 db.define_table('note_version',
