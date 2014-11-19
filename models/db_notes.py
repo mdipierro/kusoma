@@ -16,8 +16,8 @@ db.define_table('note_version',
                 Field('note_id', 'reference note_main', notnull=True),
                 Field('modify_by', 'reference auth_user', default=auth.user_id),
                 Field('modify_on', 'datetime', default=request.now),
-                Field('title'),
-                Field('note_content'))
+                Field('title', type=str, notnull=True),
+                Field('note_content', type=str, notnull=True))
 
 db.define_table('note_tag',
                 Field('note_id', 'reference note_main', notnull=True),
@@ -29,19 +29,19 @@ db.define_table('note_discussion',
                 Field('note_id', 'reference note_main', notnull=True),
                 Field('create_on', 'datetime', default=request.now),
                 Field('create_by', 'reference auth_user', default=auth.user_id),
-                Field('post_content'))
+                Field('post_content', type=str, notnull=True))
 
 db.define_table('note_message',
                 Field('user_id', 'reference auth_user', default=auth.user_id),
                 Field('version_id', 'reference note_version'),
                 Field('create_on', 'datetime', default=request.now),
-                Field('has_read'))
+                Field('has_read', type=bool, notnull=True))
 
 db.define_table('note_user_note_relation',
                 Field('note_id', 'reference note_main', notnull=True),
                 Field('user_id', 'reference auth_user', default=auth.user_id),
-                #two relations: participator or subscriber
-                Field('relation'))
+                #two relations: unsubscribed 0, subscribed 1, and participated 2
+                Field('relation', type=int, notnull=True))
 
 
 class notedb:
