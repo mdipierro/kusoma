@@ -13,14 +13,14 @@
 </div>
 
 <script>
-  function Note(note_id, title, modify_by, modify_on, has_read)
+  function Note(note_id, version_id, title, modify_by, modify_on, has_read, message_id)
   {
   this.note_id = note_id;
   this.title = title;
   this.modify_by = modify_by;
   this.modify_on = modify_on;
   this.has_read = has_read;
-  this.TitleURL = '<a href="' + '{{=URL("notepage")}}' + '?vid=' + note_id + '">' + title + '</a>';
+  this.TitleURL = '<a href="' + '{{=URL("mark_message_read_request")}}' + '?vid=' + version_id + '&message_id=' + message_id+ '">' + title + '</a>';
   }
 {{
   from gluon.serializers import json
@@ -40,7 +40,7 @@
       console.log(1);
 //  if(o.note_version.note_id)
   {
-  var n = new Note(o.note_version.note_id, o.note_version.title, o.note_version.modify_by, o.note_version.modify_on, o.note_message.has_read);
+  var n = new Note(o.note_version.note_id, o.note_version.id, o.note_version.title, o.note_version.modify_by, o.note_version.modify_on, o.note_message.has_read, o.note_message.id);
   noteList.push(n);
   
   }

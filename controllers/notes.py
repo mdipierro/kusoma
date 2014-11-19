@@ -9,7 +9,7 @@ def index():
 
 @auth.requires_login()
 def mysubscriptions():
-    rows = db(db.note_user_note_relation.user_id == auth.user_id and db.note_user_note_relation.relation == 1).select()
+    rows = db(db.note_user_note_relation.user_id == auth.user_id and db.note_user_note_relation.relation == True).select()
     
     note_lists = []
     for row in rows:
@@ -28,6 +28,15 @@ def unsubscribe_note_request():
 @auth.requires_login()
 def notifications():
     return get_messages(auth.user_id)
+
+@auth.requires_login()
+def mark_message_read_request():
+    message_id = request.vars["message_id"]
+    vid = request.vars["vid"]
+    
+    if message_id:
+        mark_message_read(message_id)
+    redirect(URL('notepage', args=[''], vars=dict(vid=vid)))
 
 def notepage():
     return dict()
@@ -161,7 +170,8 @@ def delete_tag(version_id, tag):
 #----------------------------------------------------------#
 def get_messages(user_id):
     query = (db.note_message.user_id == user_id) & (db.note_message.version_id == db.note_version.id)
-    rows = db(query).select(db.note_version.note_id, db.note_version.title, db.note_version.modify_by, db.note_version.modify_on, db.note_message.has_read)
+    #rows = db(query).select(db.note_version.note_id, db.note_version.title, db.note_version.modify_by, db.note_version.modify_on, db.note_message.has_read)
+    rows = db(query).select(db.note_version.note_id, db.note_version.id,db.note_version.title, db.note_version.modify_by, db.note_version.modify_on, db.note_message.has_read, db.note_message.id)
     return dict(rows=rows)
 
 def mark_message_read(message_id):
