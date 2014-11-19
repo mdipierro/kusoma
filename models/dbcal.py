@@ -79,7 +79,7 @@ class DATE_DEFAULT(object):
 ## Constants
 IS_TEACHER = auth.user and auth.user.is_teacher
 IS_ADMINISTRATOR = auth.user and auth.user.is_administrator
-CAN_MANAGE_EVENTS = IS_TEACHER | IS_ADMINISTRATOR
+CAN_MANAGE_EVENTS = IS_TEACHER or IS_ADMINISTRATOR
 
 PERSONAL_EVENTS = (db.cal_event.owner_id == auth.user_id)
 PUBLIC_EVENTS = (db.event_visibility.visibility=='public')

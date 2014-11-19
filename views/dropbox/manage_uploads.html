@@ -34,7 +34,7 @@ Date: 10/23/14
             <tr>
                 {{if homework.folder == folder.id:}}
                     <td>
-                        <a href="{{=URL('../../homeworks',args=(section_id))}}">{{=homework.name}}</a>
+                        <a href="{{=URL('homeworks','manage_homeworks',args=(section_id))}}">{{=homework.name}}</a>
                     </td>
                     {{if homework.opening_date is not None:}}
                     <td>{{=homework.opening_date.strftime("%b %d, %Y %I:%S%p")}}</td>
@@ -96,7 +96,7 @@ Date: 10/23/14
                 {{for homework in other_homeworks:}}
                     <tr>
                         <td>
-                            <a href="{{=URL('../../homeworks', args=(section_id))}}">{{=homework.name}}</a>
+                            <a href="{{=URL('homeworks','manage_homeworks', args=(section_id))}}">{{=homework.name}}</a>
                         </td>
                         {{if homework.opening_date is not None:}}
                         <td>{{=homework.opening_date.strftime("%b %d, %Y %I:%S%p")}}</td>

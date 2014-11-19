@@ -1,12 +1,10 @@
 @auth.requires_login()
 def index():
-    '''
-        Display course for user
-    '''
+    """
+    Display course for user
+    """
     user_id = auth.user_id
-
     courses = my_sections()
-
     return dict(courses=courses)
 
 @auth.requires_login()
@@ -17,12 +15,14 @@ def manage_uploads():
     Display assignments for a course section to the user
     """
     section_id = request.args(0,otherwise=URL('index'))
-    section = db.course_section[section_id]
-    if not is_user_student(section_id) and not is_user_teacher(section_id):
-        return dict(section_id=section_id, section=section, rejected="Permission denied. You are not in this course section.")
+    section = db.course_section(section_id) or exception("Section does not exist")
     add_section_menu(section_id)
+    if not is_user_student(section_id) and not is_user_teacher(section_id):
+        return dict(section_id=section_id, section=section, 
+                    rejected="Permission denied. You are not in this course section.")
     folders = db(db.folder.course_section == section_id).select()
-    homeworks = db(db.homework.course_section == section_id).select(orderby=db.homework.assignment_order)
+    homeworks = db(db.homework.course_section == section_id).select(
+        orderby=db.homework.assignment_order)
     return dict(folders=folders, homeworks=homeworks,
                 section_id=section_id, user_id=auth.user_id,
                 section=section, rejected=None)
@@ -109,34 +109,37 @@ def feedback():
 
 @auth.requires_login()
 def submit():
-    section_id = request.args(0)
-    homework_id = request.args(1)
-    if (section_id is None or homework_id is None):
-        redirect(URL('index'))
+    section_id = request.args(0,cast=int)
+    homework_id = request.args(1,cast=int)
+
     student = (db.submission.id_student == auth.user_id)
     submission = (db.submission.homework == homework_id)
     record = db(student & submission).select().first()
+
+    # record = db.submission(id_student=auth.user.id,homework=homework_id)
+
     db.submission.id.readable = False
     db.submission.id_student.readable = False
     db.submission.id_student.writable = False
+    db.submission.id_student.default = auth.user.id
     db.submission.file_name.readable = False
     db.submission.file_name.writable = False
     db.submission.homework.readable = False
     db.submission.homework.writable = False
+    db.submission.homework.default = homework_id
+
     form = SQLFORM(db.submission, record, upload=URL('download'))
-    form.vars.id_student = auth.user_id
     if request.vars.file_upload is not None:
         try:
             form.vars.file_name = request.vars.file_upload.filename
         except:
             pass
-    form.vars.homework = homework_id
     btn = form.element("input",_type="submit")
     if (record is not None):
         btn["_onclick"] = "return confirm('Are you sure you want to overwrite your submission?');"
     if form.process().accepted:
-        redirect(URL('manage_uploads', args=(section_id)))
-        response.flash = 'File submitted'
+        session.flash = 'File submitted'
+        redirect(URL('manage_uploads', args=section_id))
     elif form.errors:
         response.flash = 'Error file not submitted'
     return dict(form=form)

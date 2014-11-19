@@ -50,8 +50,7 @@ def edit():
 
     # Get video id if provided
     video_id = request.args(0,cast=int)
-    video = db(db.recording.id==video_id).select().first()
-    if not video: redirect(URL('default','index'))
+    video = db.recording(video_id) or redirect(URL('default','index'))
 
     section_id = video.course_id
     add_section_menu(section_id)
@@ -73,7 +72,7 @@ def edit():
 
     # If form is accepted then update recording db and send to course page
     if form.process().accepted:
-        response.flash = 'Form accepted'
+        session.flash = 'Form accepted'
         redirect(URL('section', args=section_id))
     elif form.errors:
         response.flash = 'Form has errors'
@@ -88,9 +87,7 @@ def create():
     """
     # Get section id if provided
     section_id = request.args(0,cast=int)
-    section=db(db.course_section.id == section_id).select().first()
-    if not section: redirect(URL('default','index'))
-
+    section = db.course_section(section_id) or redirect(URL('default','index'))
     add_section_menu(section_id)
 
     ###################################
@@ -109,7 +106,6 @@ def create():
     start = False
 
     db.recording.course_id.default = section_id
-
     form_new = SQLFORM(db.recording, fields=fields)
 
     # If form is accepted we show start a hangout button
@@ -142,7 +138,7 @@ def create():
         and form_existing.vars.youtube_title will contain the Youtube title.
         If invalid, form.errors.youtube will contain an error message.
         """
-        from simplejson import JSONDecodeError
+        # from simplejson import JSONDecodeError
         try:
             form.vars.youtube_id = get_youtube_id(form.vars.youtube_link)
             form.vars.youtube_title = get_youtube_title(form.vars.youtube_id)
