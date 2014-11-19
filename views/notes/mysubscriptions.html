@@ -24,8 +24,7 @@
   this.Modifier = modifier;
   this.UserId = uid;
   this.TitleURL = '<a href="' + '{{=URL("notepage")}}' + '?vid=' + versionId + '">' + title + '</a>';
-  this.unsubscribeURL = '<a href="' + '{{=URL("unsubscribe_note")}}' + '?note_id=' + noteId + '&' + 'user_id=' + uid +' " class="btn btn-default">' + 'Unsubscribe' + '</a>';
-  
+  this.unsubscribeURL = '<a href="' + '{{=URL("unsubscribe_note_request")}}' + '?note_id=' + noteId + '&' + 'user_id=' + uid +' " class="btn btn-default">' + 'Unsubscribe' + '</a>';
   }
 {{
   from gluon.serializers import json
@@ -124,6 +123,12 @@ for(var i in jsonData)
 
 
   </script>
+
+<form>
+    <input  name="name" onkeyup="ajax('{{=URL('default', 'echo')}}', ['name'], 'target')" />
+</form>
+<div id="target"></div>
+
 
 <link rel="stylesheet" href="../static/css/bootstrap-table.css">
 <script src="../static/js/bootstrap-table.js"></script>

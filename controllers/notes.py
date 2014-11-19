@@ -20,6 +20,12 @@ def mysubscriptions():
     return dict(notes=note_lists)
 
 @auth.requires_login()
+def unsubscribe_note_request():
+    if request.vars["note_id"] and request.vars["user_id"]:
+        unsubscribe_note(request.vars["note_id"], request.vars["user_id"])
+    redirect(URL('mysubscriptions'))
+
+@auth.requires_login()
 def notifications():
     return get_messages(auth.user_id)
 
