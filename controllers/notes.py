@@ -209,15 +209,21 @@ def get_subscribed_notes(user_id):
     rows_from = db(db.note_user_note_relation).select()
     notes_list = []
     for row in rows_from:
-        if row.user_id == user_id and row.relation is True:
+        if row.user_id == user_id and row.relation is not 0:
             notes_list.append(row.note_id)
     return dict(rows=notes_list)
 
 
 def subscribe_note(note_id, user_id):
-    db.note_user_note_relation.update_or_insert((db.note_user_note_relation.note_id==note_id) & (db.note_user_note_relation.user_id==user_id), note_id=note_id, user_id=user_id, relation=True)
+    db.note_user_note_relation.update_or_insert((db.note_user_note_relation.note_id==note_id) & (db.note_user_note_relation.user_id==user_id), note_id=note_id, user_id=user_id, relation=1)
     db.commit()
 
+
 def unsubscribe_note(note_id, user_id):
-    db.note_user_note_relation.update_or_insert((db.note_user_note_relation.note_id==note_id) & (db.note_user_note_relation.user_id==user_id), note_id=note_id, user_id=user_id, relation=False)
+    db.note_user_note_relation.update_or_insert((db.note_user_note_relation.note_id==note_id) & (db.note_user_note_relation.user_id==user_id), note_id=note_id, user_id=user_id, relation=0)
+    db.commit()
+
+
+def participate_note(note_id, user_id):
+    db.note_user_note_relation.update_or_insert((db.note_user_note_relation.note_id==note_id) & (db.note_user_note_relation.user_id==user_id), note_id=note_id, user_id=user_id, relation=2)
     db.commit()
