@@ -11,50 +11,47 @@
 
 <div id="example1console"></div>
 
-    <div id="refresh">
-<table class="table">
+<div id="refresh">
+  <table class="table">
     <tr>
-        <th>Homework</th>
-        <th>min</th>
-        <th>max</th>
-        <th>average</th>
-        <th>median</th>
-        <th>std</th>
+      <th>Homework</th>
+      <th>min</th>
+      <th>max</th>
+      <th>average</th>
+      <th>median</th>
+      <th>std</th>
     </tr>
-        <tr>
-        <th>Enable stats for student</th>
-        <td><input id = "min" data-size="mini" type="checkbox"   class="checkbox-switcher"
-                   {{if stat_options:}}{{if stat_options[0].min_score:}} checked {{pass}}{{pass}}></td>
-        <td><input id = "max" data-size="mini" type="checkbox"   class="checkbox-switcher"
-                   {{if stat_options:}}{{if stat_options[0].max_score:}} checked {{pass}}{{pass}}></td>
-        <td><input id = "avg" data-size="mini" type="checkbox"   class="checkbox-switcher"
-                   {{if stat_options:}}{{if stat_options[0].avg_score:}} checked {{pass}}{{pass}}></td>
-        <td><input id = "med" data-size="mini" type="checkbox"   class="checkbox-switcher"
-                   {{if stat_options:}}{{if stat_options[0].median_score:}} checked {{pass}}{{pass}}></td>
-        <td><input id = "std" data-size="mini" type="checkbox"   class="checkbox-switcher"
-                   {{if stat_options:}}{{if stat_options[0].std:}} checked {{pass}}{{pass}}></td>
+    <tr>
+      <th>Enable stats for student</th>
+      <td><input id = "min" data-size="mini" type="checkbox"   class="checkbox-switcher"
+                 {{if stat_options:}}{{if stat_options[0].min_score:}} checked {{pass}}{{pass}}></td>
+      <td><input id = "max" data-size="mini" type="checkbox"   class="checkbox-switcher"
+                 {{if stat_options:}}{{if stat_options[0].max_score:}} checked {{pass}}{{pass}}></td>
+      <td><input id = "avg" data-size="mini" type="checkbox"   class="checkbox-switcher"
+                 {{if stat_options:}}{{if stat_options[0].avg_score:}} checked {{pass}}{{pass}}></td>
+      <td><input id = "med" data-size="mini" type="checkbox"   class="checkbox-switcher"
+                 {{if stat_options:}}{{if stat_options[0].median_score:}} checked {{pass}}{{pass}}></td>
+      <td><input id = "std" data-size="mini" type="checkbox"   class="checkbox-switcher"
+                 {{if stat_options:}}{{if stat_options[0].std:}} checked {{pass}}{{pass}}></td>
     </tr>
 
     <p>The statistics below are all provided to teachers by default, but need to be manually turned on in order for your students to view them.  There is a row titled “Enable stats for students” and for each statistic you can choose to have it turned on or off by toggling the button in each column.</p>
 
     {{for a in stat:}}
-        <tr>
-            <td>{{=a['hw'].name}}</td>
-            <td><div class='min display'>{{=a['min']}}</div></td>
-            <td><div class='max display'>{{=a['max']}}</div></td>
-            <td><div class='avg display'>{{=a['average']}}</div></td>
-            <td><div class='med display'>{{=a['median']}}</div></td>
-            <td><div class='std display'>{{=a['std']}}</div></td>
-        </tr>
-
+    <tr>
+      <td>{{=a['hw'].name}}</td>
+      <td><div class='min display'>{{=a['min']}}</div></td>
+      <td><div class='max display'>{{=a['max']}}</div></td>
+      <td><div class='avg display'>{{=a['average']}}</div></td>
+      <td><div class='med display'>{{=a['median']}}</div></td>
+      <td><div class='std display'>{{=a['std']}}</div></td>
+    </tr>
+    
     {{pass}}
   
-</table>
-  </div>
+  </table>
+</div>
 <script>
-
-
-
 
  var data = [
  {{for row in users:}}

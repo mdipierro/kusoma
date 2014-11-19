@@ -35,7 +35,6 @@ def get_all_students(section_id):
 def get_grades_student(section_id, student_id):
     query = (db.homework.course_section==section_id)
     leftJoin = db.assignment_grade.on((db.homework.id==db.assignment_grade.assignment_id) & (db.assignment_grade.user_id==student_id))
-
     return db(query).select(left=leftJoin, orderby=db.homework.assignment_order)
 
 def get_final_grade(section_id, student_id):
@@ -49,6 +48,7 @@ def get_homework_section(section_id):
 
 
 def get_homework_stats(section_id):
+    # CHECK THIS
     query = (db.assignment_grade.section_id==section_id)
     sel = db.assignment_grade.grade.max() | db.assignment_grade.grade.min() | db.assignment_grade.grade.avg()
     groupby = db.assignment_grade.assignment_id | db.homework.name
@@ -59,16 +59,6 @@ def get_homework_stats(section_id):
 def get_assignment_by_homework(section_id, homework_id):
     query = (db.assignment_grade.section_id==section_id) & (db.assignment_grade.assignment_id==homework_id)
     return db(query).select(db.assignment_grade.grade)
-
-def is_user_teacher(section_id):
-    return db.membership(course_section=section_id,
-                         role='teacher',
-                         auth_user=auth.user.id)
-
-def is_user_student(section_id):
-    return db.membership(course_section=section_id,
-                         role='student',
-                         auth_user=auth.user.id)
 
 def convert_to_list(hw):
     my_list=[]
