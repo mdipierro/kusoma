@@ -30,27 +30,23 @@
 {{
   from gluon.serializers import json
 }}
-  var jsonData = 
+
+
+var jsonData =
 {{
-  response.write(json(notes), escape=False)
-  }};
+    response.write(json(notes), escape=False)
+}};
 
-  var noteList = [];
-  console.log(jsonData);
-  for(var i in jsonData)
-  {
-  var o = jsonData[i];
-  if(o.note_main)
-  {console.log(1);
-//  if(o.note_version.note_id)
-  {
-  var n = new Note(o.note_version.note_id, o.note_version.id, o.note_version.title, o.note_main.create_on, o.note_main.create_by, o.note_version.modify_on, o.note_version.modify_by, o.note_user_note_relation.user_id);
-  noteList.push(n);
-  
-  }
-  }
-  }
-
+var noteList = [];
+console.log(jsonData);
+for(var i in jsonData)
+{
+    var o = jsonData[i];
+    {console.log(1);
+            var n = new Note(o.note_id, o.version_id, o.title, o.create_on, o.create_by, o.modify_on, o.modify_by, o.user_id);
+            noteList.push(n);
+    }
+}
 
     $(function () {
 

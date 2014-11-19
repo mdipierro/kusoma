@@ -7,14 +7,17 @@ import json
 def index():
     return get_note_list('')
 
-#@auth.requires_login()
+@auth.requires_login()
 def mysubscriptions():
-    return get_note_list('')
-    rows = []
-    notes = get_subscribed_notes(auth.user_id)
-    for note_id in notes:
-        rows.append(get_note_by_id(note))
-    return dict(rows=rows)
+    rows = db(db.note_user_note_relation.user_id == auth.user_id and db.note_user_note_relation.relation == 1).select()
+    
+    note_lists = []
+    for row in rows:
+        note_list = get_note_by_id(row.note_id)["notes"]
+        for one_row in note_list:
+            one_row["user_id"] = auth.user_id
+            note_lists.append(one_row)
+    return dict(notes=note_lists)
 
 @auth.requires_login()
 def notifications():
