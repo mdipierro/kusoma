@@ -205,10 +205,9 @@ def get_subscribed_notes(user_id):
 
 
 def subscribe_note(note_id, user_id):
-    db.note_user_not_relation.update_or_insert(note_id=note_id, users_id=user_id, relation=True)
+    db.note_user_note_relation.update_or_insert((db.note_user_note_relation.note_id==note_id) & (db.note_user_note_relation.user_id==user_id), note_id=note_id, user_id=user_id, relation=True)
     db.commit()
 
-
 def unsubscribe_note(note_id, user_id):
-    db.note_user_not_relation.update_or_insert(note_id=note_id, users_id=user_id, relation=False)
+    db.note_user_note_relation.update_or_insert((db.note_user_note_relation.note_id==note_id) & (db.note_user_note_relation.user_id==user_id), note_id=note_id, user_id=user_id, relation=False)
     db.commit()
