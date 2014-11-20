@@ -17,7 +17,7 @@ def index():
 #----------------------------------------------------------#
 @auth.requires_login()
 def mysubscriptions():
-    rows = db(db.note_user_note_relation.user_id == auth.user_id and db.note_user_note_relation.relation == True).select()
+    rows = db(db.note_user_note_relation.user_id == auth.user_id and db.note_user_note_relation.relation == 1).select()
     
     note_lists = []
     for row in rows:
@@ -74,6 +74,12 @@ def noteeditor():
     else:
         result = dict(courseList=course_info)
     return result
+
+@auth.requires_login()
+def subscribe():
+    note_id = request.vars.nid
+    subscribe_note(note_id, auth.user_id)
+    redirect(URL('mysubscriptions'))
 
 
 def getNotePost():
@@ -193,6 +199,9 @@ def add_note_version(note_id, user_id,title, content):
     db.commit()
     db(db.note_main.id == note_id ).update(version_id = versionId)
     db.commit()
+
+    participate_note(note_id, user_id)
+
     return versionId
     
 def add_tag(vid, tags):

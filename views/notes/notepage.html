@@ -21,7 +21,7 @@
 			  <ul class="info">
 				<li><a onclick='#' href='{{=URL("noteeditpage",vars=dict(vid=request.vars.vid,nid=request.vars.nid))}}'>Edit</a></li>
 				<li><a onclick='' href='{{=URL("get_all_history_versions_request",vars=dict(nid=request.vars.nid))}}'>History</a></li>
-				<li><a onclick='' href='#'>Subscibe</a></li>
+				<li><a onclick='' href='{{=URL("subscribe",vars=dict(nid=request.vars.nid))}}'>Subscibe</a></li>
 			  </ul>
 		  </div>
             <h3 id="articleTitle"></h3>

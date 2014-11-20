@@ -11,111 +11,112 @@
   <table id="table-javascript"></table>
 </div>
 
-<script>
+<script type="text/javascript">
   function Note(noteId, versionId, title, createDate, creator, modifyDate, modifier, uid)
   {
-  this.NoteId = noteId;
-  this.VersionId = versionId;
-  this.Title = title;
-  this.CreateDate = createDate;
-  this.Creator = creator;
-  this.ModifyDate = modifyDate;
-  this.Modifier = modifier;
-  this.UserId = uid;
-  this.TitleURL = '<a href="' + '{{=URL("notepage")}}' + '?vid=' + versionId + '">' + title + '</a>';
+	  this.NoteId = noteId;
+	  this.VersionId = versionId;
+	  this.Title = title;
+	  this.CreateDate = createDate;
+	  this.Creator = creator;
+	  this.ModifyDate = modifyDate;
+	  this.Modifier = modifier;
+	  this.UserId = uid;
+	  this.TitleURL = '<a href="' + '{{=URL("notepage")}}' + '?vid=' + versionId + '&nid=' + noteId + '">' + title + '</a>';
   }
-{{
-  from gluon.serializers import json
-}}
+  {{
+	  from gluon.serializers import json
+  }}
   var jsonData = 
-{{
-  response.write(json(notes), escape=False)
-  }};
-
+	  {{
+		  response.write(json(notes), escape=False)
+	  }};
+  
   var noteList = [];
   console.log(jsonData);
   for(var i in jsonData)
   {
-  var o = jsonData[i];
-  if(o.note_id)
-  {console.log(1);
-//  if(o.note_version.note_id)
-  {
-  var n = new Note(o.note_id, o.version_id, o.title, o.create_on, o.create_by, o.modify_on, o.modify_by, 1);
-  noteList.push(n);
+	  var o = jsonData[i];
+	  if(o.note_id)
+	  {console.log(1);
+	   //  if(o.note_version.note_id)
+	   {
+		   var n = new Note(o.note_id, o.version_id, o.title, o.create_on, o.create_by, o.modify_on, o.modify_by, 1);
+		   noteList.push(n);
+		   
+	   }
+	  }
+  }
   
-  }
-  }
-  }
-
-
-    $(function () {
-
-            $('#table-javascript').bootstrapTable({
-                data: noteList,
-                cache: false,
-                height: 400,
-                striped: true,
-                pagination: true,
-                pageSize: 50,
-                pageList: [10, 25, 50, 100, 200],
-                search: true,
-                showColumns: false,
-                showRefresh: false,
-                minimumCountColumns: 2,
-                clickToSelect: true,
-                toolbar: '#custom-toolbar',
-                columns: [
-                {
-                    field: 'NoteId',
-                    title: 'NoteId',
-                    align: 'right',
-                    valign: 'bottom',
-                    sortable: true
-                }, {
-                    field: 'TitleURL',
-                    title: 'Title',
-                    align: 'center',
-                    valign: 'middle',
-                    sortable: true
-                }, {
-                    field: 'Creator',
-                    title: 'Create By',
-                    align: 'left',
-                    valign: 'top',
-                    sortable: true
-                }, {
-                    field: 'CreateDate',
-                    title: 'Create On',
-                    align: 'center',
-                    valign: 'middle'
-  }, {
-                    field: 'Modifier',
-                    title: 'Modify By',
-                    align: 'center',
-                    valign: 'middle',
-                    sortable:true
-  },
-  {
-                    field: 'ModifyDate',
-                    title: 'Modify On',
-                    align: 'center',
-                    valign: 'middle',
-                    sortable:true
-  },
-  {
-                    field: 'UserId',
-                    title: 'User',
-                    align: 'center',
-                    valign: 'middle',
-  sortable:true,
-  visible:false
-  },
   
-  ]
-            });
-    });
-
+  $(function () {
+	  
+	  $('#table-javascript').bootstrapTable({
+		  data: noteList,
+		  cache: false,
+		  height: 400,
+		  striped: true,
+		  pagination: true,
+		  pageSize: 50,
+		  pageList: [10, 25, 50, 100, 200],
+		  search: true,
+		  showColumns: false,
+		  showRefresh: false,
+		  minimumCountColumns: 2,
+		  clickToSelect: true,
+		  toolbar: '#custom-toolbar',
+		  columns: [
+			  {
+				  field: 'NoteId',
+				  title: 'NoteId',
+				  align: 'right',
+				  valign: 'bottom',
+				  sortable: true,
+				  visible:false
+			  }, {
+				  field: 'TitleURL',
+				  title: 'Title',
+				  align: 'center',
+				  valign: 'middle',
+				  sortable: true
+			  }, {
+				  field: 'Creator',
+				  title: 'Create By',
+				  align: 'left',
+				  valign: 'top',
+				  sortable: true
+			  }, {
+				  field: 'CreateDate',
+				  title: 'Create On',
+				  align: 'center',
+				  valign: 'middle'
+			  }, {
+				  field: 'Modifier',
+				  title: 'Modify By',
+				  align: 'center',
+				  valign: 'middle',
+				  sortable:true
+			  },
+			  {
+				  field: 'ModifyDate',
+				  title: 'Modify On',
+				  align: 'center',
+				  valign: 'middle',
+				  sortable:true
+			  },
+			  {
+				  field: 'UserId',
+				  title: 'User',
+				  align: 'center',
+				  valign: 'middle',
+				  sortable:true,
+				  visible:false
+			  },
+			  
+		  ]
+	  });
+  });
+  
 
   </script>
 
