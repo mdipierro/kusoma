@@ -1,11 +1,8 @@
 # -*- coding: utf-8 -*-
-# try something like
-
 def compute_stats(section_id, hws):
     stat_data = []
     for hw in hws:
         s = convert_to_list(get_assignment_by_homework(section_id, hw.id))
-        ### WHAT HAPPENS IF s IS FALSE?
         if s:
             mean = sum(s)/len(s)
             var = sum(x*x for x in s)/len(s) - mean**2
@@ -16,7 +13,8 @@ def compute_stats(section_id, hws):
                     'median':round(sorted(s)[int(len(s)/2)],2),
                     'std':round(var**0.5,2),
                     'hw':hw
-                    })
+            })
+
     return stat_data
 
 @auth.requires_login()
@@ -46,9 +44,8 @@ def teacher():
     response.files.insert(0,URL('static','js/bootstrap-switch.min.js'))
     response.files.insert(0,URL('static','css/bootstrap-switch.min.css'))
 
-    # session.flash = 'Welcome Teacher'
-
     ## WE SHOULD SPEED THIS UP WITH A SINGLE JOIN QUERY
+    ## this could be done in a single query however it will complecate the entire process since i will need to know which columns are the hws and which ones are the final grae
     students = get_all_students(section_id)
     for st in students:
         st.hws = get_grades_student(section_id, st.auth_user.id)
@@ -129,15 +126,3 @@ def statistics():
                                                **{'section_id':section_id, field:value})
     session.flash = "Statistics Options Changed"
     return str(section_id)  + " " + stat + " " +value
-
-#### FOR TESTING
-
-@auth.requires_login()
-def addhw():
-    grid = SQLFORM.smartgrid(db.homework)
-    return dict(grid=grid)
-
-@auth.requires_login()
-def addgrade():
-    grid = SQLFORM.smartgrid(db.assignment_grade)
-    return dict(grid=grid)
