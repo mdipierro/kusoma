@@ -38,6 +38,7 @@ def theme_picked():
 
     return dict()
 
+
 def preview():
     
     subfolder = request.args(0)
