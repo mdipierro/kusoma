@@ -31,12 +31,15 @@ def theme_picked():
     db(db.theme.URL == css_pathname).update(use_count=uses)
 	
 	# See table printed out, use_counts will increment. 
-    all_rows = db(db.theme).select()
-    print all_rows
+    
 
     redirect(URL('themes', 'index'))    
 
     return dict()
+
+def display_popular():
+    for row in db(db.theme).select(db.theme.name, orderby=db.theme.use_count*-1, limitby=(0, 3)):
+        row.name
 
 
 def preview():
