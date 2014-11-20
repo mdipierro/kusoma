@@ -21,9 +21,11 @@ def mysubscriptions():
     
     note_lists = []
     for row in rows:
+        relation = row.relation
         note_list = get_note_by_id(row.note_id)["notes"]
         for one_row in note_list:
             one_row["user_id"] = auth.user_id
+            one_row["relation"] = relation
             note_lists.append(one_row)
     return dict(notes=note_lists)
 
