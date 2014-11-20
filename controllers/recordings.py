@@ -2,6 +2,8 @@
 #This is the controller for the class recordings module of LMS299
 
 #HMAC key to use for signing the hangouts app callback URL
+#TODO: This should be randomly generated once at server startup and stored somewhere(?)
+#so that it is not publicly accessible.
 API_SIGN_KEY = '46bhvw1ymnV2178GXYOrbqKfkfyYfM7RrDoqffq9v+N5'
 
 @auth.requires_login()
@@ -21,9 +23,7 @@ def section():
     arg1 - the section_id
     """
     section_id = request.args(0,cast=int)
-    section=db(db.course_section.id == section_id).select().first()
-    if not section: redirect(URL('default','index'))
-
+    section = db.course_section(section_id) or redirect(URL('default','index'))
     add_section_menu(section_id)
 
     videos = db(db.recording.course_id==section_id).select()
@@ -34,12 +34,7 @@ def section():
     else:
         redirect(URL('default','section', args=section_id))
 
-    #Here's a possible way of encoding callback URL and section_id for start_data to hangouts app
-    #to decode in javascript: https://stackoverflow.com/questions/901115/how-can-i-get-query-string-values-in-javascript
-    import urllib
-    start_data=urllib.urlencode(dict(callback=URL('update_recording', scheme=True, host=True), section_id=section_id))
-
-    return dict(section=section, videos=videos, is_teacher=is_teacher, start_data=start_data)
+    return dict(section=section, videos=videos, is_teacher=is_teacher)
 
 @auth.requires_login()
 def edit():
@@ -47,7 +42,6 @@ def edit():
     Edit an entry in the recording database.
     arg1 - the recording id
     """
-
     # Get video id if provided
     video_id = request.args(0,cast=int)
     video = db.recording(video_id) or redirect(URL('default','index'))
@@ -114,11 +108,6 @@ def create():
         start = True
         redirect(URL('start', args=(form_new.vars.id)))
 
-    if start:
-        users = users_in_section(section_id, roles=[STUDENT, TEACHER])
-    else:
-        users = dict()
-
 
     ###################################
     # Build form for existing recording
@@ -138,7 +127,6 @@ def create():
         and form_existing.vars.youtube_title will contain the Youtube title.
         If invalid, form.errors.youtube will contain an error message.
         """
-        # from simplejson import JSONDecodeError
         try:
             form.vars.youtube_id = get_youtube_id(form.vars.youtube_link)
             form.vars.youtube_title = get_youtube_title(form.vars.youtube_id)
@@ -160,8 +148,8 @@ def create():
             is_class=set_is_class)
         db.recording.course_id.writable=False
 
-        response.flash = 'Form accepted'
-        redirect(URL('index', args=section_id))
+        session.flash = 'Added recording'
+        redirect(URL('section', args=section_id))
     elif form_existing.errors:
         if form_existing.errors.youtube:
             response.flash = form_existing.errors.youtube
@@ -170,13 +158,24 @@ def create():
 
     return dict(form_new=form_new, form_existing=form_existing, section=section)
 
-#Jeremy would like this to be integrated with create() such that the start-a-hangout button will only appear
-#when the form has been filled out.
+@auth.requires_login()
+def new_recording():
+    """
+    This is an ajax callback from the create view. It will load the hangouts button
+    in place of the 'Start a new hangout button'.
+    """
+    section_id = request.args(0,cast=int)
+
+    id = db.recording.insert(course_id=section_id)
+    return LOAD('recordings', 'start.load', args=id, ajax=True)
+
 @auth.requires_login()
 def start():
+    """
+    This loads the Hangouts button
+    """
     video_id = request.args(0,cast=int)
-    video = db(db.recording.id==video_id).select().first()
-    if not video: redirect(URL('default','index'))
+    video = db.recording(video_id) or redirect(URL('default','index'))
 
     section_id = video.course_id
     add_section_menu(section_id)
@@ -186,18 +185,10 @@ def start():
 
     if not video.youtube_id:
         start = True
-        users = users_in_section(9, [STUDENT,TEACHER])
-
+    users = users_in_section(9, [STUDENT,TEACHER])
     callback_url=URL('recordings', 'api', args=['recording', video.id], vars=request.get_vars, host=True, hmac_key=API_SIGN_KEY)
 
-    return dict(video=video, start=start, users=users, callback_url=callback_url)
-
-@auth.requires_login()
-def new_recording():
-    section_id = request.args(0,cast=int)
-
-    id = db.recording.insert(course_id=section_id)
-    return LOAD('recordings', 'start.load', args=id, ajax=True)
+    return dict(start=start, users=users, callback_url=callback_url)
 
 @request.restful()
 def api():
@@ -239,6 +230,7 @@ def api():
         return dict()
     return locals()
 
+#Leaving this here as another example of how the RESTFUL API might be written
 # def api():
 #     from gluon.contrib.hypermedia import Collection
 #     rules = {
@@ -251,16 +243,6 @@ def api():
 #         #'recording': {'GET':{},'POST':{},'PUT':{},'DELETE':{}}
 #         }
 #     return Collection(db).process(request,response,rules)
-
-
-def get_youtube_title_test():
-    from simplejson import JSONDecodeError
-
-    try:
-        title = get_youtube_title(request.args[0])
-    except JSONDecodeError:
-        raise HTTP(400,"Invalid Youtube ID")
-    return title
 
 def get_youtube_title(video_id):
     """
