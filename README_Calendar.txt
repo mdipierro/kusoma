@@ -1,2 +1,2 @@
 To view documentation for the LMS299 Calendar, visit
-https://drive.google.com/file/d/0B_qxrFue5LJNelpEMVI3VmVHcjg/view?usp=sharing
+https://docs.google.com/document/d/1GBMqqL_poL48MTs4C59FiCGZ9vQ3q6f7A1EcEYHoMCg/edit?usp=sharing
