@@ -77,12 +77,9 @@ class DATE_DEFAULT(object):
 ## the code more readable and maintainable.
 ################################################################################
 ## Constants
-if auth.is_logged_in():
-    IS_TEACHER = db(db.auth_user.id == auth.user_id).select(db.auth_user.is_teacher).first().is_teacher
-    IS_ADMINISTRATOR = db(db.auth_user.id == auth.user_id).select(db.auth_user.is_administrator).first().is_administrator
-    CAN_MANAGE_EVENTS = IS_TEACHER | IS_ADMINISTRATOR
-else:
-    CAN_MANAGE_EVENTS = False
+IS_TEACHER = auth.user and auth.user.is_teacher
+IS_ADMINISTRATOR = auth.user and auth.user.is_administrator
+CAN_MANAGE_EVENTS = IS_TEACHER or IS_ADMINISTRATOR
 
 PERSONAL_EVENTS = (db.cal_event.owner_id == auth.user_id)
 PUBLIC_EVENTS = (db.event_visibility.visibility=='public')
@@ -132,10 +129,8 @@ EVENT_FIELDS = [db.cal_event.id,
 def add_event(title, visibility, owner=auth.user_id, details='',
               start_date=date.today(), end_date=None, all_day=False, course_id=None):
     """Add a new event to the table."""
-    usr = db(db.auth_user.id == auth.user_id).select().first()
-    if not (usr.is_teacher or usr.is_administrator):
-        raise Exception('You are not authorized to create events.')
-    from datetime import datetime
+    if not (auth.user and (auth.user.is_teacher or auth.user.is_administrator)):
+        exception('You are not authorized to create events.')
     start = _convert_string_to_date(start_date, default=DATE_DEFAULT.start)
     end = _convert_string_to_date(end_date, default=DATE_DEFAULT.end)
     new_event = db.cal_event.insert(owner_id=owner,
@@ -150,34 +145,30 @@ def add_event(title, visibility, owner=auth.user_id, details='',
 
 def update_event(event_id, title, details, start_date, end_date, all_day, visibility, course_id):
     """Update the given event."""
-    event = db(db.cal_event.id == event_id).select(db.cal_event.id, db.cal_event.owner_id, db.cal_event.title).first()
-    if event:
-        if auth.user_id != event.owner_id:
-            raise Exception('You do not own the event "%s" - update failed.' % event.title)
-        start = _convert_string_to_date(start_date, fmt=INPUT_DATE_FORMAT, default=DATE_DEFAULT.start)
-        end = _convert_string_to_date(end_date, fmt=INPUT_DATE_FORMAT, default=DATE_DEFAULT.end)
-        start, end = _sort_dates(start, end)
-        db(db.cal_event.id == event_id).update(title=title,
-                                               details=details,
-                                               start_date=start,
-                                               end_date=end,
-                                               all_day=all_day,
-                                               visibility=visibility,
-                                               course_id=course_id)
-    else:
-        raise Exception('Could not find event')
-
+    start = _convert_string_to_date(start_date, fmt=INPUT_DATE_FORMAT, default=DATE_DEFAULT.start)
+    end = _convert_string_to_date(end_date, fmt=INPUT_DATE_FORMAT, default=DATE_DEFAULT.end)
+    start, end = _sort_dates(start, end)
+    query = db.cal_event.id==event_id
+    query &= db.cal_event.owner_id == auth.user_id
+    n = db(query).update(title=title,
+                         details=details,
+                         start_date=start,
+                         end_date=end,
+                         all_day=all_day,
+                         visibility=visibility,
+                         course_id=course_id)
+    if n==0:
+        exception('Could not find event or your are not the owner')
+        
 def delete_event(event_id):
     """Delete the given event."""
     # Check if the user is the owner of the event.
     # If not, don't allow them to delete it.
-    event = db(db.cal_event.id == event_id).select(db.cal_event.id, db.cal_event.owner_id).first()
-    if event:
-        if auth.user_id != event.owner_id:
-            raise Exception('You do not own the event "%s".' % title)
-        db(db.cal_event.id == event_id).delete()
-    else:
-        raise Exception('Could not find event')
+    query = db.cal_event.id==event_id
+    query &= db.cal_event.owner_id == auth.user_id
+    n = db(query).delete()
+    if n == 0:
+        exception('Could not find event or you are not the owner')
 
 def my_events(start_date, end_date, json=False):
     """Events for the logged-in user."""
@@ -208,9 +199,9 @@ def course_events(start_date, end_date, course_id):
     return _get_events_json(query, EVENT_FIELDS)
 
 def get_event(event_id):
-    evt = db(db.cal_event.id == event_id).select().first()
+    evt = db.cal_event(event_id)
     if evt.owner_id != auth.user_id:
-        raise Exception('You don\'t own this event.')
+        exception('You don\'t own this event.')
     return evt
 
 def _get_events(query, fields, groupby=None):
@@ -266,9 +257,9 @@ def _last_of_month():
 
 def _convert_string_to_date(date, fmt=INPUT_DATE_FORMAT, default=DATE_DEFAULT.start):
     """
-	Converts a date string to a datetime object.
-	If date is already a datetime object, it just gets returned.
-	Otherwise, a default date is returned.
+    Converts a date string to a datetime object.
+    If date is already a datetime object, it just gets returned.
+    Otherwise, a default date is returned.
     """
     from datetime import datetime
     from types import StringType
