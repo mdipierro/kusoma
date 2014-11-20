@@ -1,5 +1,7 @@
 #this is db file for notes
 from gluon.tools import *
+
+
 auth = Auth(db)
 auth.define_tables()
 crud = Crud(db)
@@ -22,7 +24,7 @@ db.define_table('note_version',
 db.define_table('note_tag',
                 Field('note_id', 'reference note_main', notnull=True),
                 Field('version_id', 'reference note_version', notnull=True),
-                Field('tag'))
+                Field('tag', 'list:string'))
 
 db.define_table('note_discussion',
                 Field('pid', default=0),

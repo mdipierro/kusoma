@@ -3,6 +3,9 @@
 import time
 import json
 
+import logging
+logger = logging.getLogger("web2py.app.lms299")
+logger.setLevel(logging.DEBUG)
 
 def index():
     return get_note_list('')
@@ -43,34 +46,49 @@ def mynotes():
     return get_my_note_list(auth.user_id)
 
 def notepage():
-    return dict()
-
+    vid = request.vars.vid
+    note = get_note_by_vid(vid)
+    return note
+@auth.requires_login()
 def noteeditpage():
     return dict()
 
+@auth.requires_login()
 def noteeditor():
     course_info = db().select(db.course.id, db.course.code)
-    return dict(courseList=course_info)
+
+    if 'vid' in request.vars:
+        vid = request.vars.vid
+        result = dict( get_note_by_vid(vid),courseList=course_info)
+        logger.debug(result)
+    else:
+        result = dict(courseList=course_info)
+    return result
+
+def getNotePost():
+    uid = auth.user_id
+    cid = request.vars.CourseId
+    title = request.vars.Title
+    tag = request.vars['Tag[]']
+    content = request.vars.Content
+    action = request.vars.Action
+    try:
+        logger.debug(action)
+        if action == 'add':
+            nid = add_new_note(cid, uid)
+        elif action == 'update':
+            nid = request.vars.NoteId
+        logger.debug(nid)
+        vid = add_note_version(nid, uid,title, content)
+        add_tag(vid, tag)
+    except Exception, e:
+        logger.error('error:%s' % e)
+        
+    return dict(VersionId='vid')
 
 def date_handler(obj):
     return obj.isoformat() if hasattr(obj, 'isoformat') else obj
 
-#def get_all_notes():
-#    return db().select(db.note_main.All)
-
-#def add_note(course_id, tag):
-#    db.notes_main.insert(course_id = course_id, tag = tag, create_on = time.time())
-#    db.commit()
-    
-#----------------------------------------------------------#
-#interface about notes
-#----------------------------------------------------------#
-#def get_note_list():
-#    query = (db.note_main.id == db.note_version.note_id
-#            )&(db.note_main.id == db.note_user_note_relation.note_id
-#            )&(db.note_version.modify_on == db(db.note_main.id == db.note_version.note_id).select(max(db.note_version.modify_on)))
-#    rows = db(query).select(db.note_version.note_id, db.note_version.title, db.note_main.create_on, db.note_main.create_by, db.note_version.modify_on, db.note_version.modify_by, db.note_user_note_relation.user_id)
-#    return dict(rows=rows)
 
 #include notes both subscribed and participated
 def get_my_note_list(user_id):
@@ -91,25 +109,23 @@ def get_my_note_list(user_id):
     return dict(notes=note_lists)
     
 def get_note_list(search_content):
-    query = (db.note_main.id == db.note_version.note_id)&(db.note_version.note_content.upper().contains(search_content.upper().strip()))&(db.note_main.version_id == db.note_version.id)
+    query = (db.note_main.id == db.note_version.note_id)&(db.note_version.note_content.upper().contains(search_content.upper().strip()))&(db.note_main.version_id == db.note_version.id)&(db.note_main.course_id == db.course.id)
     rows = db(query).select()
     
     note_lists = []
     for row in rows:
         create_by = (db(db.auth_user.id == row.note_main.create_by).select().first()).first_name + ' ' + (db(db.auth_user.id == row.note_main.create_by).select().first()).last_name
         modify_by = (db(db.auth_user.id == row.note_version.modify_by).select().first()).first_name + ' ' + (db(db.auth_user.id == row.note_version.modify_by).select().first()).last_name
-        note_list = {'note_id': row.note_main.id, 'version_id': row.note_main.version_id, 'title': row.note_version.title, 'create_by': create_by, 'create_on': row.note_main.create_on, 'modify_by': modify_by, 'modify_on': row.note_version.modify_on}
+        note_list = {'note_id': row.note_main.id, 'version_id': row.note_main.version_id, 'title': row.note_version.title, 'create_by': create_by, 'create_on': row.note_main.create_on, 'modify_by': modify_by, 'modify_on': row.note_version.modify_on, 'course_code':row.course.code}
         note_lists.append(note_list)
         
     return dict(notes=note_lists)     
-    #search_content = "%" + search_content.upper().strip() + "%"
-    #query = (db.note_main.id == db.note_version.note_id
-    #        )&(db.note_main.id == db.note_user_note_relation.note_id
-    #        )&(db.note_version.note_content.upper().contains(search_content.upper().strip()))
-    #rows = db(query).select(db.note_version.note_id, db.note_version.title, db.note_version.id, db.note_main.create_on, db.note_main.create_by, db.note_version.modify_on, db.note_version.modify_by, db.note_user_note_relation.user_id)
-    #return dict(notes=rows)
-#return dict(jsonStr=json.dumps([[row.note_version.note_id,row.note_version.title,row.note_main.create_on,row.note_main.create_by,row.note_version.modify_on,row.note_version.modify_by,row.note_user_note_relation.user_id] for row in rows], default=date_handler))
-#return dict(notes=rows)
+
+def get_note_by_vid(vid):
+    query = (db.note_version.id == vid)&(db.note_version.id == db.note_tag.version_id)&(db.note_main.version_id ==db.note_version.id)
+    rows = db(query).select(db.note_version.ALL,db.note_main.course_id,db.note_tag.tag)
+
+    return dict(note=rows[0]) 
 
 def get_note_by_id(note_id):
     query = (db.note_main.id == note_id)&(db.note_main.id == db.note_version.note_id)&(db.note_main.version_id == db.note_version.id)
@@ -149,20 +165,20 @@ def get_note_content(note_id):
 
 def add_new_note(course_id, user_id):
     #get course_id user_id from request?
-    id = db.note_main.insert(course_id = course_id, create_by = user_id, create_on = time.time())
+    id = db.note_main.insert(course_id = course_id, create_by = user_id)
     db.commit()
     return id
 
-def add_note_version(note_id, user_id, content):
-    #get user_id from request?
-    id = db.notes_version.insert(note_id = note_id, modify_by = user_id, modify_on = time.time(), title = title, note_content = content)
-    db(db.note_main.note_id == note_id).update(version_id = id)
+def add_note_version(note_id, user_id,title, content):
+    versionId = db.note_version.insert(note_id = note_id, modify_by = user_id, title = title, note_content = content)
     db.commit()
-    return id
+    db(db.note_main.id == note_id ).update(version_id = versionId)
+    db.commit()
+    return versionId
     
-def add_tag(version_id, tag):
-    note_id = db(db.note_version.id == version_id).select().first().note_id
-    db.note_tag.update_or_insert(note_id = note_id, version_id = version_id, tag = tag)
+def add_tag(vid, tags):
+    nid = db(db.note_version.id == vid).select(db.note_version.note_id)[0].note_id
+    db.note_tag.update_or_insert(note_id = nid, version_id = vid, tag = tags)
     db.commit()
     
 def delete_tag(version_id, tag):
@@ -185,7 +201,7 @@ def mark_message_read(message_id):
 
 
 def add_messages(user_id, version_id):
-    db.note_message.insert(user_id = user_id, version_id = version_id, create_on = time.time(), has_read = False)
+    db.note_message.insert(user_id = user_id, version_id = version_id, has_read = False)
     db.commit()
 
 

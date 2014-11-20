@@ -6,12 +6,10 @@
     <script src="../static/js/jquery.tag-editor.min.js"></script>
 	<script src="../static/js/note_editor.js"></script>
 	<script src="../static/js/jquery.editable.js"></script>
-	<script src="../static/js/bootstrap-select.js"></script>
 	<link href="http://netdna.bootstrapcdn.com/bootstrap/3.1.1/css/bootstrap.min.css" rel="stylesheet">
 	<link href="http://netdna.bootstrapcdn.com/font-awesome/4.0.3/css/font-awesome.min.css" rel="stylesheet">
 	<link href="../static/css/note_editor.css" type="text/css" rel="stylesheet"/>
 	<link rel="stylesheet" href="../static/css/jquery.tag-editor.css">
-	<link rel="stylesheet" href="../static/css/bootstrap.select.css">
 	<style>
 	  #txtTitle {padding:15px;width:400px;}
 	  .centerDv {
@@ -19,68 +17,153 @@
 	  width:500px;
 	  text-align:center;
 	  }
+
+	  .noteattbar
+	  ｛
+	  padding:0;background-color: #f5f5f5;background-image: -moz-linear-gradient(top, #ffffff, #e6e6e6);background-image: -webkit-gradient(linear, 0 0, 0 100%, from(#ffffff), to(#e6e6e6));background-image: -webkit-linear-gradient(top, #ffffff, #e6e6e6);background-image: -o-linear-gradient(top, #ffffff, #e6e6e6);background-image: linear-gradient(to bottom, #ffffff, #e6e6e6);background-repeat: repeat-x;border-top: 1px solid #cccccc;
+	  ｝
 	  </style>
 	
 	<script type="text/javascript">
 	  $(document).ready( function() {
 		  
-		  $("#txtEditor").Editor();  
+		 // $("#txtEditor").Editor();  
 	  });
+
+	  function submitNote()
+	  {
+		  var action;
+		  {{if 'vid' in request.vars:}}
+		  action = 'update';
+		  nid = {{=request.vars.nid}};
+		  {{else:}}
+		  action = 'add';
+		  nid = 0;
+		  {{pass}}
+		  var content = $("#txtEditor").Editor('getText');
+		  var title = $('#noteTitle').text();
+		  var tag = $('#tags').tagEditor('getTags')[0].tags;
+		  var courseId = $('#dlCourse').val();
+
+		  var postData = {Content:content, Title:title, Tag:tag, CourseId:courseId, Action:action, NoteId:nid}
+
+		  $.ajax(
+			  {
+				  type:'POST',
+				  url:"{{=URL('getNotePost')}}",
+				  data:postData,
+				  success:function(data){
+					  back();
+				  }
+			  }
+		  );
+
+
+	  }
 	</script>
   </head>
   <body>
-	<form enctype="multipart/form-data" action="{{URL()}}" method="post">
-	  <div class="container-fluid">
-		<div class="row">
-		  <div class="container">
-			<div class="row">
-			  <div class="col-lg-12 nopadding" style="height:800px;">
-				<div class="centerDv">
-				  <h3>Note Title</h3>
-				</div>
-				<div style="margin:0 0 1.2em">
-				  <table>
-					<tr>
-					  <td colspan="2">
-						<b>Course:</b><select name='dlCourse' class="selectpicker">
-						  <option value="">Select course</option>
-						  {{for course in courseList:}}
-						  <option value="{{=course.id}}">
-							{{=course.code}}
-						  </option>
-						  {{pass}}
-						</select>
-					  </td>
-					</tr>
-					<tr>
-					  <td style="width:100%">
-						<textarea id="tags"></textarea>
-					  </td>
-					  <td>
-						<a href="#" class="btn btn-primary btn-default" style="border:0"><span class="glyphicon glyphicon-floppy-disk"></span> Save</a>
-					  </td>
-					</tr>
-				</table></div>			  
-				<textarea id="txtEditor"></textarea>
-				
+	<div class="container-fluid">
+	  <div class="row">
+		<div class="container">
+		  <div class="row">
+			<div class="col-lg-12 nopadding" style="height:800px;">
+			  <div class="centerDv">
+				<h3 id="noteTitle">Title</h3>
 			  </div>
-			</div>  
-		  </div>
+			  <div>
+                <table style="padding:0;background-color: #f5f5f5;background-image: -moz-linear-gradient(top, #ffffff, #e6e6e6);background-image: -webkit-gradient(linear, 0 0, 0 100%, from(#ffffff), to(#e6e6e6));background-image: -webkit-linear-gradient(top, #ffffff, #e6e6e6);background-image: -o-linear-gradient(top, #ffffff, #e6e6e6);background-image: linear-gradient(to bottom, #ffffff, #e6e6e6);background-repeat: repeat-x;border-top: 1px solid #cccccc;" width="100%">
+                  <tr>
+                    <td style="padding-left:10;">
+                      Course:
+                    </td>
+                    <td style="padding-left:0;padding-right:100;">
+					  <select id='dlCourse' class="form-control" style="margin-top:10">
+						<option value="">Select course</option>
+						{{for course in courseList:}}
+						<option value="{{=course.id}}">
+						  {{=course.code}}
+						</option>
+						{{pass}}
+					  </select>
+                    </td>
+                    <td style="padding:0">
+                      Tag:
+                    </td>
+					<td style="padding-left:10;padding-right:50;">
+					  <textarea id="tags"></textarea>
+					</td>
+					<td style="padding-left:0">
+					  <a href="#" onclick="submitNote()" class="btn btn-primary btn-default" style="border:0"><span class="glyphicon glyphicon-floppy-disk"></span> Save </a>
+					  <a href="#" onclick="back()" class="btn btn-primary btn-default"><span class="glyphicon glyphicon-remove"></span>Cancel</a>
+					</td>
+				  </tr>
+				</table>
+			  </div>			  
+			  <textarea id="txtEditor"></textarea>
+			</div>
+		  </div>  
 		</div>
 	  </div>
+	</div>	
+	<script type="text/javascript">
+	  $(function()
+		{
+			$('#tags').tagEditor(
+				{
+					autocomplete: { delay: 0, position: { collision: 'flip' }, source: [] },
+					forceLowercase: false,
+					placeholder: 'Note Tags...'
+				}
+			);
+			
+			$('.centerDv h3').editable('mouseover');
+		}
+	   );
+	  function back()
+	  {
+		  window.parent.location.href = "{{=URL('index')}}";
+	  }
 	  
-	  <script>
-		$(function() {
-		$('#tags').tagEditor({
-		autocomplete: { delay: 0, position: { collision: 'flip' }, source: [] },
-		forceLowercase: false,
-		placeholder: 'Note Tags...'
-		});
-		
-		$('.centerDv h3').editable('mouseover');
-		});
-		
-	  </script>
-	</form>
+	  function Note(title, content, courseid, tag)
+	  {
+		  this.Title = title;
+		  this.Content = content;
+		  this.CourseId = courseid;
+		  this.Tag = tag;
+	  }
+
+
+	  {{
+		  from gluon.serializers import json
+	  }}
+	  {{ if 'vid' in request.vars:}}
+	  var o = 
+	  {{
+		  response.write(json(note), escape=False)
+	  }};
+
+	  var note = new Note(o.note_version.title, o.note_version.note_content, o.note_main.course_id, o.note_tag.tag);
+	  $("#txtEditor").Editor();
+	  $("#txtEditor").Editor('setText', note.Content);
+	  console.log(note.Content);
+	  $('#noteTitle').text(note.Title);
+	  console.log(note.Tag);
+	  $(function(){
+		  for(var i=0;i<note.Tag.length;i++)
+		  {
+			  var tag = note.Tag[i];
+			  $('#tags').tagEditor('addTag', tag);
+		  }
+	  
+	  });
+
+	  $('#dlCourse').val(note.CourseId);
+	  $( "#dlCourse" ).prop( "disabled", true );
+	  {{else:}}
+	  $("#txtEditor").Editor();
+
+	  {{pass}}
+	</script>
   </body>
 </html>

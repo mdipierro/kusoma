@@ -3,5 +3,12 @@
   {{include 'notes/note_header.html'}}
 </div>
 <div>
+  {{if 'vid' in request.vars:}}
+  <iframe src='{{=URL("noteeditor", vars=dict(vid=request.vars.vid,nid=request.vars.nid))}}' style='width:100%;height:1024px;border:0;'></iframe>
+  <script type="text/javascript">
+	console.log(1);
+  </script>
+  {{else:}}
   <iframe src='{{=URL("noteeditor")}}' style='width:100%;height:1024px;border:0;'></iframe>
+  {{pass}}
   </div>
