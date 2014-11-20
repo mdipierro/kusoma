@@ -163,6 +163,10 @@ if db(db.auth_user).isempty():
     mdp_id = db.auth_user.insert(first_name="Good",last_name='Teacher',
                                  email='good.teacher@example.com',
                                  password=CRYPT()('test')[0])
+    st_id = db.auth_user.insert(first_name="Good",last_name='student',
+                                 email='good.student@example.com',
+                                 password=CRYPT()('test')[0])
+
 
     populate(db.auth_user,300)
     db(db.auth_user.id>1).update(is_student=True,is_teacher=False,is_administrator=False)
@@ -186,6 +190,7 @@ if db(db.auth_user).isempty():
                 signup_deadline=datetime.date(2014,11,10))
             rows = db(db.auth_user).select(limitby=(0,10),orderby='<random>')
             db.membership.insert(course_section=i, auth_user=mdp_id, role=TEACHER)
+            db.membership.insert(course_section=i, auth_user=st_id, role=STUDENT)
 
             for h in range(1,7):
                 db.homework.insert(name='hw'+str(h), course_section=i,points=10, assignment_order=h)
