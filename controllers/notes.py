@@ -17,7 +17,7 @@ def index():
 #----------------------------------------------------------#
 @auth.requires_login()
 def mysubscriptions():
-    rows = db(db.note_user_note_relation.user_id == auth.user_id and db.note_user_note_relation.relation == True).select()
+    rows = db(db.note_user_note_relation.user_id == auth.user_id and db.note_user_note_relation.relation != 0).select()
     
     note_lists = []
     for row in rows:
