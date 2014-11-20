@@ -10,28 +10,27 @@
 import datetime
 
 #@auth.requires_login()
-@auth.requires(auth.user.is_teacher==True or auth.user.is_administrator==True)
+
+@auth.requires(CAN_MANAGE_EVENTS)
 def create():
-    # Display a form the user can use to create a new event.
-    #
-    # The form should allow the user to select a course.
-    #
-    # When the event is created in db.cal_event, a record is also created in db.course_event
-    # where the course_id is the course that the user selected and the referenced event is the
-    # record just created in db.cal_event
+    """
+    Display a form the user can use to create a new event.
+    
+    The form should allow the user to select a course.
+    
+    When the event is created in db.cal_event, a record is also created in db.course_event
+    where the course_id is the course that the user selected and the referenced event is the
+    record just created in db.cal_event
+    """
+    end = None
     if request.args:
-        if request.args(0):
-            start = _convert_string_to_date(request.args(0), fmt=OUTPUT_DATE_FORMAT)
-        else:
-            start = datetime.datetime.today()
+        start = _convert_string_to_date(request.args(0), fmt=OUTPUT_DATE_FORMAT)
         if request.args(1):
             end = _convert_string_to_date(request.args(1), fmt=OUTPUT_DATE_FORMAT)
-        else:
-            end = None
     else:
         start = datetime.datetime.today()
-    start = datetime.datetime(start.year, start.month, start.day)
-    end = datetime.datetime(start.year, start.month, start.day + 1)
+        # We re-create the date so the time is 00:00:00, rather than the current time.
+    	start = datetime.datetime(start.year, start.month, start.day)
     db.cal_event.start_date.default = start
     db.cal_event.end_date.default = end
     url = URL('calendar', 'my_calendar')
@@ -44,23 +43,26 @@ def create():
     return dict(form=form)
 
 #@auth.requires_login()
-@auth.requires(auth.user.is_teacher==True or auth.user.is_administrator==True)
+@auth.requires(CAN_MANAGE_EVENTS)
 def manage():
-    # get a list of events that the current user created
-    # display the events in a grid or a picklist
-    # The user can selects an event and clicks a delete button
-    # Delete the event that the user selected
+    """
+    Get a list of events that the current user created
+    display the events in a grid or a picklist.
+    The user can selects an event and clicks a delete button.
+    Delete the event that the user selected.
+    """
     return dict(grid=SQLFORM.smartgrid(db.cal_event))
 
 @auth.requires_login()
 def my_calendar():
-    # input: a course ID passed in through the session object
-    # use course picker list to select a course
-    # With the given course ID, query all of the events related to that course
-    # The view will use the object as a datasource for fullcalendar and display the events
+    """
+    input: a course ID passed in through the session object
+    use course picker list to select a course
+    With the given course ID, query all of the events related to that course
+    The view will use the object as a datasource for fullcalendar and display the events
+    """
     rows = ''
     selectedCourse = request.vars.selectedCourse
-    selectedCourseEvents = my_events(datetime.date.min, datetime.date.max, True)
     if selectedCourse:
         query = db.course_section.name == selectedCourse
         rows = db(query).select()
@@ -70,4 +72,6 @@ def my_calendar():
             response.flash = 'You are not authorized to view the events for this course section'
         else:
             selectedCourseEvents = course_events(datetime.date.min, datetime.date.max, rows[0].course.id)
+    else:
+        selectedCourseEvents = my_events(datetime.date.min, datetime.date.max, True)
     return dict(myCourses = my_sections(), rows = rows, selectedCourseEvents = selectedCourseEvents, selectedCourse = selectedCourse)
