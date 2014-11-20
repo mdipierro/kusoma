@@ -19,8 +19,8 @@
   this.Title = title;
   this.ModifyDate = modifyDate;
   this.Modifier = modifier;
-  this.TitleURL = '<a href="' + '{{=URL("notepage")}}' + '?vid=' + versionId + '">' + title + '</a>';
-  this.editURL = '<a href="' + '{{=URL("noteeditpage")}}' + '?vid=' + versionId + ' " class="btn btn-default">' + 'Edit' + '</a>';
+  this.TitleURL = '<a href="' + '{{=URL("notepage")}}' + '?vid=' + versionId + '&nid=' + noteId + '">' + title + '</a>';
+  this.editURL = '<a href="' + '{{=URL("noteeditpage")}}' + '?vid=' + versionId + '&nid=' + noteId + ' " class="btn btn-default">' + 'Edit' + '</a>';
   }
 {{
   from gluon.serializers import json
@@ -36,7 +36,7 @@
   {
       var o = jsonData[i];
       console.log(1);
-      var n = new Note(o.note_id, o.id, o.title, o.modify_on, o.modify_by);
+      var n = new Note(o.note_id, o.version_id, o.title, o.modify_on, o.modify_by);
       noteList.push(n);
   }
 
