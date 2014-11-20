@@ -255,11 +255,19 @@ def get_subscribed_notes(user_id):
 
 
 def subscribe_note(note_id, user_id):
+    rows_from = db(db.note_user_note_relation).select()
+    for row in rows_from:
+        if row.user_id == user_id and row.note_id == note_id and row.relation is 2:
+            return
     db.note_user_note_relation.update_or_insert((db.note_user_note_relation.note_id==note_id) & (db.note_user_note_relation.user_id==user_id), note_id=note_id, user_id=user_id, relation=1)
     db.commit()
 
 
 def unsubscribe_note(note_id, user_id):
+    rows_from = db(db.note_user_note_relation).select()
+    for row in rows_from:
+        if row.user_id == user_id and row.note_id == note_id and row.relation is 2:
+            return
     db.note_user_note_relation.update_or_insert((db.note_user_note_relation.note_id==note_id) & (db.note_user_note_relation.user_id==user_id), note_id=note_id, user_id=user_id, relation=0)
     db.commit()
 
