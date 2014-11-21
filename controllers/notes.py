@@ -61,17 +61,12 @@ def notepage():
     vid = request.vars.vid
     logger.debug(vid)
     note = get_note_by_vid(vid)
-    return note
+    rel = get_relevant_list_new(vid)
+    return dict(note,rels=rel)
+
 @auth.requires_login()
 def noteeditpage():
     return dict()
-
-def relevant():
-    vid = request.vars.vid
-    result = get_relevant_list_new(vid)
-    logger.debug(result)
-    return result
-
 
 @auth.requires_login()
 def noteeditor():
@@ -221,15 +216,16 @@ def get_relevant_list_new(version_id):
                         break
             if flag == True:
                 title = db(db.note_version.id == row.version_id).select().first().title
-                version = {'version_id': row.version_id, 'title': title}
+                version = {'version_id': row.version_id, 'title': title,'note_id': row.note_id}
                 tag_list.append(version)
             flag = False
-        tag_list = []
+
             
         version_ids = {'tag': t1, 'version_id': tag_list}
         version_list.append(version_ids)
+        tag_list = []
 
-    return dict(rows = version_list)
+    return dict(rels = version_list)
     
 def get_note_content(note_id):
     query = (db.note_main.id == db.note_version.note_id
