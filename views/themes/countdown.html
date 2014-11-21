@@ -1,28 +1,17 @@
 {{extend 'layout.html'}}
 
 <h2>Theme has been set.</h2>
-<p>redirecting in 5 seconds... &nbsp&nbsp<button onclick="goHome()">Go Now</button></p>
+<p>redirecting in 5 seconds... &nbsp&nbsp<button onclick="location.href = '{{=URL('default', 'index')}}'">Go Now</button></p>
 
-<p><button onclick="goBack()">Go Back</button> and choose a different theme.</p>
-
+<p><button onclick="location.href = '{{=URL('themes', 'themeBack')}}'">Go Back</button> and choose a different theme.</p>
 
 <script src="//code.jquery.com/jquery-1.10.2.js"></script>
 <script type="text/javascript">
-
 setTimeout(
     function()
     {
-        window.location = "{{=URL('default', 'index')}}";
+        window.location = "index";
     }, 5000);
-
-function goBack(){
-    window.location.replace('themeBack');
-}
-
-function goHome(){
-    window.location = "{{=URL('default', 'index')}}"
-}
-
 </script>
 
 
