@@ -169,7 +169,7 @@ def get_all_history_versions(note_id):
 #return notes ids that have at least one tag the same as designated
 def get_relevant_list(version_id):
     tag = db(db.note_tag.version_id == version_id).select().first()  
-    rows = db(db.note_tag).select()
+    rows = db(db.note_tag.version_id != version_id).select()
     flag = False
     version_list = []
     for row in rows:
@@ -192,7 +192,7 @@ def get_relevant_list(version_id):
 
 def get_relevant_list_new(version_id):
     tag = db(db.note_tag.version_id == version_id).select().first()  
-    rows = db(db.note_tag).select()
+    rows = db(db.note_tag.version_id != version_id).select()
     flag = False
     version_list = []
     tag_list = []
@@ -201,9 +201,7 @@ def get_relevant_list_new(version_id):
             note = db(db.note_main.version_id == row.version_id).select()
             if note.__len__() > 0:
                 tag_temp = db(db.note_tag.version_id == note.first().version_id).select().first()
-                for t2 in tag_temp.tag:
-                    if flag == True:
-                        break                
+                for t2 in tag_temp.tag:              
                     if t2 == t1:
                         flag = True
                         break
@@ -211,13 +209,12 @@ def get_relevant_list_new(version_id):
                 version = {row.version_id}
                 tag_list.append(version)
             flag = False
-            tag_list = []
+        tag_list = []
             
         version_ids = {'tag': t1, 'version_id': tag_list}
         version_list.append(version_ids)
 
     return dict(rows = version_list)
-
 def get_note_content(note_id):
     query = (db.note_main.id == db.note_version.note_id
             )&(db.note_main.id == note_id
