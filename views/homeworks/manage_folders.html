@@ -1,0 +1,14 @@
+{{extend 'layout.html'}}
+
+
+{{if rejected is None:}}
+
+<h2>Folder Management Interface</h2>
+{{=folders}}
+<br/>
+<h3><a href="{{=URL('manage_homeworks',args=(section_id))}}">Homework Management Interface</a></h3>
+
+{{else:}}
+    <h3>{{=rejected}}</h3>
+    <h4><a href="{{=URL('../../default/section',args=(section_id))}}">View this section</a></h4>
+{{pass}}
