@@ -1,11 +1,9 @@
 {{extend 'layout.html'}}
 
 
-<h1>Welcome to Grade Interface</h1>
-<a class="btn btn-primary" href="{{=URL('student',args=section_id)}}"> Student</a>
+<h1>Welcome to Grade Interface  </h1>
 
-
-
+<p>You can update or edit a grade at any time by entering the grade into the built-in spreadsheet below, and clicking the ‘Save’ button located at the bottom left corner of the spreadsheet. There is also a column in the spreadsheet for comments. Any comments input here will be viewable by the student. </p>
 
 <div id="dataTable" class="handsontable"></div>
 <button class="btn btn-primary" name="save" > Save</button>
@@ -13,55 +11,47 @@
 
 <div id="example1console"></div>
 
-
-<table class="table">
+<div id="refresh">
+  <table class="table">
     <tr>
-        <th>Homework</th>
-        <th>min</th>
-        <th>max</th>
-        <th>average</th>
-        <th>median</th>
-        <th>mean</th>
-        <th>sum</th>
-        <th>cov</th>
-        <th>var</th>
-        <th>std</th>
+      <th>Homework</th>
+      <th>min</th>
+      <th>max</th>
+      <th>average</th>
+      <th>median</th>
+      <th>std</th>
     </tr>
-        <tr>
-        <th>Enable stats for student</th>
-        <td><input data-size="mini" type="checkbox" class="checkbox-switcher" name="" /></td>
-        <td><input data-size="mini" type="checkbox" class="checkbox-switcher" name="" /></td>
-        <td><input data-size="mini" type="checkbox" class="checkbox-switcher" name="" /></td>
-        <td><input data-size="mini" type="checkbox" class="checkbox-switcher" name="" /></td>
-        <td><input data-size="mini" type="checkbox" class="checkbox-switcher" name="" /></td>
-        <td><input data-size="mini" type="checkbox" class="checkbox-switcher" name="" /></td>
-        <td><input data-size="mini" type="checkbox" class="checkbox-switcher" name="" /></td>
-        <td><input data-size="mini" type="checkbox" class="checkbox-switcher" name="" /></td>
-        <td><input data-size="mini" type="checkbox" class="checkbox-switcher" name="" /></td>
+    <tr>
+      <th>Enable stats for student</th>
+      <td><input id = "min" data-size="mini" type="checkbox"   class="checkbox-switcher"
+                 {{if stat_options:}}{{if stat_options[0].min_score:}} checked {{pass}}{{pass}}></td>
+      <td><input id = "max" data-size="mini" type="checkbox"   class="checkbox-switcher"
+                 {{if stat_options:}}{{if stat_options[0].max_score:}} checked {{pass}}{{pass}}></td>
+      <td><input id = "avg" data-size="mini" type="checkbox"   class="checkbox-switcher"
+                 {{if stat_options:}}{{if stat_options[0].avg_score:}} checked {{pass}}{{pass}}></td>
+      <td><input id = "med" data-size="mini" type="checkbox"   class="checkbox-switcher"
+                 {{if stat_options:}}{{if stat_options[0].median_score:}} checked {{pass}}{{pass}}></td>
+      <td><input id = "std" data-size="mini" type="checkbox"   class="checkbox-switcher"
+                 {{if stat_options:}}{{if stat_options[0].std:}} checked {{pass}}{{pass}}></td>
     </tr>
+
+    <p>The statistics below are all provided to teachers by default, but need to be manually turned on in order for your students to view them.  There is a row titled “Enable stats for students” and for each statistic you can choose to have it turned on or off by toggling the button in each column.</p>
 
     {{for a in stat:}}
-        <tr>
-            <td>{{=a['hw'].name}}</td>
-            <td>{{=a['min']}}</td>
-            <td>{{=a['max']}}</td>
-            <td>{{=a['average']}}</td>
-            <td>{{=a['median']}}</td>
-            <td>{{=a['mean']}}</td>
-            <td>{{=a['sum']}}</td>
-            <td>{{=a['cov']}}</td>
-            <td>{{=a['var']}}</td>
-            <td>{{=a['std']}}</td>
-
-        </tr>
-
+    <tr>
+      <td>{{=a['hw'].name}}</td>
+      <td><div class='min display'>{{=a['min']}}</div></td>
+      <td><div class='max display'>{{=a['max']}}</div></td>
+      <td><div class='avg display'>{{=a['average']}}</div></td>
+      <td><div class='med display'>{{=a['median']}}</div></td>
+      <td><div class='std display'>{{=a['std']}}</div></td>
+    </tr>
+    
     {{pass}}
-
-</table>
-
+  
+  </table>
+</div>
 <script>
-
-    $(".checkbox-switcher").bootstrapSwitch();
 
  var data = [
  {{for row in users:}}
@@ -81,22 +71,9 @@
        total:'',
        final:'{{if row.final:}} {{=row.final.grade }} {{pass}}',
        comment:'{{if row.final:}} {{=row.final.teacher_comment}} {{pass}}'
-
       },
   {{pass}}
   ];
-
-var nonnegative_validator_fn = function (value, callback) {
-  setTimeout(function(){
-    if (new String(value).valueOf() != new String("NaN").valueOf() && (!value || parseFloat(value) >= 0) )  {
-      callback(true);
-    }
-    else {
-      callback(false);
-    }
-  }, 300);
-};
-
 
   $('#dataTable').handsontable({
     data: data,
@@ -107,9 +84,6 @@ var nonnegative_validator_fn = function (value, callback) {
     fixedColumnsLeft: 2,
     cells: function (row, col, prop) {
         var cellProperties = {}
-//        if(col === 0 ||col === 1  ) {
-//          cellProperties.readOnly = true;
-//        }
         return cellProperties;
     },
     colHeaders: true,
@@ -124,26 +98,24 @@ var nonnegative_validator_fn = function (value, callback) {
         {{for hw in names:}}
        ,{
              data: "hw.{{=hw.homework.id}}"
-            ,title: "{{=hw.homework.name}}"
+            ,title: "{{=hw.homework.name}}({{=hw.homework.points}})"
             ,tp: "{{=hw.homework.points}}}"
             ,type: 'numeric'
             ,format: '0,0'
-            ,validator: nonnegative_validator_fn
             ,allowInvalid: false
         }
-
         {{pass}}
       ,{
             data: "total",
-            title:"computed Grade",
+            title:"Computed Grade",
             readOnly:true,
             renderer:calGrad
       },{
             data: "final",
             title:"Final Grade",
+            type: "dropdown",
+            source: ["A", "A-", "B+", "B", "B-", "C+", "C", "C-","D+","D","D-","F"],
             readOnly:false
-            ,validator: nonnegative_validator_fn
-            ,allowInvalid: false
       }
       ,{
             data: "comment",
@@ -152,10 +124,8 @@ var nonnegative_validator_fn = function (value, callback) {
       }
     ]
   });
-
  var $console = $("#example1console");
  var handsontable = $('#dataTable').data('handsontable');
-
     $("button[name='save']").click(function () {
       $.ajax({
         url: "{{=URL('savedata',args=section_id)}}",
@@ -165,7 +135,17 @@ var nonnegative_validator_fn = function (value, callback) {
         success: function (res) {
             if(res)
             {
-              //  $console.text(JSON.stringify(res, undefined, 2));
+              $('#refresh').load(document.URL + ' #refresh',  function() {
+                  $(".checkbox-switcher").bootstrapSwitch();
+                  $(".checkbox-switcher").each(function(a,elm){
+                      var state = $(elm).is(":checked")?true:false;
+                      changeColorByState(".display."+this.id, state);
+                  });
+                  $('.checkbox-switcher').on('switchChange.bootstrapSwitch', function (event, state) {
+                      save_stat(this.id, state);
+                      changeColorByState(".display."+this.id, state);
+                 });
+             });
             }
              else {
                 $console.text('Save error');
@@ -176,10 +156,8 @@ var nonnegative_validator_fn = function (value, callback) {
         }
       });
     });
-
     function calGrad(instance, td, row, col, prop, value, cellProperties)
     {
-
         var studentHWs = $('#dataTable').data('handsontable').getDataAtRowProp(row, "hw");
         var earnedPoints = 0;
         {{point =0}}
@@ -187,28 +165,21 @@ var nonnegative_validator_fn = function (value, callback) {
                 {{point += hw.homework.points}}
              {{pass}}
         var totalAvailablePoints = {{=point}};
-
         for (var key in studentHWs ) {
           if (studentHWs.hasOwnProperty(key)) {
-
               if ( studentHWs[key])
                 earnedPoints += parseInt(studentHWs[key]);
           }
         }
-
         value = (earnedPoints/totalAvailablePoints) * 100;
         value = Math.round(value*100)/100;
-
-
         if (value)
         {
             var color;
-
             if ( value<70)
                 color = "red";
             else if (value<80)
                 color = "yellow";
-
             if ( color)
             {
               $(td).css({
@@ -216,11 +187,52 @@ var nonnegative_validator_fn = function (value, callback) {
               });
             }
         }
-
         Handsontable.renderers.TextRenderer.apply(this, arguments);
     }
 
 
+    $(document).ready(function(){
+        $(".checkbox-switcher").bootstrapSwitch();
+        
+        $(".checkbox-switcher").each(function(a,elm){
+            var state = $(elm).is(":checked")?true:false;
+            changeColorByState(".display."+this.id, state);
+         });
+       $('.checkbox-switcher').on('switchChange.bootstrapSwitch', function (event, state) {
+           save_stat(this.id, state);
+           changeColorByState(".display."+this.id, state);
+       });
+    });
 
+    function save_stat(stat, value)
+    {
+        $.ajax({
+            url: "{{=URL('statistics', args=section_id)}}",
+            data:{'stat' : stat, 'val' : value},
+            type: 'GET',
+            success: function (res) {
+                if(res)
+                {
+                }
+                 else {
+                    $console.text('Save error');
+                }
+            },
+            error: function () {
+              $console.text("Error something didn't work");
+            }
+      });
+    }
+
+    function changeColorByState (selector, state)
+    {
+        $(selector).each(function(index, elm) {
+           var color = "gray";
+           if (state) {
+               color = "black";
+           }
+           elm.style.color = color;
+       });
+    }
 
 </script>

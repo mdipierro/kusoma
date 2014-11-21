@@ -30,6 +30,7 @@ if auth.user:
     courses = [(s.name,False,URL('default','section',args=s.id)) for s in my_sections()]
     if courses:
         response.menu.append(('My Courses',False,None,courses))
+        response.menu.append(('Dropbox', False, URL('dropbox', 'index')))
 
 if auth.user and auth.user.is_administrator:
     response.menu.append(('Manage',False,None,[

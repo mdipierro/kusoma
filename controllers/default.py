@@ -121,3 +121,6 @@ def calendar():
     return dict(course=course, rows=rows, current_sections=current_sections,
                 past_sections=past_sections)
 
+
+def error():
+    return "not implemented but should display an error page"

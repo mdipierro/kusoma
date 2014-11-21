@@ -1,45 +1,18 @@
-
-
-
 {{extend 'layout.html'}}
 <h1>Student Grade Interface</h1><br><br>
+
+<p>Here you can view your current grades for the selected course. Assignments that have not been graded yet will be listed with a dash (“-“) in place of a grade.  If your teacher chooses to provide any comments, you will be able to see them below your listed grades. Your teacher may also choose to enable statistics for you to view, which will show up to the right of each assignment if they are enabled.</p>
 
 <h4>{{=section.name}} - {{=auth.user.first_name}} {{=auth.user.last_name}}</h4>
 <table class="table">
   <tr>
-   {{if True:}}
-    <th>Assignment</th>	
-   {{pass}}
-   {{if True:}}
+    <th>Assignment</th>
     <th>Grade</th>
-   {{pass}}
-   {{if True:}}
-    <th>Min</th>
-   {{pass}}
-   {{if True:}}
-    <th>Max</>
-   {{pass}}
-   {{if True:}}
-    <th>Average</th>
-   {{pass}}
-   {{if True:}}
-    <th>Median</th>
-   {{pass}}
-   {{if True:}}
-    <th>Mean</th>
-   {{pass}}
-   {{if True:}}
-    <th>Sum</th>
-   {{pass}}
-   {{if True:}}
-    <th>Covariance</th>
-   {{pass}}
-   {{if True:}}
-    <th>Variance</th>
-   {{pass}}
-   {{if True:}}
-    <th>Standard Deviation</th>
-   {{pass}}
+   {{if stat_options:}}{{if stat_options[0].min_score:}}  <th>Min</th> {{pass}}{{pass}}
+   {{if stat_options:}}{{if stat_options[0].max_score:}}  <th>Max</th> {{pass}}{{pass}}
+   {{if stat_options:}}{{if stat_options[0].avg_score:}}  <th>Average</th> {{pass}}{{pass}}
+   {{if stat_options:}}{{if stat_options[0].median_score:}}  <th>Median</th> {{pass}}{{pass}}
+   {{if stat_options:}}{{if stat_options[0].std:}}  <th>Standard Deviation</th> {{pass}}{{pass}}
   </tr>
   {{for g in student_grades:}}
   <tr>
@@ -53,33 +26,11 @@
         </td>
        {{for s in stat:}}
           {{if s['hw'].name == g.homework.name:}}
-            {{if True:}}
-             <td>{{=s['min']}}</td>
-            {{pass}}
-            {{if True:}}
-             <td>{{=s['max']}}</td>
-            {{pass}}
-            {{if True:}}
-             <td>{{=s['average']}}</td>
-            {{pass}}
-            {{if True:}}
-             <td>{{=s['median']}}</td>
-            {{pass}}
-            {{if True:}}
-             <td>{{=s['mean']}}</td>
-            {{pass}}
-            {{if True:}}
-             <td>{{=s['sum']}}</td>
-            {{pass}}
-            {{if True:}}
-             <td>{{=s['cov']}}</td>
-            {{pass}}
-            {{if True:}}
-             <td>{{=s['var']}}</td>
-            {{pass}}
-            {{if True:}}
-             <td>{{=s['std']}}</td>
-            {{pass}}
+            {{if stat_options:}}{{if stat_options[0].min_score:}}  <td>{{=s['min']}}</td> {{pass}}{{pass}}
+            {{if stat_options:}}{{if stat_options[0].max_score:}}  <td>{{=s['max']}}</td> {{pass}}{{pass}}
+            {{if stat_options:}}{{if stat_options[0].avg_score:}}  <td>{{=s['average']}}</td> {{pass}}{{pass}}
+            {{if stat_options:}}{{if stat_options[0].median_score:}}  <td>{{=s['median']}}</td> {{pass}}{{pass}}
+            {{if stat_options:}}{{if stat_options[0].std:}}  <td>{{=s['std']}}</td> {{pass}}{{pass}}
           {{pass}}
        {{pass}}
    {{pass}}
@@ -90,3 +41,134 @@
     <h7>{{=gr.teacher_comment}}</h7>
 {{pass}}
 {{pass}}
+
+<p>If statistics have been enabled by your teacher, you will be able to view them in graphical form below.  You can choose which stats you would like to see by clicking on the appropriate key located beneath the graph.  For instance, if you would like to view the average grade for all assignments, click “Average”.  In addition, you can hover over a point of the graph with your mouse to show you more stats for that particular assignment.</p>
+
+
+    <div id="chartContainer" style="height: 300px; width: 100%;"></div>
+
+
+ <script type="text/javascript">
+	window.onload = function () {
+		var chart = new CanvasJS.Chart("chartContainer",
+		{
+			zoomEnabled: false,
+			title:{
+				text: "Statistics"
+			},
+			axisY2:{
+				interlacedColor: "#F5F5F5",
+				gridColor: "#D7D7D7",
+	 			tickColor: "#D7D7D7"
+			},
+            theme: "theme2",
+            toolTip:{
+                    shared: true
+            },
+			legend:{
+				verticalAlign: "bottom",
+				horizontalAlign: "center",
+				fontSize: 15,
+				fontFamily: "Lucida Sans Unicode"
+			},
+			data: [
+                    {
+                        type: "line",
+                        lineThickness:5,
+                        axisYType:"secondary",
+                        showInLegend: true,
+                        name: "My Grades",
+                        dataPoints: [
+                            {{for g in student_grades:}}
+                                { label: '{{=g.homework.name}}',
+                                  y:  {{if g.assignment_grade.grade:}}
+                                          {{=g.assignment_grade.grade}}
+                                       {{else:}}0{{pass}}
+                                },
+                            {{pass}}
+                        ]
+                    }
+                    {{if stat_options:}}
+                        {{if stat_options[0].min_score:}}
+                            ,{
+                                type: "line",
+                                lineThickness:2,
+                                axisYType:"secondary",
+                                showInLegend: true,
+                                name: "Minimum",
+                                dataPoints: [
+                                       {{for s in stat:}}
+                                            { label: '{{=s['hw'].name}}',
+                                              y:  {{=s['min']}}
+                                            },
+                                        {{pass}}
+                                ]
+                            }
+                        {{pass}}
+                        {{if stat_options[0].max_score:}}
+                            ,{
+                                type: "line",
+                                lineThickness:2,
+                                axisYType:"secondary",
+                                showInLegend: true,
+                                name: "Maximum",
+                                dataPoints: [
+                                       {{for s in stat:}}
+                                            { label: '{{=s['hw'].name}}',
+                                              y:  {{=s['max']}}
+                                            },
+                                        {{pass}}
+                                ]
+                            }
+                        {{pass}}
+                        {{if stat_options[0].avg_score:}}
+                            ,{
+                                type: "line",
+                                lineThickness:2,
+                                axisYType:"secondary",
+                                showInLegend: true,
+                                name: "Average",
+                                dataPoints: [
+                                       {{for s in stat:}}
+                                            { label: '{{=s['hw'].name}}',
+                                              y:  {{=s['average']}}
+                                            },
+                                        {{pass}}
+                                ]
+                            }
+                        {{pass}}
+                        {{if stat_options[0].median_score:}}
+                            ,{
+                                type: "line",
+                                lineThickness:2,
+                                axisYType:"secondary",
+                                showInLegend: true,
+                                name: "Median",
+                                dataPoints: [
+                                       {{for s in stat:}}
+                                            { label: '{{=s['hw'].name}}',
+                                              y:  {{=s['median']}}
+                                            },
+                                        {{pass}}
+                                ]
+                            }
+                        {{pass}}
+                     {{pass}}
+			],
+          legend: {
+            cursor:"pointer",
+            itemclick : function(e) {
+              if (typeof(e.dataSeries.visible) === "undefined" || e.dataSeries.visible) {
+                 e.dataSeries.visible = false;
+              }
+              else {
+                e.dataSeries.visible = true;
+              }
+              chart.render();
+            }
+          }
+        });
+
+chart.render();
+}
+</script>
