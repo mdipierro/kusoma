@@ -220,15 +220,17 @@ def get_relevant_list_new(version_id):
                         flag = True
                         break
             if flag == True:
-                version = {row.version_id}
+                title = db(db.note_version.id == row.version_id).select().first().title
+                version = {'version_id': row.version_id, 'title': title}
                 tag_list.append(version)
             flag = False
+        tag_list = []
             
         version_ids = {'tag': t1, 'version_id': tag_list}
         version_list.append(version_ids)
-        tag_list = []
 
     return dict(rows = version_list)
+    
 def get_note_content(note_id):
     query = (db.note_main.id == db.note_version.note_id
             )&(db.note_main.id == note_id
