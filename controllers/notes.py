@@ -66,6 +66,13 @@ def notepage():
 def noteeditpage():
     return dict()
 
+def relevant():
+    vid = request.vars.vid
+    result = get_relevant_list_new(vid)
+    logger.debug(result)
+    return result
+
+
 @auth.requires_login()
 def noteeditor():
     course_info = db().select(db.course.id, db.course.code)
