@@ -223,10 +223,10 @@ def get_relevant_list_new(version_id):
                 version = {row.version_id}
                 tag_list.append(version)
             flag = False
-        tag_list = []
             
         version_ids = {'tag': t1, 'version_id': tag_list}
         version_list.append(version_ids)
+        tag_list = []
 
     return dict(rows = version_list)
 def get_note_content(note_id):
