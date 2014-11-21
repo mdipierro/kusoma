@@ -1,0 +1,47 @@
+{{extend 'layout.html'}}
+
+<h2>Theme Chosen</h2>
+
+<h4>Theme has been set.</h4>
+<h5>Go <a h
+
+<script>
+setTimeout(
+    function()
+    {
+        {{redirect(URL('themes', 'index'))}}
+    },8000);
+</script>
+
+
+<div id='container'></div>
+
+<script id='template' type='text/ractive'>
+<p>[[time.getSeconds()]]</p>
+</script>
+
+
+<script src='http://cdn.ractivejs.org/latest/ractive.min.js'></script>
+<script>
+
+var ractive = new Ractive({
+    el: 'container',
+    template: '#template',
+    delimeters: ['[[', ']]'],
+    data: {
+        time: new Date()
+        }  
+});
+
+setInterval( function() {
+ ractive.set('time', new Date());
+}, 1000);
+
+</script>
+
+
+
+
+
+<!-- <div>{{=A('go back', _href=URL('theme_picked', args=session.current_theme))}}</div> -->
+    
