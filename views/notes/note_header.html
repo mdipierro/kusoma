@@ -1,0 +1,15 @@
+<style>
+/*  .NoteHeader {border-bottom:1px #DEDEDE solid;}*/
+  .NoteHeader .info {font-weight:bold; list-style:none; margin-right:1em; margin-top:.2em; text-align:right;}
+  .NoteHeader .info li {display:inline; font-family: "myriad pro",sans-serif; font-size:.85em;}
+  .NoteHeader .info li span {border-right:1px solid #52493f; padding-right:.3em;}
+  .NoteHeader .info li a {border-right:1px solid #0e72b5; color:#0e72b5; padding:0 .3em; text-decoration:none;}
+  .NoteHeader .info li a:hover, .info li a:active, .info li a:focus {text-decoration:underline;}
+  .NoteHeader .TopIcon {width:16px;height:16px;}
+</style>
+  <ul class="info">
+    <li><a href='{{=URL("mynotes")}}'><img src="../static/images/notes.png" class="TopIcon" alt="My Notes" title="My Notes" /></a></li>
+    <li><a href='{{=URL("notifications")}}'><img src="../static/images/note_no_message.png" class="TopIcon" alt="Notification" title="Notification" /></a></li>
+    <li><a href='{{=URL("mysubscriptions")}}'><img src="../static/images/note_subscribe.png" alt="Subscription" title="Subscription"/></a></li>
+    <li><a href="#"><img src="../static/images/note_settings.png" alt="Settings" title="Settings"/></a></li>
+  </ul>
