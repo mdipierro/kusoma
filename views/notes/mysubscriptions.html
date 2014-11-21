@@ -13,7 +13,7 @@
 </div>
 
 <script>
-  function Note(noteId, versionId, title, createDate, creator, modifyDate, modifier, uid)
+  function Note(noteId, versionId, title, createDate, creator, modifyDate, modifier, uid, relation)
   {
   this.NoteId = noteId;
   this.VersionId = versionId;
@@ -24,7 +24,12 @@
   this.Modifier = modifier;
   this.UserId = uid;
   this.TitleURL = '<a href="' + '{{=URL("notepage")}}' + '?vid=' + versionId + '">' + title + '</a>';
-  this.unsubscribeURL = '<a href="' + '{{=URL("unsubscribe_note_request")}}' + '?note_id=' + noteId + '&' + 'user_id=' + uid +' " class="btn btn-default">' + 'Unsubscribe' + '</a>';
+  
+  var unsubscribeURL_none = ''
+  this.unsubscribeURL = 'None'
+  // 1 = subscibed, 2=participated
+  if (relation == 1)
+      this.unsubscribeURL = '<a href="' + '{{=URL("unsubscribe_note_request")}}' + '?note_id=' + noteId + '&' + 'user_id=' + uid +' " class="btn btn-default">' + 'Unsubscribe' + '</a>';
   }
 {{
   from gluon.serializers import json
@@ -42,7 +47,7 @@ for(var i in jsonData)
 {
     var o = jsonData[i];
     {console.log(1);
-            var n = new Note(o.note_id, o.version_id, o.title, o.create_on, o.create_by, o.modify_on, o.modify_by, o.user_id);
+            var n = new Note(o.note_id, o.version_id, o.title, o.create_on, o.create_by, o.modify_on, o.modify_by, o.user_id, o.relation);
             noteList.push(n);
     }
 }

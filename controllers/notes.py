@@ -17,13 +17,16 @@ def index():
 #----------------------------------------------------------#
 @auth.requires_login()
 def mysubscriptions():
-    rows = db(db.note_user_note_relation.user_id == auth.user_id and db.note_user_note_relation.relation == 1).select()
+    rows = db(db.note_user_note_relation.user_id == auth.user_id and db.note_user_note_relation.relation != 0).select()
+
     
     note_lists = []
     for row in rows:
+        relation = row.relation
         note_list = get_note_by_id(row.note_id)["notes"]
         for one_row in note_list:
             one_row["user_id"] = auth.user_id
+            one_row["relation"] = relation
             note_lists.append(one_row)
     return dict(notes=note_lists)
 
@@ -264,11 +267,19 @@ def get_subscribed_notes(user_id):
 
 
 def subscribe_note(note_id, user_id):
+    rows_from = db(db.note_user_note_relation).select()
+    for row in rows_from:
+        if row.user_id == user_id and row.note_id == note_id and row.relation is 2:
+            return
     db.note_user_note_relation.update_or_insert((db.note_user_note_relation.note_id==note_id) & (db.note_user_note_relation.user_id==user_id), note_id=note_id, user_id=user_id, relation=1)
     db.commit()
 
 
 def unsubscribe_note(note_id, user_id):
+    rows_from = db(db.note_user_note_relation).select()
+    for row in rows_from:
+        if row.user_id == user_id and row.note_id == note_id and row.relation is 2:
+            return
     db.note_user_note_relation.update_or_insert((db.note_user_note_relation.note_id==note_id) & (db.note_user_note_relation.user_id==user_id), note_id=note_id, user_id=user_id, relation=0)
     db.commit()
 
