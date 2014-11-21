@@ -274,9 +274,16 @@ def mark_message_read(message_id):
     db.commit()
 
 
-def add_messages(user_id, version_id):
-    db.note_message.insert(user_id = user_id, version_id = version_id, has_read = False)
-    db.commit()
+def add_messages(version_id):
+    note_id = None
+    for row in db(db.note_version).select():
+        if row.id == version_id:
+            note_id = row.note_id
+            break
+    for row in db(db.note_user_note_relation).select():
+        if row.note_id == note_id and row.relation is not 0:
+            db.note_message.insert(user_id=row.user_id, version_id=version_id, has_read=False)
+            db.commit()
 
 
 #----------------------------------------------------------#
