@@ -184,9 +184,37 @@ def get_relevant_list(version_id):
                         flag = True
                         break
         if flag == True:
-            version_id = {'version_id': row.version_id}
-            version_list.append(version_id)
+            version_ids = {'version_id': row.version_id}
+            version_list.append(version_ids)
         flag = False
+
+    return dict(rows = version_list)
+
+def get_relevant_list_new(version_id):
+    tag = db(db.note_tag.version_id == version_id).select().first()  
+    rows = db(db.note_tag).select()
+    flag = False
+    version_list = []
+    tag_list = []
+    for t1 in tag.tag:
+        for row in rows:
+            note = db(db.note_main.version_id == row.version_id).select()
+            if note.__len__() > 0:
+                tag_temp = db(db.note_tag.version_id == note.first().version_id).select().first()
+                for t2 in tag_temp.tag:
+                    if flag == True:
+                        break                
+                    if t2 == t1:
+                        flag = True
+                        break
+            if flag == True:
+                version = {row.version_id}
+                tag_list.append(version)
+            flag = False
+            tag_list = []
+            
+        version_ids = {'tag': t1, 'version_id': tag_list}
+        version_list.append(version_ids)
 
     return dict(rows = version_list)
 
