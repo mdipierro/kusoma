@@ -1,3 +1,6 @@
+def group_chat():
+    return dict()
+
 def chat_i_frame():
  	return dict(sessions=get_group_chat_sessions_for_user())
 
