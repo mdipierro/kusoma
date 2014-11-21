@@ -19,6 +19,7 @@ def theme_picked():
     css_pathname = static_subfolder + '/'  + css_filename
     session.css_pathname = css_pathname
     session.current_theme = URL('static', css_pathname)
+    print session.current_theme
 
 	# Get the rows for this css, can just reuse URL as identifier
     picked = db(db.theme.URL == css_pathname).select()
@@ -59,10 +60,15 @@ def display_popular():
 
 
 def preview():    
-    # THERE SHOULD BE DEFAULT VALUES BECAUSE args(0) and args(1) MAY BE MISSING
-    subfolder = request.args(0)
-    filename = request.args(1)
-    session.preview_theme = subfolder + '/' + filename
+   
+    if request.args(0) and request.args(1):
+        subfolder = request.args(0)
+        filename = request.args(1)
+        session.preview_theme = subfolder + '/' + filename
+       
+    else:
+        session.preview_theme = 'images/default.jpg'
+
     return dict()
 
 '''
