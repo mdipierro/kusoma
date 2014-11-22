@@ -1,1 +1,22 @@
 {{extend 'layout.html'}}
+
+<h2>Add a Recording for Section {{=section.name}}</h2>
+    
+<h3>Create a New Recording</h3>
+<p>This will start a new Google Hangout on Air. Provide a name for the recording and whether this is an official class recording or not.</p>
+{{=A('Start a new recording', _id="create-recording", _class="btn btn-primary",callback=URL('new_recording',args=section.id),
+target="hangout-start")}}
+<div id="hangout-start"></div>
+
+<h3>Add an Existing Recording</h3>
+{{=MARKMIN("Enter a link of the form ``https://www.youtube.com/watch?v=dQw4w9WgXcQ``")}}
+{{=form_existing}}
+
+<script>
+    jQuery(document).ready( function () {
+        jQuery('#create-recording').click(function (e) {
+            $(e.target).remove();
+        });
+    });
+</script>
+<script src="https://apis.google.com/js/platform.js"></script>

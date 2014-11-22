@@ -1,0 +1,13 @@
+{{extend 'layout.html'}}
+<h2>lms299 wiki rss feed</h2>
+<b>This feed is created on:</b> {{=feedCreated_on}} <br />
+<a href="{{=URL('wiki')}}"> back to wiki </a>
+<table class="table">
+    {{for row in pages:}}
+    <tr><td>
+    <b>Title:</b> {{=row.title}} [<a href="{{=URL('wikishow', args=row.id, scheme=True, host=True, extension=False)}}"> show </a>]<br />
+    <b>Description:</b> {{=MARKMIN(row.body)}}<br />
+    <b>Created on:</b> {{=row.created_on}}<br />
+    </td></tr>
+    {{pass}}
+</table>

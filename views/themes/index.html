@@ -8,15 +8,25 @@ LMS Themes
 
 
 <table>
+  <tr>
   {{for row in rows:}}
-
+  
   {{=A(row.name, _href=URL('theme_picked', args=row.URL))}}
   &nbsp&nbsp&nbsp&nbsp 
   {{=A('preview', callback=URL('preview', args=row.image_URL), target='theme_preview')}}
-
-  </br>
-  {{pass}}
   
+  </br>
+  
+  {{pass}}
+  </tr>
+  <tr>
+  <br><br><br>
+  <h4>Most Popular Themes: </h4>
+  {{for row in db(db.theme).select(db.theme.ALL, orderby=db.theme.use_count*-1, limitby=(0, 3)):}}
+        {{=A(row.name, _href=URL('theme_picked', args=row.URL))}}
+        <br>
+  {{pass}}
+  </tr>
   <div id='theme_preview'></div>
  
 

@@ -26,3 +26,8 @@
 
 <h3>Syllabus</h3>
 {{=MARKMIN(section.syllabus)}}
+
+{{if membership:}}
+    <h3>Recordings</h3>
+    {{=LOAD('recordings','section.load', args=section.id, ajax=True)}}
+{{pass}}

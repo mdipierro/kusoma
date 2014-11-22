@@ -1,3 +1,10 @@
+def chat_i_frame():
+ 	return dict(sessions=get_group_chat_sessions_for_user())
+
+@auth.requires_login()
+def google_hangouts():
+    return dict(sessions=get_group_chat_sessions_for_user())
+
 @auth.requires_login()
 def history():
     return dict(sessions=get_group_chat_sessions_for_user())
