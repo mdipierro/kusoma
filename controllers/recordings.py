@@ -84,29 +84,25 @@ def create():
     section = db.course_section(section_id) or redirect(URL('default','index'))
     add_section_menu(section_id)
 
+
     ###################################
     # Build form for new recording
     ###################################
 
     # Test if current user is teacher or student for class
     # if teacher, is_class field can be set to true
+    fields_new = []
     if is_user_teacher(section_id):
-        fields = ['name', 'is_class', ]
-    elif is_user_student(section_id):
-        fields = ['name']
-    else:
+        fields_new.append(Field('new_recording_is_class',
+                                type='boolean',
+                                default=True,
+                                label=T('This is an official class recording')))
+    elif not is_user_student(section_id):
         redirect(URL('section',args=section_id))
 
-    start = False
-
-    db.recording.course_id.default = section_id
-    form_new = SQLFORM(db.recording, fields=fields)
-
-    # If form is accepted we show start a hangout button
-    # TODO add condition to verify hangout has not yet been started
-    if form_new.process().accepted:
-        start = True
-        redirect(URL('start', args=(form_new.vars.id)))
+    form_new = SQLFORM.factory(*fields_new,
+                               submit_button='Create a New Recording',
+                               _id='form_new')
 
 
     ###################################
@@ -115,7 +111,10 @@ def create():
 
     fields_existing = [Field('youtube_link', label=T('Youtube URL'))]
     if is_user_teacher(section_id):
-        fields_existing.append(Field('is_class', 'boolean', label=T('This is an official class recording'), default=True))
+        fields_existing.append(Field('is_class',
+                                     'boolean',
+                                     label=T('This is an official class recording'),
+                                     default=True))
 
     form_existing = SQLFORM.factory(*fields_existing)
 
@@ -159,26 +158,22 @@ def create():
     return dict(form_new=form_new, form_existing=form_existing, section=section)
 
 @auth.requires_login()
-def new_recording():
-    """
-    This is an ajax callback from the create view. It will load the hangouts button
-    in place of the 'Start a new hangout button'.
-    """
-    section_id = request.args(0,cast=int)
-
-    id = db.recording.insert(course_id=section_id)
-    return LOAD('recordings', 'start.load', args=id, ajax=True)
-
-@auth.requires_login()
-def start():
+def hoa_button():
     """
     This loads the Hangouts button
     """
-    video_id = request.args(0,cast=int)
-    video = db.recording(video_id) or redirect(URL('default','index'))
+    section_id = request.args(0,cast=int)
+    section = db.course_section(section_id) or redirect(URL('default','index'))
 
-    section_id = video.course_id
-    add_section_menu(section_id)
+    #If user is a teacher, we expect a new_recording_is_class checkbox was presented. If it was
+    #selected, then we expect new_recording_is_class=on as a var. If not selected, we expect no
+    #new_recording_is_class var.
+    is_class = False
+    if is_user_teacher(section_id) and request.vars['new_recording_is_class']:
+        is_class = True
+
+    video_id = db.recording.insert(course_id=section_id, is_class=is_class)
+    video = db.recording(video_id)
 
     users = dict()
     start = False
@@ -186,7 +181,8 @@ def start():
     if not video.youtube_id:
         start = True
     users = users_in_section(9, [STUDENT,TEACHER])
-    callback_url=URL('recordings', 'api', args=['recording', video.id], vars=request.get_vars, host=True, hmac_key=API_SIGN_KEY)
+    callback_url=URL('recordings', 'api', args=['recording', video.id],
+                     vars=request.get_vars, host=True, hmac_key=API_SIGN_KEY)
 
     return dict(start=start, users=users, callback_url=callback_url)
 
@@ -220,7 +216,9 @@ def api():
     def PUT(*args,**vars):
         if args[0] == 'recording':
             if args[1]:
-                return db(db.recording.id == args[1]).validate_and_update(youtube_id=vars['youtube_id'], name=get_youtube_title(vars['youtube_id']))
+                return db(db.recording.id == args[1]).validate_and_update(
+                    youtube_id=vars['youtube_id'],
+                    name=get_youtube_title(vars['youtube_id']))
         return dict()
 
     def DELETE(*args,**vars):
