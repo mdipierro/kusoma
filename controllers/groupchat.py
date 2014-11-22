@@ -1,3 +1,8 @@
+def hagouts_url_for_session():
+    import gluon.contrib.simplejson as simplejson
+    data = simplejson.loads(request.body.read())
+    return dict(data)
+
 def group_chat():
     return dict()
 
