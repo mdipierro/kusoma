@@ -1,9 +1,15 @@
 {{extend 'layout.html'}}
 
-<h2>Theme has been set.</h2>
-<p>redirecting in 5 seconds... &nbsp&nbsp<button onclick="location.href = '{{=URL('default', 'index')}}'">Go Now</button></p>
 
-<p><button onclick="location.href = '{{=URL('themes', 'themeBack')}}'">Go Back</button> and choose a different theme.</p>
+<div class="panel panel-default">
+  <div class="panel-heading">
+    <h1 class="panel-title">Theme Has Been Set</h1>
+  </div>
+  <div class="panel-body">
+    <p>redirecting in 5 seconds... &nbsp&nbsp<button onclick="location.href = '{{=URL('default', 'index')}}'">Go Now</button></p>
+    <p><button onclick="location.href = '{{=URL('themes', 'themeBack')}}'">Go Back</button> and choose a different theme.</p>
+  </div>
+</div>
 
 <script src="//code.jquery.com/jquery-1.10.2.js"></script>
 <script type="text/javascript">
