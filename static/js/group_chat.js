@@ -44,6 +44,14 @@ function onClientReady() {
           $('#msg').html("test: " + e);
         });
         
+        $.ajax({
+          contentType: 'application/json',
+          type: 'POST',
+          url: "http://127.0.0.1:8000/lms299/groupchat/hagouts_url_for_session.json",
+          data: '{ "name": "Test", "location": "Chicago" }',
+          dataType: 'json'
+        })
+
         var pageUrl = window.location.search.substring(1);
         var urlParams = pageUrl.split('&');
         console.log(urlParams);

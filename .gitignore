@@ -16,6 +16,7 @@ progress.log
 **/*.pyc
 .pythonhistory
 **/__init__*
+.idea/
 
 # Ignore temp files.
 **/#*

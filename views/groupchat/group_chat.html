@@ -1,32 +1,17 @@
 <!DOCTYPE html>
 <html>
     <head>
+         <link type="text/css" rel="stylesheet" href="{{=URL('static','css/group-chat.css')}}">
+
         <script type="text/javascript" src="//hangoutsapi.talkgadget.google.com/talkgadget/apps/gadgets/js/rpc.js"></script>
         <script type="text/javascript" src="//hangoutsapi.talkgadget.google.com/hangouts/api/hangout.js?v=1.0"></script>
-
         <script type="text/javascript" src="//ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js"></script>
         <script type="text/javascript" src="//www.google.com/jsapi"></script>
         <script type="text/javascript" src="{{=URL('static','js/group_chat.js')}}"></script>
     </head>
     <body>
         <!-- message to be displayed -->
-        <div id="msg"></div>
-        <style type="text/css">
-        <!--
-        .button {
-          border-radius: 3px;
-          -moz-border-radius: 3px;
-          background: -webkit-gradient(linear, left top, left bottom, from(#fff), to(#ddd));
-          background: -moz-linear-gradient(top, #fff, #ddd);  
-          border: 1px solid #bbb;
-        }
-
-        .button:active {
-            background: -webkit-gradient(linear, left top, left bottom, from(#aaa), to(#333)); 
-            background: -moz-linear-gradient(bottom, #ddd, #aaa); }
-
-        -->
-        </style>
+        <div id="msg"></div>l
         <h3>Simple Hangout App</h3>
         <p><input class="button" type="button" value="Show participants!" id="showParticipants" style="visibility:hidden;" onClick="showParticipants()" /></p>
         <div id="participantsDiv"></div>

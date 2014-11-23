@@ -13,17 +13,62 @@ def theme_picked():
     """
     static_subfolder = request.args(0)
     css_filename = request.args(1)
+
+    session.prev_theme = session.current_theme
     
     css_pathname = static_subfolder + '/'  + css_filename
+    session.css_pathname = css_pathname
     session.current_theme = URL('static', css_pathname)
-    redirect(URL('themes', 'index'))    
+    print session.current_theme
+
+	# Get the rows for this css, can just reuse URL as identifier
+    picked = db(db.theme.URL == css_pathname).select()
+    
+    # Get the first use_count for the first row (there should only be one...)
+    uses = int(picked[0].use_count) + 1
+
+	# This update syntax works
+    db(db.theme.URL == css_pathname).update(use_count=uses)
+
+    #redirect(URL('themes', 'index'))    
+    redirect(URL('themes', 'countdown'))
+
     return dict()
 
+def countdown():
+    return dict()
+
+'''
+If user rejects theme, they get sent here
+'''
+def themeBack():
+
+    # delete 1 from theme count for the reject theme
+    rejected_theme = db(db.theme.URL == session.css_pathname).select()
+    uses = int(rejected_theme[0].use_count) - 1
+    db(db.theme.URL == session.css_pathname).update(use_count=uses)
+
+    #reset theme back to previous
+    session.current_theme = session.prev_theme
+    session.prev_theme = ''
+    redirect(URL('themes', 'index'))
+    return dict()
+
+def display_popular():
+    for row in db(db.theme).select(db.theme.name, orderby=db.theme.use_count*-1, limitby=(0, 3)):
+        row.name, row.use_count
+
+
 def preview():    
-    # THERE SHOULD BE DEFAULT VALUES BECAUSE args(0) and args(1) MAY BE MISSING
-    subfolder = request.args(0)
-    filename = request.args(1)
-    session.preview_theme = subfolder + '/' + filename
+   
+    if request.args(0) and request.args(1):
+        subfolder = request.args(0)
+        filename = request.args(1)
+        session.preview_theme = subfolder + '/' + filename
+       
+    else:
+        session.preview_theme = 'images/default.jpg'
+
     return dict()
 
 '''
@@ -37,5 +82,4 @@ def course_themes():
     grid=SQLFORM.smartgrid(db.course, linked_tables=['theme'])
 
     return dict(grid=grid)
-
 

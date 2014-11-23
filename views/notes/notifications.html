@@ -1,0 +1,107 @@
+{{extend 'layout.html'}}
+
+<div class='NoteHeader'>
+  {{include 'notes/note_header.html'}}
+</div>
+
+<h3>Notifications</h3>
+
+<div id="noteGrid">
+  <div id="custom-toolbar">
+    </div>
+  <table id="table-javascript"></table>
+</div>
+
+<script>
+  function Note(note_id, version_id, title, modify_by, modify_on, has_read, message_id)
+  {
+  this.note_id = note_id;
+  this.title = title;
+  this.modify_by = modify_by;
+  this.modify_on = modify_on;
+  this.has_read = has_read;
+  this.TitleURL = '<a href="' + '{{=URL("mark_message_read_request")}}' + '?vid=' + version_id + '&message_id=' + message_id+ '">' + title + '</a>';
+  }
+{{
+  from gluon.serializers import json
+}}
+  var jsonData = 
+{{
+  response.write(json(rows), escape=False)
+  }};
+
+  var noteList = [];
+  console.log(jsonData);
+  for(var i in jsonData)
+  {
+  var o = jsonData[i];
+  //if(o.note_main)
+  {
+      console.log(1);
+//  if(o.note_version.note_id)
+  {
+  var n = new Note(o.note_version.note_id, o.note_version.id, o.note_version.title, o.note_version.modify_by, o.note_version.modify_on, o.note_message.has_read, o.note_message.id);
+  noteList.push(n);
+  
+  }
+  }
+  }
+
+    $(function () {
+
+            $('#table-javascript').bootstrapTable({
+                data: noteList,
+                cache: false,
+                height: 400,
+                striped: true,
+                pagination: true,
+                pageSize: 50,
+                pageList: [10, 25, 50, 100, 200],
+                search: false,
+                showColumns: false,
+                showRefresh: false,
+                minimumCountColumns: 2,
+                clickToSelect: true,
+                toolbar: '#custom-toolbar',
+                                                  
+                columns: [
+                {
+                    field: 'note_id',
+                    title: 'note_id',
+                    align: 'right',
+                    valign: 'bottom',
+                    sortable: true
+                }, {
+                    field: 'TitleURL',
+                    title: 'title',
+                    align: 'center',
+                    valign: 'middle',
+                    sortable: true
+                }, {
+                    field: 'modify_by',
+                    title: 'Modify By',
+                    align: 'left',
+                    valign: 'top',
+                    sortable: true
+                }, {
+                    field: 'modify_on',
+                    title: 'Modify On',
+                    align: 'center',
+                    valign: 'middle'
+  }, {
+                    field: 'has_read',
+                    title: 'readed',
+                    align: 'center',
+                    valign: 'middle',
+                    sortable:true
+  },
+    
+  ]
+            });
+    });
+
+
+  </script>
+
+<link rel="stylesheet" href="../static/css/bootstrap-table.css">
+<script src="../static/js/bootstrap-table.js"></script>
