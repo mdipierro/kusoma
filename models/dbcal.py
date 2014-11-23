@@ -167,7 +167,7 @@ def delete_event(event_id):
     query = db.cal_event.id==event_id
     query &= db.cal_event.owner_id == auth.user_id
     n = db(query).delete()
-    if n ==0:
+    if n == 0:
         exception('Could not find event or you are not the owner')
 
 def my_events(start_date, end_date, json=False):
@@ -257,9 +257,9 @@ def _last_of_month():
 
 def _convert_string_to_date(date, fmt=INPUT_DATE_FORMAT, default=DATE_DEFAULT.start):
     """
-	Converts a date string to a datetime object.
-	If date is already a datetime object, it just gets returned.
-	Otherwise, a default date is returned.
+    Converts a date string to a datetime object.
+    If date is already a datetime object, it just gets returned.
+    Otherwise, a default date is returned.
     """
     from datetime import datetime
     from types import StringType
