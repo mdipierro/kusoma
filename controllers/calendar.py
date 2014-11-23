@@ -22,12 +22,13 @@ def create():
     where the course_id is the course that the user selected and the referenced event is the
     record just created in db.cal_event
     """
+
     if request.args:
         start = _convert_string_to_date(request.args(0), fmt=OUTPUT_DATE_FORMAT)
     else:
         start = datetime.datetime.today()
-    start = datetime.datetime(start.year, start.month, start.day)
-    end = datetime.datetime(start.year, start.month, start.day + 1)
+        # We re-create the date so the time is 00:00:00, rather than the current time.
+    	start = datetime.datetime(start.year, start.month, start.day)
     db.cal_event.start_date.default = start
     db.cal_event.end_date.default = end
     url = URL('calendar', 'my_calendar')
@@ -42,18 +43,22 @@ def create():
 #@auth.requires_login()
 @auth.requires(CAN_MANAGE_EVENTS)
 def manage():
-    # get a list of events that the current user created
-    # display the events in a grid or a picklist
-    # The user can selects an event and clicks a delete button
-    # Delete the event that the user selected
+    """
+    Get a list of events that the current user created
+    display the events in a grid or a picklist.
+    The user can selects an event and clicks a delete button.
+    Delete the event that the user selected.
+    """
     return dict(grid=SQLFORM.smartgrid(db.cal_event))
 
 @auth.requires_login()
 def my_calendar():
-    # input: a course ID passed in through the session object
-    # use course picker list to select a course
-    # With the given course ID, query all of the events related to that course
-    # The view will use the object as a datasource for fullcalendar and display the events
+    """
+    input: a course ID passed in through the session object
+    use course picker list to select a course
+    With the given course ID, query all of the events related to that course
+    The view will use the object as a datasource for fullcalendar and display the events
+    """
     rows = ''
     selectedCourse = request.vars.selectedCourse
     if selectedCourse:
