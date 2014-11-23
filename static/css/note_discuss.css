@@ -1,0 +1,38 @@
+body
+{
+    display: block;
+}
+a {
+    cursor: pointer;
+}
+
+ul {
+    list-style: none;
+    margin-left: 20px;
+}
+.comment-author{
+    font-weight: bold;
+}
+.comment-date{
+    color: #888;
+}
+.comment-tools{
+    font-size: 10px;
+    width: 40px;
+}
+.comment-body{
+}
+.comment-info{
+    width: 140px;
+}
+
+table td{
+    vertical-align: top;
+}
+
+table{
+    width: 100%;
+}
+.body-wrapper{
+    margin-bottom: 20px;
+}
