@@ -13,8 +13,7 @@
 </div>
 <div class="bs-example">
   <ul class="nav nav-tabs" id="myTab">
-    <li><a class="active" data-toggle="tab" href="#article">Note</a></li>
-	<li><a data-toggle="tab" href="#relevant">Relevant</a></li>
+    <li class="active"><a data-toggle="tab" href="#article">Note</a></li>
     <li><a data-toggle="tab" href="#discussion">Discussion</a></li>
   </ul>
   <div class="tab-content">
@@ -24,15 +23,15 @@
 		  <li><a onclick='#' href='{{=URL("noteeditpage",vars=dict(vid=request.vars.vid,nid=request.vars.nid))}}'>Edit</a></li>
 		  <li><a onclick='' href='{{=URL("get_all_history_versions_request",vars=dict(nid=request.vars.nid))}}'>History</a></li>
 		  <li><a onclick='' href='{{=URL("subscribe",vars=dict(nid=request.vars.nid))}}'>Subscibe</a></li>
-          <li><a onclick='#' href='{{=URL("relevant",vars=dict(vid=request.vars.vid))}}'>Relevant</a></li>
 		</ul>
 	  </div>
       <h3 id="articleTitle"></h3>
       <p id="articleContent"></p>
-    </div>
-    <div id="relevant" class="tab-pane fade">
-      <h3 id="Relevant"></h3>
-      <p id="articleContent"></p>
+	  <div class="list-group">
+		<a href="#relevantList" onclick="showRelevant()" class="list-group-item active"><span id="bdCount" class="badge"></span>Relevant</a>
+		<dl id="relevantList" class="dl-horizontal">
+		</dl>
+	  </div>	  
     </div>
     <div id="discussion" class="tab-pane fade">
 	  <div class="NoteHeader">
@@ -104,11 +103,6 @@
     </div>
   </div>
 </div>
-<div class="list-group">
-  <a href="#relevantList" onclick="showRelevant()" class="list-group-item active"><span id="bdCount" class="badge"></span>Relevant</a>
-  <dl id="relevantList" class="dl-horizontal">
-  </dl>
-</div>
 
 
 <script type="text/javascript">
@@ -179,7 +173,20 @@
             {
                 relTab.show();
             }
-        }
+		}
+
+  {{
+	  from gluon.serializers import json
+  }}
+  var jsonData = 
+	  {{
+		  response.write(json(message), escape=False)
+	  }};
+
+  if (jsonData == 'True')
+  {
+	$('#imgMessage').attr('src', '../static/images/note_message.png');
+  }
 </script>
 
 <script type="text/html" id="add-comment-template"></script>

@@ -117,8 +117,20 @@
 	  });
   });
   
+  {{
+	  from gluon.serializers import json
+  }}
+  var jsonData = 
+	  {{
+		  response.write(json(message), escape=False)
+	  }};
 
+  if (jsonData == 'True')
+  {
+	$('#imgMessage').attr('src', '../static/images/note_message.png');
+  }
   </script>
 
 <link rel="stylesheet" href="../static/css/bootstrap-table.css">
 <script src="../static/js/bootstrap-table.js"></script>
+

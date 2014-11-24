@@ -23,7 +23,7 @@
   this.ModifyDate = modifyDate;
   this.Modifier = modifier;
   this.UserId = uid;
-  this.TitleURL = '<a href="' + '{{=URL("notepage")}}' + '?vid=' + versionId + '">' + title + '</a>';
+  this.TitleURL = '<a href="' + '{{=URL("notepage")}}' + '?vid=' + versionId +'&nid=' + noteId + '">' + title + '</a>';
   
   var unsubscribeURL_none = ''
   this.unsubscribeURL = 'None'
@@ -124,10 +124,25 @@ for(var i in jsonData)
                           
   ]
             });
-    });
+  });
+
+
+    {{
+	  from gluon.serializers import json
+  }}
+  var jsonData = 
+	  {{
+		  response.write(json(message), escape=False)
+	  }};
+
+  if (jsonData == 'True')
+  {
+	$('#imgMessage').attr('src', '../static/images/note_message.png');
+  }
 
 
   </script>
 
 <link rel="stylesheet" href="../static/css/bootstrap-table.css">
 <script src="../static/js/bootstrap-table.js"></script>
+

@@ -1,4 +1,8 @@
 {{extend 'layout.html'}}
+<style>
+  .read {}
+  .unread {font-weight:600;}
+</style>
 
 <div class='NoteHeader'>
   {{include 'notes/note_header.html'}}
@@ -20,7 +24,8 @@
   this.modify_by = modify_by;
   this.modify_on = modify_on;
   this.has_read = has_read;
-  this.TitleURL = '<a href="' + '{{=URL("mark_message_read_request")}}' + '?vid=' + version_id + '&message_id=' + message_id+ '">' + title + '</a>';
+  var style_class = (has_read == 'False' ? 'unread' : 'read');
+  this.TitleURL = '<a class="' + style_class +'" href="' + '{{=URL("mark_message_read_request")}}' + '?vid=' + version_id + '&nid=' + note_id + '&message_id=' + message_id+  '">' + title + '</a>';
   }
 {{
   from gluon.serializers import json
@@ -40,7 +45,7 @@
       console.log(1);
 //  if(o.note_version.note_id)
   {
-  var n = new Note(o.note_version.note_id, o.note_version.id, o.note_version.title, o.note_version.modify_by, o.note_version.modify_on, o.note_message.has_read, o.note_message.id);
+  var n = new Note(o.note_id, o.version_id, o.title, o.modify_by, o.modify_on, o.has_read, o.message_id);
   noteList.push(n);
   
   }
@@ -98,10 +103,24 @@
     
   ]
             });
-    });
+  });
+
+    {{
+	  from gluon.serializers import json
+  }}
+  var jsonData = 
+	  {{
+		  response.write(json(message), escape=False)
+	  }};
+
+  if (jsonData == 'True')
+  {
+	$('#imgMessage').attr('src', '../static/images/note_message.png');
+  }
 
 
   </script>
 
 <link rel="stylesheet" href="../static/css/bootstrap-table.css">
 <script src="../static/js/bootstrap-table.js"></script>
+
