@@ -7,12 +7,10 @@ a chat session.
 db.define_table(
     'group_chat_session',
     Field('title'),
+	Field('url'),
     Field('course_section', 'reference course_section', requires=NE),
     Field('start_time', 'datetime', default=request.now),
-    Field('end_time', 'datetime'),
-    Field('is_active', 'boolean', default=True),
     Field('initiator', 'reference membership'),
-    Field('on_page')
 )
 
 """
@@ -48,11 +46,12 @@ db.define_table(
     Field('user_id', 'reference membership', requires=NE)
 )
 
-def init_group_chat_session(course_section_id, title=None, user_id=auth.user_id):
+def init_group_chat_session(course_section_id, url, title=None, user_id=auth.user_id):
     """
     Initiates a group chat session. Returns the group chat session id.
     """
     session_id = db.group_chat_session.insert(course_section=course_section_id,
+											  url=url,
                                               initiator=user_id,
                                               title=title)
     db.group_chat_user_session.insert(session_id=session_id,

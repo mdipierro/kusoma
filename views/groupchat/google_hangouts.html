@@ -1,18 +1,34 @@
-<!--Need an Html file where we would launch our hangout
-
-
--->
 {{extend 'layout.html'}}
-<h1>Hangout</h1>
-<!--all hangout apps are written in  JavaScript and they are launched from the hangout -->
-<!-- TO DO: display it if the user is logged in, otherwise prompt for login first -->
-<div class="panel-group" id="hangout" role="tablist" aria-multiselectable="true">
-    <!--We need an action: ask google plus to create a new hangout -->
-    <!-- the Get method will append all the parameters as part of the urls -->
-    <form action="https://plus.google.com/hangouts/_" method="GET">
-    <!-- the gid is the identifier for the app that will get created -->
-    <input type="hidden" name="gid" value="1034917723522"/>
-    <!-- the gd is the data that will be sending into the app when it starts -->
-    <input type="submit" value="Join Hangout"/>
-</form>
-</div>
+
+<h1>Hangouts</h1>
+
+{{for row in courses:}}
+<table cellspacing="0" cellpadding="0">
+    <tr>
+        <th>
+            <a href="{{=URL('default', 'course',args=row.course_section.id)}}">{{=row.course_section.name}}</a>
+        </th>
+        <th>
+            <a target="_blank" href="https://plus.google.com/hangouts/_?gid=317987183028">
+                {{=IMG(_src=URL('static','images/start-hangout.png'))}}
+            </a>
+        </th>
+    </tr>
+    <tr>
+        <td><h5>Join Ongoing Hangouts</h5></td>
+    </tr>
+    <tr>
+        <td></td>
+        <td><a href="{{=URL('default', 'course',args=row.course_section.id)}}">{{=row.course_section.name}}</a></td>
+    </tr>
+    <tr>
+        <td></td>
+        <td><a href="{{=URL('default', 'course',args=row.course_section.id)}}">{{=row.course_section.name}}</a></td>
+    </tr>
+
+    <br><br>
+</table>
+{{pass}}
+
+
+
