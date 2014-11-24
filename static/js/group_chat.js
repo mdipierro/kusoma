@@ -1,33 +1,3 @@
-$(document).ready(function() {
-  console.log("ready!");
-});
-
-function sendMessage() {
-  console.log("sendMessage()");
-  gapi.hangout.data.sendMessage("Plz work!!!");
-}
-
-function showParticipants() {
-  var participants = gapi.hangout.getParticipants();
-
-  var retVal = '<p>Participants: </p><ul>';
-
-  for (var index in participants) {
-    var participant = participants[index];
-
-    if (!participant.person) {
-      retVal += '<li>A participant not running this app</li>';
-    }
-    retVal += '<li>' + participant.person.displayName + '</li>';
-  }
-
-  retVal += '</ul>';
-
-  var div = document.getElementById('participantsDiv');
-
-  div.innerHTML = retVal;
-}
-
 function onClientReady() {
   // When API is ready...                                                         
   gapi.hangout.onApiReady.add(
@@ -35,15 +5,6 @@ function onClientReady() {
       sendHangoutsUrl();
 
       document.getElementById('showParticipants').style.visibility = 'visible';
-        
-      gapi.hangout.onParticipantsAdded.add(function(e) {
-        console.log(e);
-      });
-        
-      gapi.hangout.data.onMessageReceived.add(function(e) {
-        console.log("onMessageReceived()");
-        $('#msg').html("test: " + e);
-      });
 
       var pageUrl = window.location.search.substring(1);
       var urlParams = pageUrl.split('&');
