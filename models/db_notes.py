@@ -43,7 +43,7 @@ db.define_table('note_user_note_relation',
                 Field('note_id', 'reference note_main', notnull=True),
                 Field('user_id', 'reference auth_user', default=auth.user_id),
                 #two relations: unsubscribed 0, subscribed 1, and participated 2
-                Field('relation', notnull=True))
+                Field('relation','integer', notnull=True))
 
 
 class notedb:
