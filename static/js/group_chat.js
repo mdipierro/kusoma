@@ -22,8 +22,8 @@ var lms299 = {
           $.ajax({
             contentType: 'application/json',
             type: 'POST',
-            url: "http://127.0.0.1:8000/lms299/groupchat/hagouts_url_for_session.json",
-            data: '{ "sessionId": "1", "hangoutsUrl ": "' + gapi.hangout.getHangoutUrl() + '"}',
+            url: "http://127.0.0.1:8000/lms299/groupchat/hangouts_url_for_session.json",
+            data: '{ "sessionId": "1", "hangoutsUrl": "' + gapi.hangout.getHangoutUrl() + '"}',
             dataType: 'json'
           });
         }
