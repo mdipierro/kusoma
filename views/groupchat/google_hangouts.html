@@ -3,7 +3,7 @@
 <h1>Hangouts</h1>
 
 {{for row in courses:}}
-<table cellspacing="0" cellpadding="0">
+<table>
     <tr>
         <th>
             <a href="{{=URL('default', 'course',args=row.course_section.id)}}">{{=row.course_section.name}}</a>
