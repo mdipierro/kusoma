@@ -3,7 +3,8 @@
 def index():
     #session.flash = "Select a theme for your LMS"    
     rows = db(db.theme.name).select()
-    return dict(rows = rows)
+    images=db(db.image.name).select()
+    return dict(rows = rows, images=images)
 
 
 def theme_picked():
