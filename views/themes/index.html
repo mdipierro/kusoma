@@ -38,5 +38,13 @@
   
   <div id='theme_preview'></div>
  
+  <h3>    
+{{=T('Image gallery')}}
+</h3>
+
+{{for image in images:}}
+  <img style="width:200px; height:200px; max-width:200px;float: right; margin: 0px 0px 15px 15px;" src="{{=URL('static','images/%s' %(image.thumbfile))}}">
+      {{pass}}
+</img>
 
 

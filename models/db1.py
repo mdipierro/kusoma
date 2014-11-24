@@ -3,6 +3,8 @@
 #  
 # ROLES = ('teacher','student','auditor','grader')
 
+from os import path
+
 STUDENT, TEACHER = 'student','teacher'
 
 NE = IS_NOT_EMPTY()
@@ -12,6 +14,29 @@ db.define_table('theme',
                 Field('URL', requires=NE), 
                 Field('image_URL', requires=NE),
                 Field('use_count', default=0))
+
+db.define_table('image',
+    Field('name', requires=NE),
+    Field('thumbfile', 'upload', uploadfolder=path.join(
+        request.folder,'static','photo_gallery'
+        ), autodelete=True, label=T('ThumbFile'))
+)
+
+if db(db.image).isempty():
+    db.image.insert(name="Light Theme", 
+                        thumbfile = 'light.jpg')
+    db.image.insert(name="Dark Theme",
+                        thumbfile = 'dark.jpg')
+    db.image.insert(name='Bluish',
+                        thumbfile = 'bluish.jpg')
+    db.image.insert(name='Maverick',
+                        thumbfile = 'maverick.jpg')
+    db.image.insert(name='Sky Blue',
+                        thumbfile = 'skyblue.jpg')
+    db.image.insert(name='Sunny Hill',
+                        thumbfile = 'sunnyhill.jpg')
+    db.image.insert(name="Default",
+                        thumbfile = 'default.jpg')
 
 
 if db(db.theme).isempty():
