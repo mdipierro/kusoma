@@ -5,9 +5,11 @@ def google_hangouts():
     return dict(courses=courses)
 
 
-def hagouts_url_for_session():
+def hangouts_url_for_session():
+    print "inside  hangouts_url_for_session"
     import gluon.contrib.simplejson as simplejson
     data = simplejson.loads(request.body.read())
+    init_chat(data["sessionId"], data["hangoutsUrl"])
     return dict(data)
 
 def group_chat():
@@ -28,8 +30,8 @@ def history_session(session_id):
 
 
 @auth.requires_login()
-def init_chat(course_section_id, title):
-	return dict(session_id=init_group_chat_session(course_section_id, title))
+def init_chat(course_section_id, url):
+    return dict(session_id=init_group_chat_session(course_section_id, url))
 
 
 @auth.requires_login()
