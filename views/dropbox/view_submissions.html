@@ -6,7 +6,7 @@ Date: 10/23/14
 {{extend 'layout.html'}}
 
 <h2>{{=section.name}} Dropbox</h2>
-<a href="{{=URL('../manage_uploads',args=(section.id))}}"
+<a href="{{=URL('dropbox', 'manage_uploads',args=(section.id))}}"
    class="btn btn-primary">&lt;&lt; Go Back</a><p></p>
 
 {{if rejected is None:}}
@@ -19,7 +19,7 @@ Date: 10/23/14
                    class="btn btn-primary btn-small">Download</td>
             <td><a href="{{=URL('feedback',args=(submission.submission.id, section_id, homework_id))}}"
                    class="btn btn-primary btn-small">Leave Feedback</td>
-            <td><a href="{{=URL('../../gradebook/teacher',args=(section_id))}}"
+            <td><a href="{{=URL('gradebook', 'teacher',args=(section_id))}}"
                    class="btn btn-primary btn-small">Grade Submission</td>
         </tr>
         <tr></tr>
@@ -27,5 +27,5 @@ Date: 10/23/14
     </table>
 {{else:}}
     <h3>{{=rejected}}</h3>
-<h4><a href="{{=URL('../../default/section',args=(section_id))}}">View this section</a></h4>
+<h4><a href="{{=URL('default', 'section',args=(section_id))}}">View this section</a></h4>
 {{pass}}
