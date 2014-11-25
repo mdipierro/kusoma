@@ -28,9 +28,9 @@ var lms299 = {
         });
       }
         
-      function setUserChatSettings(cameraEnabled, micEnabled) {
-        gapi.hangout.av.setCameraMute(cameraEnabled);
-        gapi.hangout.av.setMicrophoneMute(micEnabled);
+      function setUserChatSettings(muteCamera, muteMicrophone) {
+        gapi.hangout.av.setCameraMute(muteCamera);
+        gapi.hangout.av.setMicrophoneMute(muteMicrophone);
       }
     }
   }
