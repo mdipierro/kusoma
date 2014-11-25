@@ -10,14 +10,18 @@ logger.setLevel(logging.DEBUG)
 
 
 def index():
-    return get_note_list('')
+
+    message = note_header()
+    return dict(get_note_list(''), message=message)
 
 #----------------------------------------------------------#
 # View related functions
 #----------------------------------------------------------#
 @auth.requires_login()
 def mysubscriptions():
-    rows = db(db.note_user_note_relation.user_id == auth.user_id and db.note_user_note_relation.relation != 0).select()
+   
+    rows = db((db.note_user_note_relation.user_id == auth.user_id) & (db.note_user_note_relation.relation == 1)).select()
+
     
     note_lists = []
     for row in rows:
@@ -27,7 +31,9 @@ def mysubscriptions():
             one_row["user_id"] = auth.user_id
             one_row["relation"] = relation
             note_lists.append(one_row)
-    return dict(notes=note_lists)
+
+    message = note_header()
+    return dict(notes=note_lists, message=message)
 
 @auth.requires_login()
 def unsubscribe_note_request():
@@ -37,16 +43,18 @@ def unsubscribe_note_request():
 
 @auth.requires_login()
 def notifications():
-    return get_messages(auth.user_id)
+    message = note_header()
+    
+    return dict(get_messages(auth.user_id),message=message)
 
 @auth.requires_login()
 def mark_message_read_request():
     message_id = request.vars["message_id"]
     vid = request.vars["vid"]
-    
+    nid = request.vars.nid
     if message_id:
         mark_message_read(message_id)
-    redirect(URL('notepage', args=[''], vars=dict(vid=vid)))
+    redirect(URL('notepage', vars=dict(vid=vid,nid=nid)))
 
 def get_all_history_versions_request():
     note_id = request.vars.nid
@@ -54,16 +62,28 @@ def get_all_history_versions_request():
 
 @auth.requires_login()
 def mynotes():
-    return get_my_note_list(auth.user_id)
+    message = note_header()
+    return dict(get_my_note_list(auth.user_id), message=message)
 
 def notepage():
     vid = request.vars.vid
-    logger.debug(vid)
+
     note = get_note_by_vid(vid)
-    return note
+    rel = get_relevant_list_new(vid)
+    message = note_header()
+    return dict(note,rels=rel,message=message)
+
+def note_header():
+    result = False
+    if auth.user:
+        result = has_unread(auth.user_id)
+
+    return result
+
 @auth.requires_login()
 def noteeditpage():
-    return dict()
+    message = note_header()
+    return dict(message=message)
 
 @auth.requires_login()
 def noteeditor():
@@ -72,21 +92,31 @@ def noteeditor():
     if 'vid' in request.vars:
         vid = request.vars.vid
         result = dict( get_note_by_vid(vid),courseList=course_info)
-        logger.debug(result)
+
     else:
         result = dict(courseList=course_info)
     return result
 
+@auth.requires_login()
+def subscribe():
+
+    note_id = request.vars.nid
+
+    subscribe_note(note_id, auth.user_id)
+    redirect(URL('mysubscriptions'))
+
 
 def getNotePost():
+    logger.debug('245')
     uid = auth.user_id
     cid = request.vars.CourseId
     title = request.vars.Title
     tag = request.vars['Tag[]']
+
     content = request.vars.Content
     action = request.vars.Action
+    logger.debug(action)
     try:
-
         if action == 'add':
             nid = add_new_note(cid, uid)
         elif action == 'update':
@@ -96,8 +126,9 @@ def getNotePost():
         add_tag(vid, tag)
     except Exception, e:
         logger.error('error:%s' % e)
-        
+    
     return dict(VersionId='vid')
+
 
 
 def date_handler(obj):
@@ -138,7 +169,7 @@ def get_note_list(search_content):
 def get_note_by_vid(vid):
     query = (db.note_version.id == vid)&(db.note_version.id == db.note_tag.version_id)&(db.note_main.id ==db.note_version.note_id)
     rows = db(query).select(db.note_version.ALL,db.note_main.course_id,db.note_tag.tag)
-    logger.debug(rows[0])
+
     return dict(note=rows[0]) 
 
 def get_note_by_id(note_id):
@@ -207,15 +238,16 @@ def get_relevant_list_new(version_id):
                         break
             if flag == True:
                 title = db(db.note_version.id == row.version_id).select().first().title
-                version = {'version_id': row.version_id, 'title': title}
+                version = {'version_id': row.version_id, 'title': title,'note_id': row.note_id}
                 tag_list.append(version)
             flag = False
-        tag_list = []
+
             
         version_ids = {'tag': t1, 'version_id': tag_list}
         version_list.append(version_ids)
+        tag_list = []
 
-    return dict(rows = version_list)
+    return dict(rels = version_list)
     
 def get_note_content(note_id):
     query = (db.note_main.id == db.note_version.note_id
@@ -235,6 +267,10 @@ def add_note_version(note_id, user_id,title, content):
     db.commit()
     db(db.note_main.id == note_id ).update(version_id = versionId)
     db.commit()
+
+    add_messages(versionId)
+    participate_note(note_id, user_id)
+
     return versionId
     
 def add_tag(vid, tags):
@@ -250,20 +286,47 @@ def delete_tag(version_id, tag):
 #----------------------------------------------------------#
 #interface about message
 #----------------------------------------------------------#
+@auth.requires_login()
+def has_unread(user_id):
+    result = 'False'
+    dt = get_messages(user_id)['rows']
+
+    for m in dt:
+
+        if m['has_read'] == 'False':
+            result = 'True'
+            break
+
+    return result
+    
 def get_messages(user_id):
     query = (db.note_message.user_id == user_id) & (db.note_message.version_id == db.note_version.id)
     #rows = db(query).select(db.note_version.note_id, db.note_version.title, db.note_version.modify_by, db.note_version.modify_on, db.note_message.has_read)
     rows = db(query).select(db.note_version.note_id, db.note_version.id,db.note_version.title, db.note_version.modify_by, db.note_version.modify_on, db.note_message.has_read, db.note_message.id)
-    return dict(rows=rows)
+
+    note_lists=[]
+    for row in rows:
+        modify_by = (db(db.auth_user.id == row.note_version.modify_by).select().first()).first_name + ' ' + (db(db.auth_user.id == row.note_version.modify_by).select().first()).last_name
+        note_list = {'note_id': row.note_version.note_id, 'version_id': row.note_version.id, 'title': row.note_version.title, 'modify_by': modify_by, 'modify_on': row.note_version.modify_on,'has_read':row.note_message.has_read, 'message_id':row.note_message.id}
+        note_lists.append(note_list)
+        
+    return dict(rows=note_lists)
 
 def mark_message_read(message_id):
     db(db.note_message.id == message_id).update(has_read = True)
     db.commit()
 
 
-def add_messages(user_id, version_id):
-    db.note_message.insert(user_id = user_id, version_id = version_id, has_read = False)
-    db.commit()
+def add_messages(version_id):
+    note_id = None
+    for row in db(db.note_version).select():
+        if row.id == version_id:
+            note_id = row.note_id
+            break
+    for row in db(db.note_user_note_relation).select():
+        if (row.note_id == note_id) and (row.relation != 0):
+            db.note_message.insert(user_id=row.user_id, version_id=version_id, has_read=False)
+            db.commit()
 
 
 #----------------------------------------------------------#
@@ -291,15 +354,18 @@ def get_subscribed_notes(user_id):
     rows_from = db(db.note_user_note_relation).select()
     notes_list = []
     for row in rows_from:
-        if row.user_id == user_id and row.relation is not 0:
+        if (row.user_id == user_id) and (row.relation != 2):
             notes_list.append(row.note_id)
     return dict(rows=notes_list)
 
 
 def subscribe_note(note_id, user_id):
+    
     rows_from = db(db.note_user_note_relation).select()
     for row in rows_from:
-        if row.user_id == user_id and row.note_id == note_id and row.relation is 2:
+
+        if row.user_id == user_id and str(row.note_id) == note_id and row.relation == 2:
+            session.flash = 'No need subscribe as a participator!'
             return
     db.note_user_note_relation.update_or_insert((db.note_user_note_relation.note_id==note_id) & (db.note_user_note_relation.user_id==user_id), note_id=note_id, user_id=user_id, relation=1)
     db.commit()
@@ -308,7 +374,7 @@ def subscribe_note(note_id, user_id):
 def unsubscribe_note(note_id, user_id):
     rows_from = db(db.note_user_note_relation).select()
     for row in rows_from:
-        if row.user_id == user_id and row.note_id == note_id and row.relation is 2:
+        if (row.user_id == user_id) and (str(row.note_id) == note_id) and (row.relation == 2):
             return
     db.note_user_note_relation.update_or_insert((db.note_user_note_relation.note_id==note_id) & (db.note_user_note_relation.user_id==user_id), note_id=note_id, user_id=user_id, relation=0)
     db.commit()

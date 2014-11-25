@@ -6,12 +6,13 @@
 
 <div id="noteGrid">
   <div id="custom-toolbar">
-	<a href='{{=URL("noteeditpage")}}' class="btn btn-default">Create Note</a>
-    </div>
+	<a  class="btn btn-default" href='{{=URL("noteeditpage")}}'>Create Note</a>
+  </div>
   <table id="table-javascript"></table>
 </div>
 
-<script type="text/javascript">
+  <script type="text/javascript">
+	console.log(1);
 	function Note(noteId, versionId, title, createDate, creator, modifyDate, modifier, uid, code)
   {
 	  this.NoteId = noteId;
@@ -51,7 +52,7 @@
   
   
   $(function () {
-	  
+  
 	  $('#table-javascript').bootstrapTable({
 		  data: noteList,
 		  cache: false,
@@ -124,6 +125,21 @@
 		  ]
 	  });
   });
+
+  {{
+	  from gluon.serializers import json
+  }}
+  var jsonData = 
+	  {{
+		  response.write(json(message), escape=False)
+	  }};
+
+  console.log(jsonData);
+  if (jsonData == 'True')
+  {
+	$('#imgMessage').attr('src', '../static/images/note_message.png');
+  }
+
 
 
   </script>

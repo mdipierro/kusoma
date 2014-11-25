@@ -105,7 +105,7 @@ def feedback():
         response.flash = 'form accepted'
         redirect(URL('view_submissions', args=[section_id, homework_id]))
 
-    return dict(form=form, homework=homework)
+    return dict(form=form, homework=homework, section_id=section_id)
 
 @auth.requires_login()
 def submit():
@@ -142,4 +142,4 @@ def submit():
         redirect(URL('manage_uploads', args=section_id))
     elif form.errors:
         response.flash = 'Error file not submitted'
-    return dict(form=form)
+    return dict(form=form, section_id=section_id)

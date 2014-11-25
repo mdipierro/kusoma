@@ -1,7 +1,10 @@
 {{extend 'layout.html'}}
+
+
 <div class='NoteHeader'>
   {{include 'notes/note_header.html'}}
 </div>
+
 <div>
   {{if 'vid' in request.vars:}}
   <iframe src='{{=URL("noteeditor", vars=dict(vid=request.vars.vid,nid=request.vars.nid))}}' style='width:100%;height:1024px;border:0;'></iframe>
@@ -12,3 +15,19 @@
   <iframe src='{{=URL("noteeditor")}}' style='width:100%;height:1024px;border:0;'></iframe>
   {{pass}}
   </div>
+
+  <script type="text/javascript">
+	  {{
+	  from gluon.serializers import json
+  }}
+  var jsonData = 
+	  {{
+		  response.write(json(message), escape=False)
+	  }};
+
+  if (jsonData == 'True')
+  {
+	$('#imgMessage').attr('src', '../static/images/note_message.png');
+  }
+  </script>
+
