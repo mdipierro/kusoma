@@ -46,6 +46,7 @@ def add_section_menu(section_id):
                 ('Dropbox',False,URL('dropbox','manage_uploads',args=section_id)),
                 ('Chat',False,URL('chat','manage_chat',args=section_id)),
                 ('Recordings',False,URL('recordings','index',args=section_id)),
+                ('Poll',False,URL('polling','polls',args=section_id)),
                 ]))
 
 if False:    
