@@ -10,7 +10,9 @@
         </th>
         <th>
             <a href="https://plus.google.com/hangouts/_?gid=317987183028">
-                {{=IMG(_src=URL('static','images/start-hangout.png'))}}
+                <!--{{=IMG(_src=URL('static','images/start-hangout.png'))}}-->
+                <!---->
+                {{=IMG(_src=URL('static','images/start-hangout.png'),_onclick= "{{=URL(r=request,f='insert_new_hangout')}}")}}
             </a>
         </th>
     </tr>
