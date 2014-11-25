@@ -46,6 +46,9 @@ def init_group_chat_session(course_section, url=None, title=None, user_id=auth.u
     return session_id
 	
 def update_group_chat_session(session_id, url):
+    """
+	Updates the chat session with the url to join the session
+	"""
     db(db.group_chat_session.id == session_id).update(url = url)
 
 def add_user_to_group_chat_session(group_chat_session_id, user_id=auth.user_id):
@@ -66,9 +69,15 @@ def update_user_group_chat_settings(use_microphone=False, use_web_camera=False, 
     db.commit();
 	
 def update_user_setting_mic(use_microphone, user_id=request.now):
+    """
+	Updates the user settings with a true or false depending on if the user wants to use a mic
+	"""
     db(db.group_chat_user_settings.user_id == user_id).update(use_microphone = use_microphone)
 	
 def update_user_setting_cam(use_web_camera, user_id=request.now):
+    """
+	Updates the user settings with a true or false depending on if the user wants to use a camera
+	"""
     db(db.group_chat_user_settings.user_id == user_id).update(use_web_camera = use_web_camera)
 
 def get_user_group_chat_settings(user_id=request.now):
