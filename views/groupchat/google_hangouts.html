@@ -6,16 +6,16 @@
 <table>
     <tr>
         <th>
-            <a href="{{=URL('default', 'course',args=row.course_section.id)}}">{{=row.course_section.name}}</a>
+            <a href="{{=URL('default', 'section',args=row.course_section.id)}}">{{=row.course_section.name}}</a>
         </th>
         <th>
-           <form action="https://plus.google.com/hangouts/_" method="GET">
-             <input type="hidden" name="gid" value="317987183028"/>
-             <input type="hidden" name="gd" value='{"course_section_id":"{{=row.course_section.id}}", "user_id":"{{=auth.user_id}}"}'/>
-             
-             <input type="submit" value="Join Hangout"/>
-           </form>
-           {{=IMG(_src=URL('static','images/start-hangout.png'))}}
+            <form action="https://plus.google.com/hangouts/_" method="GET">
+                <input type="hidden" name="gid" value="317987183028"/>
+                <input type="hidden" name="gd"
+                       value='{"course_section_id":"{{=row.course_section.id}}", "user_id":"{{=auth.user_id}}"}'/>
+
+                {{=INPUT(_type="image", _src=URL('static','images/start-hangout.png'), alt="Submit Form")}}
+            </form>
         </th>
     </tr>
     <tr>
