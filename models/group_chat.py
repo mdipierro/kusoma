@@ -46,7 +46,7 @@ def init_group_chat_session(course_section, url=None, title=None, user_id=auth.u
     return session_id
 	
 def update_group_chat_session(session_id, url):
-    db(db.group_chat_session.id = session_id).update(url=url)
+    db(db.group_chat_session.id == session_id).update(url = url)
 
 def add_user_to_group_chat_session(group_chat_session_id, user_id=auth.user_id):
     """
@@ -55,16 +55,6 @@ def add_user_to_group_chat_session(group_chat_session_id, user_id=auth.user_id):
     db.group_chat_user_session.insert(session_id=group_chat_session_id,
                                       user_id=user_id)
     db.commit()
-
-
-def add_user_group_chat_settings(use_microphone=False, use_web_camera=False, user_id=request.now):
-    """
-    Sets up passed in user's group chat preferences.
-    """
-    db.group_chat_user_settings.insert(user_id=user_id,
-                                       use_microphone=use_microphone,
-                                       use_web_camera=use_web_camera)
-    db.commit();
 	
 def update_user_group_chat_settings(use_microphone=False, use_web_camera=False, user_id=request.now):
     """
@@ -74,13 +64,18 @@ def update_user_group_chat_settings(use_microphone=False, use_web_camera=False, 
                                        use_microphone=use_microphone,
                                        use_web_camera=use_web_camera)
     db.commit();
-
+	
+def update_user_setting_mic(use_microphone, user_id=request.now):
+    db(db.group_chat_user_settings.user_id == user_id).update(use_microphone = use_microphone)
+	
+def update_user_setting_cam(use_web_camera, user_id=request.now):
+    db(db.group_chat_user_settings.user_id == user_id).update(use_web_camera = use_web_camera)
 
 def get_user_group_chat_settings(user_id=request.now):
     """
     Retrieves a user's group chat settings.
     """
-    return db(db.group_chat_user_settings.user_id == user_id).select()
+    return db.group_chat_user_settings(db.group_chat_user_settings.user_id==user_id)
 
 def get_group_chat_sessions_for_user(user_id=auth.user_id):
     """
