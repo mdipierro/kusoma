@@ -4,8 +4,16 @@ var lms299 = {
       gapi.hangout.onApiReady.add(
         function(eventObj) {
         sendHangoutsUrl();
+
+        gapi.hangout.av.onCameraMute.add(function(e) {
+          updateUserSettingCamera(e.isCameraMute);
+        });
+
+        gapi.hangout.av.onMicrophoneMute.add(function(e) {
+          updateUserSettingMicrophone(e.isMicrophoneMute);
+        });
       });
-      
+
       function getParameter(name) {
         var pageUrl = window.location.search.substring(1);
         var urlParams = pageUrl.split('&');
@@ -24,6 +32,26 @@ var lms299 = {
           type: 'POST',
           url: "http://127.0.0.1:8000/lms299/groupchat/hangouts_url_for_session.json",
           data: '{ "sessionId": "1", "hangoutsUrl": "' + gapi.hangout.getHangoutUrl() + '"}',
+          dataType: 'json'
+        });
+      }
+
+      function updateUserSettingCamera(muteCamera) {
+        $.ajax({
+          contentType: 'application/json',
+          type: 'POST',
+          url: "http://127.0.0.1:8000/lms299/groupchat/update_user_settings_camera.json",
+          data: '{ "muteCamera": "' + muteCamera + '"}',
+          dataType: 'json'
+        });
+      }
+
+      function updateUserSettingMicrophone(muteMicrophone) {
+        $.ajax({
+          contentType: 'application/json',
+          type: 'POST',
+          url: "http://127.0.0.1:8000/lms299/groupchat/update_user_settings_microphone.json",
+          data: '{ "muteMicrophone": "' + muteMicrophone + '"}',
           dataType: 'json'
         });
       }
