@@ -27,7 +27,7 @@
 <h3>Syllabus</h3>
 {{=MARKMIN(section.syllabus)}}
 
-{{if membership:}}
+{{if membership or is_user_teacher(section.id):}}
     <h3>Recordings</h3>
     {{=LOAD('recordings','section.load', args=section.id, ajax=True)}}
 {{pass}}
