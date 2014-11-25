@@ -7,7 +7,6 @@ var lms299 = {
       gapi.hangout.onApiReady.add(
         function(eventObj) {
         sendHangoutsUrl();
-
         gapi.hangout.av.onCameraMute.add(function(e) {
           updateUserSettingCamera(e.isCameraMute);
         });
@@ -25,18 +24,20 @@ var lms299 = {
         for (var i = 0; i < urlParams.length; i++) {
           var param = urlParams[i].split('=');
           if (param[0] == name) {
-            alert (param[1]);
+            return param[1];
           }
         }
       }
       
       // Sends the Hangouts URL to the lms299 web2py instance via an AJAX call.
       function sendHangoutsUrl() {
+        var gd = $.parseJSON(decodeURIComponent(getParameter('gd')));
+        gd.hangoutUrl = gapi.hangout.getHangoutUrl();
         $.ajax({
           contentType: 'application/json',
           type: 'POST',
           url: "http://127.0.0.1:8000/lms299/groupchat/hangouts_url_for_session.json",
-          data: '{ "sessionId": "1", "hangoutsUrl": "' + gapi.hangout.getHangoutUrl() + '"}',
+          data: JSON.stringify(gd),
           dataType: 'json'
         });
       }

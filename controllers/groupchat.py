@@ -11,9 +11,9 @@ def google_hangouts():
 def hangouts_url_for_session():
     import gluon.contrib.simplejson as simplejson
     data = simplejson.loads(request.body.read())
-    update_existing_hangout(data["sessionId"], data["hangoutsUrl"])
-    settings = get_user_group_chat_settings()
-    update_user_group_chat_settings(settings.use_microphone, settings.use_camera)
+    insert_new_hangout(data['course_section_id'], data['user_id'], data['hangoutUrl']);
+    '''settings = get_user_group_chat_settings()'''
+    '''update_user_group_chat_settings(settings.use_microphone, settings.use_camera)'''
     return dict(data)
 	
 @auth.requires_login()
@@ -31,8 +31,8 @@ def update_user_settings_camera():
     return dict(data)
 
 @auth.requires_login()
-def insert_new_hangout(course_section):
-    return dict(session_id=init_group_chat_session(course_section))
+def insert_new_hangout(course_section_id, user_id, hangout_url):
+    return dict(session_id=init_group_chat_session(course_section_id, user_id, hangout_url))
 	
 @auth.requires_login()
 def update_existing_hangout(session_id,  url):

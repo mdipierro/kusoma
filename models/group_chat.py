@@ -32,14 +32,13 @@ db.define_table(
     Field('user_id', 'reference membership', requires=NE)
 )
 
-def init_group_chat_session(course_section, url=None, title=None, user_id=auth.user_id):
+def init_group_chat_session(course_section, user_id=auth.user_id, url=None):
     """
     Initiates a group chat session. Returns the group chat session id.
     """
     session_id = db.group_chat_session.insert(course_section=course_section,
 											  url=url,
-                                              initiator=user_id,
-                                              title=title)
+                                              initiator=user_id)
     db.group_chat_user_session.insert(session_id=session_id,
                                       user_id=user_id)
     db.commit()
