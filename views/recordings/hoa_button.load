@@ -12,6 +12,11 @@
                 {{pass}}
             ]
         });
+        
+        /* We wanted to remove the Hangouts button once it is clicked so that it
+           could not be clicked a second time and have duplicate entries in the database.
+           For some reason, it seems the Hangout button prevents us from registering
+           a click event, so this does not work to remove the button. */
         $('#hangouts-button').click(function () {
             $(this).remove();
         });
