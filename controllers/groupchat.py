@@ -1,3 +1,6 @@
+def group_chat():
+    return dict()
+
 @auth.requires_login()
 def google_hangouts():
     courses = db(db.membership.auth_user == auth.user.id).select()
