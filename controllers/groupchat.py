@@ -24,7 +24,7 @@ def update_user_settings_microphone():
     return dict(data)
 
 @auth.requires_login()
-def update_user_settings_microphone():
+def update_user_settings_camera():
     import gluon.contrib.simplejson as simplejson
     data = simplejson.loads(request.body.read())
     update_user_setting_cam(data[muteCamera])
