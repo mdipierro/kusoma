@@ -69,12 +69,8 @@ var lms299 = {
 
       // Updates the Google+ Hanougts instance settings using the passed in parameters.
       function setUserChatSettings(muteCamera, muteMicrophone) {
-        if (muteCamera != undefined) {
-          gapi.hangout.av.setCameraMute(muteCamera);
-        }
-        if (muteMicrophone != undefined) {
-          gapi.hangout.av.setMicrophoneMute(muteMicrophone);
-        }
+        gapi.hangout.av.setCameraMute(muteCamera);
+        gapi.hangout.av.setMicrophoneMute(muteMicrophone);
       }
     }
   }
