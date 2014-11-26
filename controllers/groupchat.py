@@ -4,7 +4,21 @@ def group_chat():
 
 @auth.requires_login()
 def google_hangouts():
+    """
+    getting user data to pass to google_hangouts.html
+    """
     memberships = db(db.membership.auth_user == auth.user.id).select()
+    """
+    if the user doesnt exist in the settings table, add them, then get their settings
+    to return to google_hangouts.html
+    """
+    if user_group_chat_settings_exists():
+        insert_user_group_chat_settings()
+    user_settings = get_user_group_chat_settings()
+    
+    """
+    get a list of the chat sessions
+    """
     note_lists = []
     for membership in memberships:
         chat_sessions = db(db.group_chat_session.course_section == membership.course_section).select(
@@ -12,7 +26,7 @@ def google_hangouts():
         note_lists.append(chat_sessions)
 
     response.files.insert(0, URL('static', 'css/chat.css'))
-    return dict(memberships=memberships, ids=note_lists)
+    return dict(memberships=memberships, user_settings=user_settings,  ids=note_lists)
 
 
 @auth.requires_login()
@@ -26,8 +40,7 @@ def hangouts_url_for_session():
 
     data = simplejson.loads(request.body.read())
     insert_new_hangout(data['course_section_id'], data['user_id'], data['hangoutUrl']);
-    '''settings = get_user_group_chat_settings()'''
-    '''update_user_group_chat_settings(settings.use_microphone, settings.use_camera)'''
+    print "past insert_new_hangout"
     return dict(data)
 
 
@@ -39,7 +52,7 @@ def update_user_settings_microphone():
     import gluon.contrib.simplejson as simplejson
 
     data = simplejson.loads(request.body.read())
-    update_user_setting_mic(data[muteMicrophone])
+    update_user_setting_mic(data['muteMicrophone'])
     return dict(data)
 
 
@@ -51,7 +64,7 @@ def update_user_settings_camera():
     import gluon.contrib.simplejson as simplejson
 
     data = simplejson.loads(request.body.read())
-    update_user_setting_cam(data[muteCamera])
+    update_user_setting_cam(data['muteCamera'])
     return dict(data)
 
 
