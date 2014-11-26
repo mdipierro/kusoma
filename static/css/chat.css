@@ -1,3 +1,5 @@
-th { height: 80px;
-font-size: 26px;
+th {
+    height: 80px;
+    font-size: 26px;
 }
+table {border: none;}

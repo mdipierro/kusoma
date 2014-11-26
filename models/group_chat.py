@@ -6,24 +6,10 @@ a chat session.
 """
 db.define_table(
     'group_chat_session',
-    Field('title'),
 	Field('url'),
     Field('course_section', 'reference course_section', requires=NE),
     Field('start_time', 'datetime', default=request.now),
     Field('initiator', 'reference membership'),
-)
-
-"""
-A single chat message that will be sent from
-a user to a chat session (many users can receive a
-single chat message).
-"""
-db.define_table(
-    'group_chat_message',
-    Field('chat_message', requires=NE),
-    Field('sender_id', 'reference membership', requires=NE),
-    Field('session_id', 'reference group_chat_session', requires=NE),
-    Field('time_sent', 'datetime', default=request.now)
 )
 
 """
@@ -32,8 +18,8 @@ Individual chat settings for a user.
 db.define_table(
     'group_chat_user_settings',
     Field('user_id','reference membership', requires=NE),
-    Field('use_microphone', 'boolean'),
-    Field('use_web_camera', 'boolean')
+    Field('mute_microphone', 'boolean'),
+    Field('mute_web_camera', 'boolean')
 )
 
 """
@@ -46,18 +32,24 @@ db.define_table(
     Field('user_id', 'reference membership', requires=NE)
 )
 
-def init_group_chat_session(course_section_id, url, title=None, user_id=auth.user_id):
+def init_group_chat_session(course_section, user_id=auth.user_id, url=None):
     """
     Initiates a group chat session. Returns the group chat session id.
     """
-    session_id = db.group_chat_session.insert(course_section=course_section_id,
+    session_id = db.group_chat_session.insert(course_section=course_section,
 											  url=url,
-                                              initiator=user_id,
-                                              title=title)
+                                              initiator=user_id)
     db.group_chat_user_session.insert(session_id=session_id,
                                       user_id=user_id)
     db.commit()
     return session_id
+	
+def update_group_chat_session(session_id, url):
+    """
+	Updates the chat session with the url to join the session
+	"""
+    db(db.group_chat_session.id == session_id).update(url = url)
+    db.commit()
 
 def add_user_to_group_chat_session(group_chat_session_id, user_id=auth.user_id):
     """
@@ -66,53 +58,51 @@ def add_user_to_group_chat_session(group_chat_session_id, user_id=auth.user_id):
     db.group_chat_user_session.insert(session_id=group_chat_session_id,
                                       user_id=user_id)
     db.commit()
-
-def add_group_chat_message(message, group_chat_session_id, user_id=auth.user_id):
-    """
-    Associates the passed in message from the given sender to the passed
-    in session.
-    """
-    db.group_chat_message.insert(chat_message=message,
-                                 sender_id=user_id,
-                                 to_session_id=group_chat_session_id)
-    db.commit();
-
-def add_user_group_chat_settings(use_microphone=False, use_web_camera=False, user_id=request.now):
-    """
-    Sets up passed in user's group chat preferences.
-    """
-    db.group_chat_user_settings.insert(user_id=user_id,
-                                       use_microphone=use_microphone,
-                                       use_web_camera=use_web_camera)
-    db.commit();
 	
-def update_user_group_chat_settings(use_microphone=False, use_web_camera=False, user_id=request.now):
+def update_user_group_chat_settings(mute_microphone=False, mute_web_camera=False, user_id=auth.user_id):
     """
     Updates passed in user's group chat preferences if they exist, otherwise insert.
     """
     db.group_chat_user_settings.update_or_insert(user_id=user_id,
-                                       use_microphone=use_microphone,
-                                       use_web_camera=use_web_camera)
-    db.commit();
+                                       mute_microphone=mute_microphone,
+                                       mute_web_camera=mute_web_camera)
+    db.commit()
+    
+def insert_user_group_chat_settings(mute_microphone=False, mute_web_camera=False, user_id=auth.user_id):
+    """
+    inserts passed in user's group chat preferences if they exist, otherwise insert.
+    """
+    db.group_chat_user_settings.insert(user_id=user_id,
+                                       mute_microphone=mute_microphone,
+                                       mute_web_camera=mute_web_camera)
+    db.commit()
+	
+def update_user_setting_mic(mute_microphone, user_id=auth.user_id):
+    """
+	Updates the user settings with a true or false depending on if the user wants to use a mic
+	"""
+    db(db.group_chat_user_settings.user_id == user_id).update(mute_microphone = mute_microphone)
+    db.commit()
+	
+def update_user_setting_cam(mute_web_camera, user_id=auth.user_id):
+    """
+	Updates the user settings with a true or false depending on if the user wants to use a camera
+	"""
+    db(db.group_chat_user_settings.user_id == user_id).update(mute_web_camera = mute_web_camera)
+    db.commit()
 
-
-def get_user_group_chat_settings(user_id=request.now):
+def get_user_group_chat_settings(user_id=auth.user_id):
     """
     Retrieves a user's group chat settings.
     """
-    return db(db.group_chat_user_settings.user_id == user_id).select()
+    data = db(db.group_chat_user_settings.user_id==user_id).select().first()
+    return data
 
-def get_group_chat_messages():
+def user_group_chat_settings_exists(user_id=auth.user_id):
     """
-    Retrieves all groups chat messages regardless of user
+    Checks to see if the user has settings in the table
     """
-    return db(db.group_chat_message).select()
-
-def get_group_chat_messages_for_session(session_id):
-    """
-    Retrieve all messages for a chat session.
-    """
-    return db(db.group_chat_message.session_id == session_id).select()
+    return db(db.group_chat_user_settings.user_id==user_id).isempty()
 
 def get_group_chat_sessions_for_user(user_id=auth.user_id):
     """
@@ -122,6 +112,5 @@ def get_group_chat_sessions_for_user(user_id=auth.user_id):
     toReturn = []
     for chatSession in chatSessions:
         toReturn.append({'session_info': (db(db.group_chat_session._id == chatSession.session_id).select())[0],
-                         'members': db(db.group_chat_user_session.session_id == chatSession.session_id).select(),
-                         'messages': get_group_chat_messages_for_session(chatSession.session_id)})
+                         'members': db(db.group_chat_user_session.session_id == chatSession.session_id).select()})
     return toReturn
