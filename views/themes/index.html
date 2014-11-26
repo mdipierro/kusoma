@@ -2,32 +2,49 @@
 {{include 'web2py_ajax.html'}}
 
 
-<h1>
-LMS Themes
-</h1>
+<div class="page-header">
+    <h1>LMS Themes</h1>
+</div>
 
 
-<table>
-  <tr>
-  {{for row in rows:}}
+
+<div class="btn-group">
+  <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown" aria-expanded="false">
+    Select Theme <span class="caret"></span>
+  </button>
+  <ul class="dropdown-menu" role="menu">
+    {{for row in rows:}}
+    <li>{{=A(row.name, _href=URL('theme_picked', args=row.URL))}}</li>
+    {{pass}}   
+  </ul>
+</div>
+<div class="btn-group">
+  <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown" aria-expanded="false">
+    Preview Theme <span class="caret"></span>
+  </button>
+  <ul class="dropdown-menu" role="menu">
+    {{for row in rows:}}
+    <li>{{=A(row.name, callback=URL('preview', args=row.image_URL), target='theme_preview')}}</li>
+    {{pass}}   
+  </ul>
+</div>   
   
-  {{=A(row.name, _href=URL('theme_picked', args=row.URL))}}
-  &nbsp&nbsp&nbsp&nbsp 
-  {{=A('preview', callback=URL('preview', args=row.image_URL), target='theme_preview')}}
-  
-  </br>
-  
-  {{pass}}
-  </tr>
-  <tr>
-  <br><br><br>
   <h4>Most Popular Themes: </h4>
   {{for row in db(db.theme).select(db.theme.ALL, orderby=db.theme.use_count*-1, limitby=(0, 3)):}}
         {{=A(row.name, _href=URL('theme_picked', args=row.URL))}}
         <br>
   {{pass}}
-  </tr>
+ 
+  
   <div id='theme_preview'></div>
  
+  <h3>    
+{{=T('Image gallery')}}
+</h3>
 
-</table>
+{{for image in images:}}
+  <img style="width:200px; height:200px; max-width:200px;float: right; margin: 0px 0px 15px 15px;" src="{{=URL('static','images/%s' %(image.thumbfile))}}">
+      {{pass}}
+</img>
+
+
