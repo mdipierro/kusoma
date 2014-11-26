@@ -12,7 +12,7 @@
             <form action="https://plus.google.com/hangouts/_" method="GET">
                 <input type="hidden" name="gid" value="317987183028"/>
                 <input type="hidden" name="gd"
-                       value='{"course_section_id":"{{=row.course_section.id}}", "user_id":"{{=auth.user_id}}"}'/>
+                       value='{"course_section_id":"{{=row.course_section.id}}", "user_id":"{{=auth.user_id}}", "muteCamera":"{{=user_settings.mute_web_camera}}", "muteMicrophone":"{{=user_settings.mute_microphone}}"}'/>
 
                 {{=INPUT(_type="image", _src=URL('static','images/start-hangout.png'), alt="Submit Form")}}
             </form>
