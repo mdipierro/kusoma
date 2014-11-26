@@ -6,7 +6,11 @@ var lms299 = {
     onClientReady: function() {
       gapi.hangout.onApiReady.add(
         function(eventObj) {
-        sendHangoutsUrl();
+        var gd = $.parseJSON(decodeURIComponent(getParameter('gd')));
+
+        sendHangoutsUrl(gd);
+        setUserChatSettings(gd.muteCamera, gd.muteMicrophone);
+
         gapi.hangout.av.onCameraMute.add(function(e) {
           updateUserSettingCamera(e.isCameraMute);
         });
@@ -30,8 +34,7 @@ var lms299 = {
       }
       
       // Sends the Hangouts URL to the lms299 web2py instance via an AJAX call.
-      function sendHangoutsUrl() {
-        var gd = $.parseJSON(decodeURIComponent(getParameter('gd')));
+      function sendHangoutsUrl(gd) {
         gd.hangoutUrl = gapi.hangout.getHangoutUrl();
         $.ajax({
           contentType: 'application/json',
@@ -66,8 +69,12 @@ var lms299 = {
 
       // Updates the Google+ Hanougts instance settings using the passed in parameters.
       function setUserChatSettings(muteCamera, muteMicrophone) {
-        gapi.hangout.av.setCameraMute(muteCamera);
-        gapi.hangout.av.setMicrophoneMute(muteMicrophone);
+        if (muteCamera != undefined) {
+          gapi.hangout.av.setCameraMute(muteCamera);
+        }
+        if (muteMicrophone != undefined) {
+          gapi.hangout.av.setMicrophoneMute(muteMicrophone);
+        }
       }
     }
   }
