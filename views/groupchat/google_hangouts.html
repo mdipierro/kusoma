@@ -2,31 +2,39 @@
 
 <h1>Hangouts</h1>
 
-{{for row in courses:}}
-<table cellspacing="0" cellpadding="0">
+{{for row in memberships:}}
+<table>
     <tr>
         <th>
-            <a href="{{=URL('default', 'course',args=row.course_section.id)}}">{{=row.course_section.name}}</a>
+            <a href="{{=URL('default', 'section',args=row.course_section.id)}}">{{=row.course_section.name}}</a>
         </th>
         <th>
-            <a target="_blank" href="https://plus.google.com/hangouts/_?gid=317987183028">
-                {{=IMG(_src=URL('static','images/start-hangout.png'))}}
-            </a>
-        </th>
-    </tr>
-    <tr>
-        <td><h5>Join Ongoing Hangouts</h5></td>
-    </tr>
-    <tr>
-        <td></td>
-        <td><a href="{{=URL('default', 'course',args=row.course_section.id)}}">{{=row.course_section.name}}</a></td>
-    </tr>
-    <tr>
-        <td></td>
-        <td><a href="{{=URL('default', 'course',args=row.course_section.id)}}">{{=row.course_section.name}}</a></td>
-    </tr>
+            <form action="https://plus.google.com/hangouts/_" method="GET">
+                <input type="hidden" name="gid" value="317987183028"/>
+                <input type="hidden" name="gd"
+                       value='{"course_section_id":"{{=row.course_section.id}}", "user_id":"{{=auth.user_id}}", "muteCamera":"{{=user_settings.mute_web_camera}}", "muteMicrophone":"{{=user_settings.mute_microphone}}"}'/>
 
-    <br><br>
+                {{=INPUT(_type="image", _src=URL('static','images/start-hangout.png'), alt="Submit Form")}}
+            </form>
+        </th>
+    </tr>
+    <br>
+    <tr>
+        <td><h4>Join Recent Hangouts</h4></td>
+    </tr>
+    {{for id in ids:}}
+    {{for myrow in id:}}
+    {{if (myrow.course_section.id== row.course_section.id) and (datetime.now()- myrow.start_time) < timedelta(minutes =
+    5):}}
+    <tr>
+        <td>&nbsp&nbsp
+            <a href="{{= myrow.url}}">Started @ {{=myrow.start_time.time()}} </a>
+        <td>
+    </tr>
+    {{pass}}
+    {{pass}}
+    {{pass}}
+    <br><br><br>
 </table>
 {{pass}}
 
