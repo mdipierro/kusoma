@@ -18,8 +18,8 @@ Individual chat settings for a user.
 db.define_table(
     'group_chat_user_settings',
     Field('user_id','reference membership', requires=NE),
-    Field('use_microphone', 'boolean'),
-    Field('use_web_camera', 'boolean')
+    Field('mute_microphone', 'boolean'),
+    Field('mute_web_camera', 'boolean')
 )
 
 """
@@ -49,6 +49,7 @@ def update_group_chat_session(session_id, url):
 	Updates the chat session with the url to join the session
 	"""
     db(db.group_chat_session.id == session_id).update(url = url)
+    db.commit()
 
 def add_user_to_group_chat_session(group_chat_session_id, user_id=auth.user_id):
     """
@@ -58,32 +59,50 @@ def add_user_to_group_chat_session(group_chat_session_id, user_id=auth.user_id):
                                       user_id=user_id)
     db.commit()
 	
-def update_user_group_chat_settings(use_microphone=False, use_web_camera=False, user_id=request.now):
+def update_user_group_chat_settings(mute_microphone=False, mute_web_camera=False, user_id=auth.user_id):
     """
     Updates passed in user's group chat preferences if they exist, otherwise insert.
     """
     db.group_chat_user_settings.update_or_insert(user_id=user_id,
-                                       use_microphone=use_microphone,
-                                       use_web_camera=use_web_camera)
-    db.commit();
+                                       mute_microphone=mute_microphone,
+                                       mute_web_camera=mute_web_camera)
+    db.commit()
+    
+def insert_user_group_chat_settings(mute_microphone=False, mute_web_camera=False, user_id=auth.user_id):
+    """
+    inserts passed in user's group chat preferences if they exist, otherwise insert.
+    """
+    db.group_chat_user_settings.insert(user_id=user_id,
+                                       mute_microphone=mute_microphone,
+                                       mute_web_camera=mute_web_camera)
+    db.commit()
 	
-def update_user_setting_mic(use_microphone, user_id=request.now):
+def update_user_setting_mic(mute_microphone, user_id=auth.user_id):
     """
 	Updates the user settings with a true or false depending on if the user wants to use a mic
 	"""
-    db(db.group_chat_user_settings.user_id == user_id).update(use_microphone = use_microphone)
+    db(db.group_chat_user_settings.user_id == user_id).update(mute_microphone = mute_microphone)
+    db.commit()
 	
-def update_user_setting_cam(use_web_camera, user_id=request.now):
+def update_user_setting_cam(mute_web_camera, user_id=auth.user_id):
     """
 	Updates the user settings with a true or false depending on if the user wants to use a camera
 	"""
-    db(db.group_chat_user_settings.user_id == user_id).update(use_web_camera = use_web_camera)
+    db(db.group_chat_user_settings.user_id == user_id).update(mute_web_camera = mute_web_camera)
+    db.commit()
 
-def get_user_group_chat_settings(user_id=request.now):
+def get_user_group_chat_settings(user_id=auth.user_id):
     """
     Retrieves a user's group chat settings.
     """
-    return db.group_chat_user_settings(db.group_chat_user_settings.user_id==user_id)
+    data = db(db.group_chat_user_settings.user_id==user_id).select().first()
+    return data
+
+def user_group_chat_settings_exists(user_id=auth.user_id):
+    """
+    Checks to see if the user has settings in the table
+    """
+    return db(db.group_chat_user_settings.user_id==user_id).isempty()
 
 def get_group_chat_sessions_for_user(user_id=auth.user_id):
     """
