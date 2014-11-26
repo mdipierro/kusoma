@@ -39,7 +39,7 @@ var lms299 = {
         $.ajax({
           contentType: 'application/json',
           type: 'POST',
-          url: "http://127.0.0.1:8000/lms299/groupchat/hangouts_url_for_session.json",
+          url: "http://127.0.0.1:8000/lms299/groupchat/create_hangout.json",
           data: JSON.stringify(gd),
           dataType: 'json'
         });

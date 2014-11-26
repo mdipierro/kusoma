@@ -30,17 +30,15 @@ def google_hangouts():
 
 
 @auth.requires_login()
-def hangouts_url_for_session():
+def create_hangout():
     """
 	This is called when the hangout starts up. The session id and url for the
 	hangout are passed using JSON and then passed to update the existing row
 	for the hangout. the user's settings are also loaded into the database.
 	"""
     import gluon.contrib.simplejson as simplejson
-
     data = simplejson.loads(request.body.read())
     insert_new_hangout(data['course_section_id'], data['user_id'], data['hangoutUrl']);
-    print "past insert_new_hangout"
     return dict(data)
 
 
@@ -50,7 +48,6 @@ def update_user_settings_microphone():
 	updates the user settings for the microphone
 	"""
     import gluon.contrib.simplejson as simplejson
-
     data = simplejson.loads(request.body.read())
     update_user_setting_mic(data['muteMicrophone'])
     return dict(data)
